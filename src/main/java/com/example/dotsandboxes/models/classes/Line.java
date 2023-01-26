@@ -1,5 +1,7 @@
 package com.example.dotsandboxes.models.classes;
 
+import com.example.dotsandboxes.models.enums.LineType;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,11 +11,13 @@ public class Line {
     private Dot start; // dot at the start of the line
     private Dot end; // dot at the end of the line
     private boolean isConnected; // indicates if the line is connected
+    LineType type;
 
     public Line(Dot start,Dot end) { // constructor
         this.start = start;
         this.end = end;
         this.isConnected = false;
+        this.type = start.getX() == end.getX() ? LineType.horizontal : LineType.vertical;
     }
 
     public Dot getEnd() { // end getter
@@ -34,8 +38,9 @@ public class Line {
     }
 
     public boolean canFormABox(Line other) { // checks if two lines can be in a box together
-        return start.canFormALine(other.end) || end.canFormALine(other.start)
-                || Math.abs(start.getX()  - end.getX()) == 1 || Math.abs(start.getX() - end.getX()) == 1;
+        if(type == LineType.horizontal) {
+            return  
+        }
     }
 
     public List<Box> findBoxes(Box[][] boxes) {
