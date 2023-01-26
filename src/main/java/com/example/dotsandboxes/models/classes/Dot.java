@@ -12,15 +12,8 @@ public class Dot {
     public int getX() { // x getter
         return x;
     }
-    public void setX(int x) { // x setter
-        this.x = x;
-    }
-
     public int getY() { // y getter
         return y;
-    }
-    public void setY(int y) { // y setter
-        this.y = y;
     }
 
     boolean canFormALine(Dot other) { // checks if two dots can form a line

@@ -9,10 +9,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Box {
-    ArrayList<Line> lines;
-    int connectedLines;
-    boolean  isComplete;
-    PlayerNumber owner;
+    private ArrayList<Line> lines;
+    private int connectedLines;
+    private boolean  isComplete;
+    private PlayerNumber owner;
 
     public Box(ArrayList<Line> lines) {
         this.lines = lines;
@@ -27,6 +27,7 @@ public class Box {
     public int getConnectedLines() {
         return connectedLines;
     }
+    public boolean getIsComplete() {return isComplete;}
     public PlayerNumber getOwner() {
         return owner;
     }
@@ -39,12 +40,13 @@ public class Box {
             lineToChange.connectLine();
             if (connectedLines == 4) {
                 isComplete = true;
+                this.owner = owner;
             }
             return connectedLines;
         }
         return -1; // line does not exist
     }
     public boolean hasLine(Line line) {
-        return  lines.indexOf(line) != -1 ? true: false;
+        return  lines.contains(line);
     }
 }
