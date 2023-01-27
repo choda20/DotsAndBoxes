@@ -29,7 +29,7 @@ public class Line {
     public Dot getStart() { // start getter
         return start;
     }
-    public Boolean isConnected() { // isConnected getter
+    public Boolean getIsConnected() { // isConnected getter
         return isConnected;
     }
 
