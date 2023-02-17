@@ -1,4 +1,4 @@
-package com.example.dotsandboxes.models.enums;
+package com.example.dotsandboxes.model.enums;
 
 public enum GameType {
     HumanVsHuman,HumanVsAI,AIVsAI
