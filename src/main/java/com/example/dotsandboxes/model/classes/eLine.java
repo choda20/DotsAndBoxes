@@ -7,24 +7,15 @@ import java.util.stream.Collectors;
 
 public class eLine {
     private Line line; // the line
-    private boolean isConnected; // indicates if the line is connected
     private boolean isHorizontal; // true for horizontal, false for vertical
 
     public eLine(Line line) { // constructor
         this.line = line;
-        this.isConnected = false;
         this.isHorizontal = line.getStartY() == line.getEndY() ? false : true;
     }
 
     public Line getLine() { // returns the line
         return line;
-    }
-    public Boolean getIsConnected() { // isConnected getter
-        return isConnected;
-    }
-
-    public void negateLine() { // swaps the line status
-        isConnected = !isConnected;
     }
 
     public boolean canFormABox(eLine other) {
