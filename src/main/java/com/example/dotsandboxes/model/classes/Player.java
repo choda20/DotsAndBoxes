@@ -14,7 +14,7 @@ public abstract class Player {
 
     public void setName(String name) {this.name = name;}
     public void setScore(int score) {this.score = score;}
-
+    public void incScore() {this.score += 1;}
     public abstract Board play(Board gameBoard);
 
 }

@@ -5,12 +5,13 @@ import com.example.dotsandboxes.model.classes.Game;
 import com.example.dotsandboxes.view.GameScreen;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
+
+import java.util.Arrays;
+
 
 public class GameScreenController {
     private Game model;
@@ -24,50 +25,39 @@ public class GameScreenController {
 
         double startingX = view.getSceneX()/2-(gridSize*50)/2; // will be used to center the board
         double startingY = view.getSceneY()/2-(gridSize*50)/2; // same as startingX
-        Board gameBoard = model.getGameBoard();
 
+        model.buildBoard(startingX,startingY);
+        setMouseSettings(model.getGameBoard().getHorizontalLines());
+        setMouseSettings(model.getGameBoard().getVerticalLines());
         setLabels(view.getLabels(),startingX,startingY); // initializes labels
-        setDots(gameBoard.getDots(),startingX,startingY,20); // initializes dots
-        setLines(gameBoard.getHorizontalLines(),gameBoard.getVerticalLines(),startingX,startingY,20); // initializes lines
-
         view.start(stage);
     }
-    public void setDots(Circle[][] dots,double startingX,double startingY, int padding) {
+
+    public void setMouseSettings(Line[][] lines) {
         for (int i=0;i<gridSize;i++) {
-            for (int j = 0; j < gridSize; j++) {
-                dots[i][j] = new Circle(startingX+(j*75),startingY+(i*75)+padding,5);
+            for (int j = 0; j < gridSize - 1; j++) {
+                lines[i][j].setStroke(Color.TRANSPARENT);
+                lines[i][j].setStrokeWidth(5);
+                lines[i][j].setOnMouseClicked((mouseEvent -> {
+                    Line clickedLine = (Line) mouseEvent.getSource();
+                    model.checkValidMove(clickedLine);
+                    System.out.println("first: " + model.getFirst().getScore());
+                    System.out.println("second: " + model.getSecond().getScore());
+                }));
+                lines[i][j].setOnMouseEntered((mouseEvent -> {
+                    Line hoveredLine = (Line) mouseEvent.getSource();
+                    if (hoveredLine.getStroke() != Color.RED) {
+                        hoveredLine.setStroke(Color.YELLOW);
+                    }
+                }));
+                lines[i][j].setOnMouseExited((mouseEvent -> {
+                    Line hoveredLine = (Line) mouseEvent.getSource();
+                    if (hoveredLine.getStroke() != Color.RED) {
+                        hoveredLine.setStroke(Color.TRANSPARENT);
+                    }
+                }));
             }
         }
-    }
-    public void setLines(Line[][] horizontalLines,Line[][] verticalLines,double startingX,double startingY, int padding) {
-        for (int i=0;i<gridSize;i++) {
-            for (int j = 0; j < gridSize-1; j++) {
-                horizontalLines[i][j] = new Line(startingX+(j*75) + 7,startingY+(i*75)+padding,startingX+((j+1)*75) - 7,startingY+((i)*75)+padding);
-                setMouseSettings(horizontalLines[i][j]);
-                verticalLines[i][j] = new Line(startingY+(i*75),startingY+(j*75)+ 7 + padding,startingY+(i*75),startingY+((j+1)*75)- 7+ padding);
-                setMouseSettings(verticalLines[i][j]);
-            }
-        }
-    }
-    public void setMouseSettings(Line line) {
-        line.setStroke(Color.TRANSPARENT);
-        line.setStrokeWidth(5);
-        line.setOnMouseClicked((mouseEvent -> {
-            Line clickedLine = (Line) mouseEvent.getSource();
-            clickedLine.setStroke(Color.RED);
-        }));
-        line.setOnMouseEntered((mouseEvent -> {
-            Line hoveredLine = (Line) mouseEvent.getSource();
-            if (hoveredLine.getStroke() != Color.RED) {
-                hoveredLine.setStroke(Color.YELLOW);
-            }
-        }));
-        line.setOnMouseExited((mouseEvent -> {
-            Line hoveredLine = (Line) mouseEvent.getSource();
-            if (hoveredLine.getStroke() != Color.RED) {
-                hoveredLine.setStroke(Color.TRANSPARENT);
-            }
-        }));
     }
     public void setLabels(Label[] labels,double startingX,double startingY) {
         labels[0] = new Label();
