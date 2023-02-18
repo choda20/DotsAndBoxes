@@ -4,7 +4,6 @@ import com.example.dotsandboxes.model.classes.Board;
 import com.example.dotsandboxes.model.classes.Game;
 import com.example.dotsandboxes.view.GameScreen;
 import com.example.dotsandboxes.view.SettingsScreen;
-import com.example.dotsandboxes.view.TitleScreen;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

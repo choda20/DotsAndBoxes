@@ -1,17 +1,13 @@
 package com.example.dotsandboxes.controller;
 
-import com.example.dotsandboxes.model.classes.Board;
 import com.example.dotsandboxes.model.classes.Game;
 import com.example.dotsandboxes.view.GameScreen;
-import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
-import javax.security.auth.callback.LanguageCallback;
-import java.util.Arrays;
 
 
 public class GameScreenController {

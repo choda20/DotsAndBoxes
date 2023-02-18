@@ -27,43 +27,23 @@ public class Game {
     public PlayerNumber getTurn() {
         return turn;
     }
+    public GameType getGameType() {return gameType;}
+    public Board getGameBoard() {return gameBoard;}
+    public Player getSecond() {return second;}
+    public Player getFirst() {return first;}
 
-    public GameType getGameType() {
-        return gameType;
-    }
+    public Player getCurrent() {return turn == PlayerNumber.first ? first: second;}
+    public boolean gameStatus() {return !(first.getScore() + second.getScore() == Math.sqrt(gameBoard.getGridSize()-1));} // true for ongoing, false for ended
 
-    public Board getGameBoard() {
-        return gameBoard;
-    }
 
-    public Player getSecond() {
-        return second;
-    }
-
-    public Player getFirst() {
-        return first;
-    }
-
-    public void setGameType(GameType type) {
-        this.gameType = type;
-    }
-
-    public void setGameBoard(Board gameBoard) {
-        this.gameBoard = gameBoard;
-    }
-
-    public void setFirst(Player first) {
-        this.first = first;
-    }
-
-    public void setSecond(Player second) {
-        this.second = second;
-    }
+    public void setGameType(GameType type) {this.gameType = type;}
+    public void setGameBoard(Board gameBoard) {this.gameBoard = gameBoard;}
+    public void setFirst(Player first) {this.first = first;}
+    public void setSecond(Player second) {this.second = second;}
 
     public void swapTurn() {
         turn = turn == PlayerNumber.first ? PlayerNumber.second : PlayerNumber.first;
     }
-    public Player getCurrent() {return turn == PlayerNumber.first ? first: second;}
     public boolean checkValidMove(Line line) {
         if (line.getStroke() == Color.YELLOW || line.getStroke() == Color.TRANSPARENT) {
             line.setStroke(Color.RED);
@@ -81,7 +61,6 @@ public class Game {
             return false;
         }
     }
-    public boolean gameStatus() {return !(first.getScore() + second.getScore() == Math.sqrt(gameBoard.getGridSize()-1));} // true for ongoing, false for ended
     public boolean isGameOver() {
         if (!gameStatus()) {
             gameBoard.disableAllLines();

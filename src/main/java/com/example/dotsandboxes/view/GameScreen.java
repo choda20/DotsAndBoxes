@@ -1,7 +1,6 @@
 package com.example.dotsandboxes.view;
 
 import com.example.dotsandboxes.model.classes.Board;
-import com.example.dotsandboxes.model.classes.Game;
 import com.example.dotsandboxes.model.classes.Player;
 import javafx.application.Application;
 import javafx.beans.property.IntegerProperty;

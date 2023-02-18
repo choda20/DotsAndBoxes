@@ -1,6 +1,5 @@
 package com.example.dotsandboxes.model.classes;
 
-import com.example.dotsandboxes.model.enums.PlayerNumber;
 import javafx.scene.shape.Line;
 
 import java.util.ArrayList;

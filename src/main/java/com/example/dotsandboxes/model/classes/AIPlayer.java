@@ -7,5 +7,4 @@ public class AIPlayer extends Player{
     public Board play(Board board) {
         return board;
     }
-
 }

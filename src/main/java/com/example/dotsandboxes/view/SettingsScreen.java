@@ -1,8 +1,6 @@
 package com.example.dotsandboxes.view;
 
-import com.example.dotsandboxes.controller.GameScreenController;
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -11,7 +9,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-import java.util.function.Function;
 
 public class SettingsScreen extends Application {
     private Label title;

@@ -1,10 +1,7 @@
 package com.example.dotsandboxes.model.classes;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.util.Pair;
-
-import java.awt.*;
 import java.util.ArrayList;
 
 
@@ -14,6 +11,7 @@ public class Board {
     private Circle[][] dots;
     private Line[][] horizontalLines;
     private Line[][] verticalLines;
+
     public Board() {}
     public Board(Board board) {
         this.gridSize = board.getGridSize();
