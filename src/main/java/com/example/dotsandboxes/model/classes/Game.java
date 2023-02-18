@@ -10,7 +10,10 @@ public class Game {
     GameType gameType;
     Board gameBoard;
 
-    public Game() {}
+    public Game() {
+        this.turn = PlayerNumber.first;
+    }
+
     public Game(Player first,Player second,GameType gameType,Board gameBoard) {
         this.gameType = gameType;
         this.first = first;

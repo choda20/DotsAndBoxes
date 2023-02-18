@@ -1,5 +1,6 @@
 package com.example.dotsandboxes.controller;
 
+import com.example.dotsandboxes.model.classes.Board;
 import com.example.dotsandboxes.model.classes.Game;
 import com.example.dotsandboxes.view.GameScreen;
 import com.example.dotsandboxes.view.SettingsScreen;
@@ -22,18 +23,29 @@ public class SettingsScreenController {
 
         setLabelStyle(view.getTitle(),view.getP1Name(),view.getP2Name(),view.getGridSize(),view.getErrorText());
         setButtonStyle(view.getMoveToGame());
-        setButtonAction(view.getMoveToGame(),view.getGridField(),view.getP1Field(),view.getP2Field());
-
+        view.getMoveToGame().setOnAction(actionEvent -> {
+            try {
+                moveToGamePressed();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
         view.start(stage);
     }
 
-    private void setButtonAction(Button moveToGame,TextField gridSize,TextField p1Name,TextField p2Name) throws Exception {
-        model.getFirst().setName(p1Name.getText());
-        model.getSecond().setName(p2Name.getText());
-        model.getGameBoard().setGridSize(Integer.parseInt(gridSize.getText()));
-        GameScreen gameView = new GameScreen(model.getGameBoard(),model.getFirst(), model.getSecond(), view.getSceneX(), view.getSceneY());
-        GameScreenController gameController = new GameScreenController(model,gameView,stage);
+    private void moveToGamePressed() throws Exception {
+        int gridSize = view.getGridInput();
+        String p1 = view.getP1Input();
+        String p2 = view.getP2Input();
+        if (gridSize > 1 && p1.length() >= 1 && p2.length() >= 1) {
+            model.getFirst().setName(p1);
+            model.getSecond().setName(p2);
+            model.setGameBoard(new Board(gridSize));
+            GameScreen gameView = new GameScreen(model.getGameBoard(), model.getFirst(), model.getSecond(), view.getSceneX(), view.getSceneY());
+            GameScreenController gameController = new GameScreenController(model, gameView, stage);
+        }
     }
+
     private boolean validateFields(TextField gridSize,TextField p1Name,TextField p2Name) {
         boolean gridValidator = gridSize.getText().chars().allMatch(Character::isDigit);
         boolean p1NameValidator = p1Name.getText().isEmpty();

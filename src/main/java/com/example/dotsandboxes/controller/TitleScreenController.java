@@ -1,6 +1,8 @@
 package com.example.dotsandboxes.controller;
 
+import com.example.dotsandboxes.model.classes.AIPlayer;
 import com.example.dotsandboxes.model.classes.Game;
+import com.example.dotsandboxes.model.classes.HumanPlayer;
 import com.example.dotsandboxes.model.enums.GameType;
 import com.example.dotsandboxes.view.GameScreen;
 import com.example.dotsandboxes.view.SettingsScreen;
@@ -31,14 +33,20 @@ public class TitleScreenController {
 
     private void handleHVH() throws Exception {
         model.setGameType(GameType.HumanVsHuman);
+        model.setFirst(new HumanPlayer());
+        model.setSecond(new HumanPlayer());
         moveToSettings();
     }
     private void handleHVA() throws Exception {
         model.setGameType(GameType.HumanVsAI);
+        model.setFirst(new HumanPlayer());
+        model.setSecond(new AIPlayer());
         moveToSettings();
     }
     private void handleAVA() throws Exception {
         model.setGameType(GameType.AIVsAI);
+        model.setFirst(new AIPlayer());
+        model.setSecond(new AIPlayer());
         moveToSettings();
     }
 

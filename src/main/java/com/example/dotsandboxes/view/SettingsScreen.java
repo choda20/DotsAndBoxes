@@ -1,5 +1,6 @@
 package com.example.dotsandboxes.view;
 
+import com.example.dotsandboxes.controller.GameScreenController;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -9,6 +10,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+
+import java.util.function.Function;
 
 public class SettingsScreen extends Application {
     private Label title;
@@ -36,7 +39,7 @@ public class SettingsScreen extends Application {
         this.sceneX = sceneX;
         this.sceneY = sceneY;
     }
-    @Override
+
     public void start(Stage stage) throws Exception {
         GridPane root = new GridPane();
         root.setAlignment(Pos.CENTER);
@@ -59,8 +62,20 @@ public class SettingsScreen extends Application {
     }
 
     public int getSceneX() {return sceneX;}
-    public Label getErrorText() {return errorText;}
     public int getSceneY() {return sceneY;}
+    public int getGridInput() {
+        int number;
+        try {
+            number = Integer.parseInt(gridField.getText());
+        }
+        catch (NumberFormatException e) {
+            number = 0;
+        }
+        return number;
+    }
+    public String getP1Input() {return p1Field.getText();}
+    public String getP2Input() {return p2Field.getText();}
+    public Label getErrorText() {return errorText;}
     public Label getGridSize() {return gridSize;}
     public Label getP1Name() {return p1Name;}
     public Label getP2Name() {return p2Name;}
