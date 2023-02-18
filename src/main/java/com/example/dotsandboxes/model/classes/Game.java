@@ -4,6 +4,7 @@ import com.example.dotsandboxes.model.enums.GameType;
 import com.example.dotsandboxes.model.enums.PlayerNumber;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.util.Pair;
 
 public class Game {
     Player first;
@@ -67,11 +68,14 @@ public class Game {
         }
         return false;
     }
-    public Player getWinner() {
-        if (first.getScore() > second.getScore()) {
-            return first;
+    public Pair<Integer,String> getWinner() { // 0 means somebody won, 1 means a tie
+        if (first.getScore() == second.getScore()) {
+            new Pair<>(1,"");
         }
-        return second;
+        else if (first.getScore() > second.getScore()) {
+            return new Pair<>(0,first.getName());
+        }
+        return new Pair<>(0,second.getName());
     }
     public void buildBoard(double sceneX,double sceneY) {
         gameBoard.initializeLines(sceneX,sceneY,20);

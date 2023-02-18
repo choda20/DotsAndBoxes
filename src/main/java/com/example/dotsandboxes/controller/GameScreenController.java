@@ -7,7 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
-
+import javafx.util.Pair;
 
 
 public class GameScreenController {
@@ -83,7 +83,13 @@ public class GameScreenController {
         labels[1].setText(view.getStaticScoreTextP1() + " " + p1Score);
         labels[2].setText(view.getStaticScoreTextP2()+ " " + p2Score);
         if (!model.gameStatus()) {
-            labels[0].setText(model.getWinner().getName() + " Won!");
+            Pair<Integer,String> results = model.getWinner();
+            if (results.getKey().intValue() == 0) {
+                labels[0].setText(results.getValue() + " Won!");
+            }
+            else {
+                labels[0].setText("It's A Tie!");
+            }
         }
         else {
             labels[0].setText(model.getCurrent().getName() + view.getStaticTurnText());
