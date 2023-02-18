@@ -70,7 +70,7 @@ public class Game {
     }
     public Pair<Integer,String> getWinner() { // 0 means somebody won, 1 means a tie
         if (first.getScore() == second.getScore()) {
-            new Pair<>(1,"");
+            return new Pair<>(1,"");
         }
         else if (first.getScore() > second.getScore()) {
             return new Pair<>(0,first.getName());
