@@ -33,8 +33,7 @@ public class Game {
     public Player getFirst() {return first;}
 
     public Player getCurrent() {return turn == PlayerNumber.first ? first: second;}
-    public boolean gameStatus() {return !(first.getScore() + second.getScore() == Math.sqrt(gameBoard.getGridSize()-1));} // true for ongoing, false for ended
-
+    public boolean gameStatus() {return !((first.getScore() + second.getScore()) == Math.pow(gameBoard.getGridSize()-1,gameBoard.getGridSize()-1));} // true for ongoing, false for ended
 
     public void setGameType(GameType type) {this.gameType = type;}
     public void setGameBoard(Board gameBoard) {this.gameBoard = gameBoard;}
