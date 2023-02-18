@@ -62,7 +62,6 @@ public class GameScreen extends Application {
             root.getChildren().addAll(verticalLines[i]);
         }
     }
-
     public Label[] getLabels() {return labels;}
     public int getSceneX() {return sceneX;}
     public int getSceneY() {return sceneY;}

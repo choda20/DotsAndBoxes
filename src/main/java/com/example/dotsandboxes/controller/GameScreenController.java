@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
+import javax.security.auth.callback.LanguageCallback;
 import java.util.Arrays;
 
 
@@ -41,8 +42,7 @@ public class GameScreenController {
                 lines[i][j].setOnMouseClicked((mouseEvent -> {
                     Line clickedLine = (Line) mouseEvent.getSource();
                     model.checkValidMove(clickedLine);
-                    System.out.println("first: " + model.getFirst().getScore());
-                    System.out.println("second: " + model.getSecond().getScore());
+                    updateScores(view.getLabels(),model.getFirst().getScore(),model.getSecond().getScore());
                 }));
                 lines[i][j].setOnMouseEntered((mouseEvent -> {
                     Line hoveredLine = (Line) mouseEvent.getSource();
@@ -61,25 +61,36 @@ public class GameScreenController {
     }
     public void setLabels(Label[] labels,double startingX,double startingY) {
         labels[0] = new Label();
-        labels[0].textProperty().bind(Bindings.concat(model.currentPlayer().getName(),view.getStaticTurnText()));
+        labels[0].setText("itay" + view.getStaticTurnText());
         labels[0].setLayoutX(startingX-labels[0].getWidth()/3);
         labels[0].setLayoutY(startingY-startingY/2);
         labels[0].setAlignment(Pos.CENTER);
         labels[0].setStyle("-fx-font-size: 50px;");
         labels[0].setTextFill(Color.BLUE);
         labels[1] = new Label();
-        labels[1].textProperty().bind(Bindings.concat(view.getStaticScoreTextP1(),model.getFirst().getScore()));
+        labels[1].setText(view.getStaticScoreTextP1() + " " +model.getFirst().getScore());
         labels[1].setLayoutX(startingX-labels[1].getWidth()/3);
         labels[1].setLayoutY(startingY-startingY/2+ 75);
         labels[1].setAlignment(Pos.CENTER);
         labels[1].setStyle("-fx-font-size: 30px;");
         labels[1].setTextFill(Color.BLUE);
         labels[2] = new Label();
-        labels[2].textProperty().bind(Bindings.concat(view.getStaticScoreTextP2(),model.getSecond().getScore()));
+        labels[2].setText(view.getStaticScoreTextP2()+ " " + model.getSecond().getScore());
         labels[2].setLayoutX(startingX-labels[1].getWidth()/3);
         labels[2].setLayoutY(startingY-startingY/2 + 125);
         labels[2].setAlignment(Pos.CENTER);
         labels[2].setStyle("-fx-font-size: 30px;");
         labels[2].setTextFill(Color.RED);
+    }
+
+    public void updateScores(Label[] labels, int p1Score, int p2Score) {
+        labels[1].setText(view.getStaticScoreTextP1() + " " + p1Score);
+        labels[2].setText(view.getStaticScoreTextP2()+ " " + p2Score);
+        if (!model.gameStatus()) {
+            labels[0].setText(model.getWinner().getName() + " Won!");
+        }
+        else {
+            labels[0].setText(model.getCurrent().getName() + view.getStaticTurnText());
+        }
     }
 }

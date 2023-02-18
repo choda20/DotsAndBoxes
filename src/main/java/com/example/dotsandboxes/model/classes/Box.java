@@ -1,41 +1,35 @@
 package com.example.dotsandboxes.model.classes;
 
 import com.example.dotsandboxes.model.enums.PlayerNumber;
+import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
 
 public class Box {
-    private ArrayList<eLine> lines;
+    private ArrayList<Line> lines;
     private int connectedLines;
     private boolean  isComplete;
 
-    public Box(ArrayList<eLine> lines) {
+    public Box(ArrayList<Line> lines) {
         this.lines = lines;
         int connectedLines = 0;
         boolean  isComplete = false;
     }
 
-    public ArrayList<eLine> getLines() {
+    public ArrayList<Line> getLines() {
         return lines;
     }
     public int getConnectedLines() {
         return connectedLines;
     }
     public boolean getIsComplete() {return isComplete;}
-
-    public int connectLine(eLine line, PlayerNumber owner) {
-        if (hasLine(line)) {
-            connectedLines += 1;
-            int index = lines.indexOf(line);
-            eLine lineToChange = lines.get(index);
-            if (connectedLines == 4) {
-                isComplete = true;
-            }
-            return connectedLines;
+    public void incConnectedLines() {
+        connectedLines+=1;
+        if(connectedLines == 4) {
+            isComplete = true;
         }
-        return -1; // line does not exist
     }
-    public boolean hasLine(eLine line) {
+    public boolean hasLine(Line line) {
         return  lines.contains(line);
     }
 }

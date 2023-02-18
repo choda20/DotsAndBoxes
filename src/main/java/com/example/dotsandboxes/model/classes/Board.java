@@ -5,9 +5,11 @@ import javafx.scene.shape.Line;
 import javafx.util.Pair;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 
 public class Board {
+    private Box[][] boxes;
     private int gridSize;
     private Circle[][] dots;
     private Line[][] horizontalLines;
@@ -18,14 +20,17 @@ public class Board {
         this.dots = board.getDots();
         this.horizontalLines = board.getHorizontalLines();
         this.verticalLines = board.getVerticalLines();
+        this.boxes = board.getBoxes();
     }
     public Board(int gridSize) {
         this.gridSize = gridSize;
         this.horizontalLines = new Line[gridSize][gridSize-1]; // array of horizontal lines
         this.verticalLines = new Line[gridSize][gridSize-1]; // array of vertical lines
         this.dots = new Circle[gridSize][gridSize]; // array of dots
+        this.boxes = new Box[gridSize-1][gridSize-1];
     }
 
+    public Box[][] getBoxes() {return boxes;}
     public Circle[][] getDots() {return dots;}
     public Line[][] getHorizontalLines() {return horizontalLines;}
     public Line[][] getVerticalLines() {return verticalLines;}
@@ -44,6 +49,17 @@ public class Board {
             }
         }
     }
+    public void initializeBoxes() {
+        for (int i=0;i<gridSize-1;i++) {
+            for (int j = 0; j < gridSize-1; j++) {
+                boxes[i][j] = new Box(new ArrayList<Line>());
+                boxes[i][j].getLines().add(verticalLines[j][i]);
+                boxes[i][j].getLines().add(verticalLines[j+1][i]);
+                boxes[i][j].getLines().add(horizontalLines[i][j]);
+                boxes[i][j].getLines().add(horizontalLines[i+1][j]);
+            }
+        }
+    }
     public void initializeDots(double startingX,double startingY, int padding) {
         for (int i=0;i<gridSize;i++) {
             for (int j = 0; j < gridSize; j++) {
@@ -51,57 +67,21 @@ public class Board {
             }
         }
     }
-    public boolean checkBoxFormed(Line line) {
-        Pair<Integer,Point> lineData = getLineIndexes(line);
-        boolean completed = false;
-        boolean firstBox = false;
-        boolean secondBox = false;
-        int i = lineData.getValue().x;
-        int j = lineData.getValue().y;
-        switch (lineData.getKey()) {
-            case 0:
-                if (i > 0 && i < gridSize-1 && j > 0) {
-                    firstBox = !horizontalLines[i - 1][j].getStroke().equals(Color.TRANSPARENT)
-                            && !verticalLines[i][j - 1].getStroke().equals(Color.TRANSPARENT) &&
-                            !verticalLines[i + 1][j - 1].getStroke().equals(Color.TRANSPARENT);
-                }
-                if (i<gridSize-1) {
-                    secondBox = !horizontalLines[i + 1][j].getStroke().equals(Color.TRANSPARENT)
-                            && !verticalLines[i][j].getStroke().equals(Color.TRANSPARENT) &&
-                            !verticalLines[i + 1][j].getStroke().equals(Color.TRANSPARENT);
-                }
-                completed = firstBox || secondBox;
-                System.out.println("first: " + firstBox + ", second: " + secondBox + ",combined: " + completed);
-                return completed;
+    public int checkBoxFormed(Line line) {
+        Pair<Integer,Box[]> parentData = getParentBoxes(line);
+        Box[] parents = parentData.getValue();
+        int numberOfParents = parentData.getKey().intValue();
+        switch (numberOfParents) {
             case 1:
-                if (i > 0 && i < gridSize-1 && j > 0) {
-                    firstBox = !verticalLines[i - 1][j].getStroke().equals(Color.TRANSPARENT)
-                            && !horizontalLines[i][j - 1].getStroke().equals(Color.TRANSPARENT) &&
-                            !horizontalLines[i + 1][j - 1].getStroke().equals(Color.TRANSPARENT);
-                }
-                if (i<gridSize-1) {
-                    secondBox = !verticalLines[i + 1][j].getStroke().equals(Color.TRANSPARENT)
-                            && !horizontalLines[i][j].getStroke().equals(Color.TRANSPARENT) &&
-                            !horizontalLines[i + 1][j].getStroke().equals(Color.TRANSPARENT);
-                }
-                completed = firstBox || secondBox;
-                System.out.println("first: " + firstBox + ", second: " + secondBox + ",combined: " + completed);
-                return completed;
+                parents[numberOfParents-1].incConnectedLines();
+                return parents[numberOfParents-1].getIsComplete() ? 1 : 0;
+            case 2:
+                parents[numberOfParents-1].incConnectedLines();
+                parents[numberOfParents-2].incConnectedLines();
+                return (parents[numberOfParents-1].getIsComplete() ? 1 : 0) + (parents[numberOfParents-2].getIsComplete() ? 1 : 0);
             default:
-                return false;
+                return 0;
         }
-    }
-
-    public Pair<Integer,Point> getLineIndexes(Line line) { // finds the index and type of a line, 0 - horizontal, 1 - vertical, -1 for not found(should not be possible)
-        for (int i=0;i<gridSize;i++) {
-            for (int j = 0; j < gridSize-1; j++) {
-                if (horizontalLines[i][j].equals(line))
-                    return new Pair<>(0,new Point(i,j));
-                if (verticalLines[i][j].equals(line))
-                    return new Pair<>(1,new Point(i,j));
-            }
-        }
-        return new Pair<>(-1,new Point(-1,-1));
     }
     public void disableAllLines() {
         for (int i=0;i<gridSize;i++) {
@@ -114,5 +94,21 @@ public class Board {
                 verticalLines[i][j].setOnMouseExited(event -> {});
             }
         }
+    }
+    public Pair<Integer,Box[]> getParentBoxes(Line line) {
+        Box[] results = new Box[2];
+        int resultIndex = 0;
+        for (int i = 0; i < gridSize-1; i++) {
+            for (int j = 0; j < gridSize-1; j++) {
+                if (boxes[i][j].hasLine(line)) {
+                    results[resultIndex] = boxes[i][j];
+                    resultIndex+=1;
+                    if (resultIndex >= 2) {
+                        return new Pair<>(resultIndex,results);
+                    }
+                }
+            }
+        }
+        return new Pair<>(resultIndex,results);
     }
 }

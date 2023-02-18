@@ -63,31 +63,42 @@ public class Game {
     public void swapTurn() {
         turn = turn == PlayerNumber.first ? PlayerNumber.second : PlayerNumber.first;
     }
-
-    public Player currentPlayer() {
-        return turn == PlayerNumber.first ? first : second;
-    }
-
+    public Player getCurrent() {return turn == PlayerNumber.first ? first: second;}
     public boolean checkValidMove(Line line) {
         if (line.getStroke() == Color.YELLOW || line.getStroke() == Color.TRANSPARENT) {
             line.setStroke(Color.RED);
-            if (gameBoard.checkBoxFormed(line))
-                currentPlayer().incScore();
-                System.out.println("result == true, score: " + currentPlayer().getScore() + ",name: " + currentPlayer().getName());
-            swapTurn();
+            int scoreObtained = gameBoard.checkBoxFormed(line);
+            if (turn == PlayerNumber.first)
+                first.setScore(first.getScore() + scoreObtained);
+            else
+                second.setScore(second.getScore() + scoreObtained);
+            if (scoreObtained == 0) {
+                swapTurn();
+            }
+            isGameOver();
             return true;
         } else {
             return false;
         }
     }
-
-    public void isGameOver() {
-        if (first.getScore() + second.getScore() == Math.sqrt(gameBoard.getGridSize()-1))
+    public boolean gameStatus() {return !(first.getScore() + second.getScore() == Math.sqrt(gameBoard.getGridSize()-1));} // true for ongoing, false for ended
+    public boolean isGameOver() {
+        if (!gameStatus()) {
             gameBoard.disableAllLines();
+            return true;
+        }
+        return false;
+    }
+    public Player getWinner() {
+        if (first.getScore() > second.getScore()) {
+            return first;
+        }
+        return second;
     }
     public void buildBoard(double sceneX,double sceneY) {
         gameBoard.initializeLines(sceneX,sceneY,20);
         gameBoard.initializeDots(sceneX,sceneY,20);
+        gameBoard.initializeBoxes();
     }
 
 }
