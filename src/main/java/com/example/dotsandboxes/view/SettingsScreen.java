@@ -11,19 +11,19 @@ import javafx.stage.Stage;
 
 
 public class SettingsScreen extends Application {
-    private Label title;
-    private Label errorText;
-    private Label p1Name;
-    private Label p2Name;
-    private Label gridSize;
-    private TextField p1Field;
-    private TextField p2Field;
-    private TextField gridField;
-    private Button moveToGame;
-    private int sceneX;
-    private int sceneY;
+    private Label title; // windows title
+    private Label errorText; // error text that shows up when the user enters invalid values
+    private Label p1Name; // p1Field title
+    private Label p2Name; // p2Field title
+    private Label gridSize; // gridField title
+    private TextField p1Field; // field that gets the name of the first player as an input
+    private TextField p2Field; // field that gets the name of the second player as an input
+    private TextField gridField; // field that gets the grid size as an input
+    private Button moveToGame; // moves the stage to the game screen
+    private int sceneX; //x-axis size of the app window
+    private int sceneY; //y-axis size of the app window
 
-    public SettingsScreen(int sceneX,int sceneY) {
+    public SettingsScreen(int sceneX,int sceneY) { // constructor
         this.title = new Label("Settings");
         this.p1Name = new Label("Player 1 name: ");
         this.errorText = new Label("Invalid Values!");
@@ -37,7 +37,7 @@ public class SettingsScreen extends Application {
         this.sceneY = sceneY;
     }
 
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) throws Exception { // sets up the stage and shows the screen
         GridPane root = new GridPane();
         root.setAlignment(Pos.CENTER);
         root.setHgap(25);
@@ -58,9 +58,22 @@ public class SettingsScreen extends Application {
         stage.show();
     }
 
+    // getters
     public int getSceneX() {return sceneX;}
     public int getSceneY() {return sceneY;}
-    public int getGridInput() {
+    public String getP1Input() {return p1Field.getText();}
+    public TextField getP1Field() {return p1Field;}
+    public String getP2Input() {return p2Field.getText();}
+    public TextField getP2Field() {return p2Field;}
+    public Label getErrorText() {return errorText;}
+    public Label getGridSize() {return gridSize;}
+    public Label getP1Name() {return p1Name;}
+    public Label getP2Name() {return p2Name;}
+    public Label getTitle() {return title;}
+    public TextField getGridField() {return gridField;}
+    public Button getMoveToGame() {return moveToGame;}
+
+    public int getGridInput() { // returns the grid size entered by the user
         int number;
         try {
             number = Integer.parseInt(gridField.getText());
@@ -70,16 +83,4 @@ public class SettingsScreen extends Application {
         }
         return number;
     }
-    public String getP1Input() {return p1Field.getText();}
-    public String getP2Input() {return p2Field.getText();}
-    public Label getErrorText() {return errorText;}
-    public Label getGridSize() {return gridSize;}
-    public Label getP1Name() {return p1Name;}
-    public Label getP2Name() {return p2Name;}
-    public Label getTitle() {return title;}
-    public TextField getGridField() {return gridField;}
-    public TextField getP1Field() {return p1Field;}
-    public TextField getP2Field() {return p2Field;}
-
-    public Button getMoveToGame() {return moveToGame;}
 }

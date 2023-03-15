@@ -11,11 +11,11 @@ import javafx.util.Pair;
 
 
 public class GameScreenController {
-    private Game model;
-    private GameScreen view;
-    private int gridSize;
+    private Game model; // the game model
+    private GameScreen view; // the game screen view
+    private int gridSize; // the grid size
 
-    public GameScreenController(Game model, GameScreen view, Stage stage) throws Exception {
+    public GameScreenController(Game model, GameScreen view, Stage stage) throws Exception { // constructor
         this.model = model;
         this.view = view;
         this.gridSize = model.getGameBoard().getGridSize();
@@ -30,7 +30,7 @@ public class GameScreenController {
         view.start(stage);
     }
 
-    public void setMouseSettings(Line[][] lines) {
+    public void setMouseSettings(Line[][] lines) { // sets up line reactions to mouse events
         for (int i=0;i<gridSize;i++) {
             for (int j = 0; j < gridSize - 1; j++) {
                 lines[i][j].setStroke(Color.TRANSPARENT);
@@ -55,21 +55,26 @@ public class GameScreenController {
             }
         }
     }
-    public void setLabels(Label[] labels,double startingX,double startingY) {
+    public void setLabels(Label[] labels,double startingX,double startingY) { // configures the screen labels
+        // shows current player
         labels[0] = new Label();
-        labels[0].setText("itay" + view.getStaticTurnText());
+        labels[0].setText(model.getCurrent().getName() + view.getStaticTurnText());
         labels[0].setLayoutX(startingX-labels[0].getWidth()/3);
         labels[0].setLayoutY(startingY-startingY/2);
         labels[0].setAlignment(Pos.CENTER);
         labels[0].setStyle("-fx-font-size: 50px;");
         labels[0].setTextFill(Color.BLUE);
+
+        // player 1's score
         labels[1] = new Label();
-        labels[1].setText(view.getStaticScoreTextP1() + " " +model.getFirst().getScore());
+        labels[1].setText(view.getStaticScoreTextP1() + " " + model.getFirst().getScore());
         labels[1].setLayoutX(startingX-labels[1].getWidth()/3);
         labels[1].setLayoutY(startingY-startingY/2+ 75);
         labels[1].setAlignment(Pos.CENTER);
         labels[1].setStyle("-fx-font-size: 30px;");
         labels[1].setTextFill(Color.BLUE);
+
+        // player 2's score
         labels[2] = new Label();
         labels[2].setText(view.getStaticScoreTextP2()+ " " + model.getSecond().getScore());
         labels[2].setLayoutX(startingX-labels[1].getWidth()/3);
@@ -79,7 +84,7 @@ public class GameScreenController {
         labels[2].setTextFill(Color.RED);
     }
 
-    public void updateScores(Label[] labels, int p1Score, int p2Score) {
+    public void updateScores(Label[] labels, int p1Score, int p2Score) { // updates scores in label text after a move was taken, and shows the winner if the game has ended
         labels[1].setText(view.getStaticScoreTextP1() + " " + p1Score);
         labels[2].setText(view.getStaticScoreTextP2()+ " " + p2Score);
         if (!model.gameStatus()) {

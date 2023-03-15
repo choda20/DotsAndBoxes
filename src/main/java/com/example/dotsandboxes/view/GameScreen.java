@@ -15,20 +15,21 @@ import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
 public class GameScreen extends Application {
-    private Board gameBoard;
-    private int sceneX;
-    private int sceneY;
-    private StringProperty player1;
-    private StringProperty player2;
-    private IntegerProperty p1Score;
-    private IntegerProperty p2Score;
-    private StringProperty staticTurnText;
-    private StringProperty staticScoreTextP1;
-    private StringProperty staticScoreTextP2;
-    private Label[] labels;
+    private Board gameBoard; // the game board
+    private int sceneX; //x-axis size of the app window
+    private int sceneY; //y-axis size of the app window
+    private StringProperty player1; // contains the name of the first player
+    private StringProperty player2; // contains the name of the second player
+    private IntegerProperty p1Score; // contains the score of the first player
+    private IntegerProperty p2Score; // contains the score of the second player
+    private StringProperty staticTurnText; // current turn text
+    private StringProperty staticScoreTextP1; // score text for player 1
+    private StringProperty staticScoreTextP2; // score text for player 2
+    private Label[] labels; // holds on screen text, 0 - for current turn, 1 - for player 1 score, 2 - for player 2 score
 
-    public GameScreen() {}
-    public GameScreen(Board gameBoard,Player p1,Player p2, int sceneX, int sceneY) {
+
+    public GameScreen() {} // empty constructor
+    public GameScreen(Board gameBoard,Player p1,Player p2, int sceneX, int sceneY) { // full constructor
         this.gameBoard = gameBoard;
         this.sceneX = sceneX;
         this.sceneY = sceneY;
@@ -43,7 +44,7 @@ public class GameScreen extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) throws Exception { // sets up the stage
         Group root = new Group(); // sets the root of the scene
         Scene scene = new Scene(root, sceneX, sceneY); // sets the scene
 
@@ -53,7 +54,7 @@ public class GameScreen extends Application {
         stage.show();
     }
 
-    public void addChildrenToRoot(Group root, Label[] labels, Circle[][] dots, Line[][] horizontalLines, Line[][] verticalLines) {
+    public void addChildrenToRoot(Group root, Label[] labels, Circle[][] dots, Line[][] horizontalLines, Line[][] verticalLines) { // adds all ui elements to the stage root
         root.getChildren().addAll(labels);
         for(int i=0;i<gameBoard.getGridSize();i++) {
             root.getChildren().addAll(dots[i]);
@@ -61,6 +62,8 @@ public class GameScreen extends Application {
             root.getChildren().addAll(verticalLines[i]);
         }
     }
+
+    // getters
     public Label[] getLabels() {return labels;}
     public int getSceneX() {return sceneX;}
     public int getSceneY() {return sceneY;}

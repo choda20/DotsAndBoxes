@@ -10,14 +10,14 @@ import javafx.stage.Stage;
 
 
 public class TitleScreen extends Application {
-    private Label title;
-    private Button HVH;
-    private Button HVA;
-    private Button AVA;
-    private int sceneX;
-    private int sceneY;
+    private Label title; // window title
+    private Button HVH; // button the enters a HVH game
+    private Button HVA; // button the enters a HVA game
+    private Button AVA; // button the enters a AVA game
+    private int sceneX; // x-axis size of the app window
+    private int sceneY; //y-axis size of the app window
 
-    public TitleScreen(int sceneX,int sceneY) {
+    public TitleScreen(int sceneX,int sceneY) { // constructor
         this.title = new Label("Dots&Boxes");
         this.HVH = new Button("Human Vs Human");
         this.HVA = new Button("Human Vs Ai");
@@ -27,7 +27,7 @@ public class TitleScreen extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) throws Exception { // sets up the window scene
         VBox root = new VBox(title, HVH, HVA, AVA);
         root.setAlignment(Pos.CENTER);
         root.setSpacing(10);
@@ -37,6 +37,7 @@ public class TitleScreen extends Application {
         stage.show();
     }
 
+    // getters
     public Label getTitle() {return title;}
     public Button getHVH() {return HVH;}
     public Button getHVA() {return HVA;}

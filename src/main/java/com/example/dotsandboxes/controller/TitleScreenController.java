@@ -14,54 +14,36 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class TitleScreenController {
-    private TitleScreen view;
-    private Game model;
-    private Stage stage;
-    public TitleScreenController(TitleScreen view, Game model, Stage stage) throws Exception {
+    private TitleScreen view; // screen view
+    private Game model; // game model
+    private Stage stage; // the app window
+    public TitleScreenController(TitleScreen view, Game model, Stage stage) throws Exception { // constructor
         this.model = model;
         this.view = view;
         this.stage = stage;
 
-        setButtonActions(view.getHVH(),view.getHVA(),view.getAVA()); // sets up button reactions to being pressed
-        setButtonStyles(view.getHVH(),view.getHVA(),view.getAVA()); // styles the Buttons
-        setLabelStyle(view.getTitle()); // styles the view
+        setButtonActions(view.getHVH(),view.getHVA(),view.getAVA());
+        setButtonStyles(view.getHVH(),view.getHVA(),view.getAVA());
+        setLabelStyle(view.getTitle());
         view.start(stage); // starts the application
     }
 
-    private void handleHVH() throws Exception {
-        model.setGameType(GameType.HumanVsHuman);
-        model.setFirst(new HumanPlayer());
-        model.setSecond(new HumanPlayer());
-        moveToSettings();
-    }
-    private void handleHVA() throws Exception {
-        model.setGameType(GameType.HumanVsAI);
-        model.setFirst(new HumanPlayer());
-        model.setSecond(new AIPlayer());
-        moveToSettings();
-    }
-    private void handleAVA() throws Exception {
-        model.setGameType(GameType.AIVsAI);
-        model.setFirst(new AIPlayer());
-        model.setSecond(new AIPlayer());
-        moveToSettings();
-    }
 
     private void moveToSettings() throws Exception { // moves the app to the settings screen after a button was pressed
         SettingsScreen settingsView = new SettingsScreen(view.getSceneX(), view.getSceneY());
         SettingsScreenController settingsController = new SettingsScreenController(settingsView,model,stage);
     }
-    private void setLabelStyle(Label title) {
+    private void setLabelStyle(Label title) { // styles the screen title
         title.setAlignment(Pos.CENTER);
         title.setStyle("-fx-font-size: 50px;");
         title.setTextFill(Color.BLUE);
     }
-    private void setButtonStyles(Button HVH, Button HVA, Button AVA) {
+    private void setButtonStyles(Button HVH, Button HVA, Button AVA) { // styles the Buttons on screen
         HVH.setPadding(new Insets(10,20,10,20));
         HVA.setPadding(new Insets(10,20,10,20));
         AVA.setPadding(new Insets(10,20,10,20));
     }
-    private void setButtonActions(Button HVH, Button HVA, Button AVA) {
+    private void setButtonActions(Button HVH, Button HVA, Button AVA) { // sets up button reactions to being pressed
         HVH.setOnAction(buttonEvent -> {
             try {
                 handleHVH();
@@ -85,5 +67,25 @@ public class TitleScreenController {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    // functions that configures the buttons to set the model game type, and change the screen to the settings screen
+    private void handleHVH() throws Exception {
+        model.setGameType(GameType.HumanVsHuman);
+        model.setFirst(new HumanPlayer());
+        model.setSecond(new HumanPlayer());
+        moveToSettings();
+    }
+    private void handleHVA() throws Exception {
+        model.setGameType(GameType.HumanVsAI);
+        model.setFirst(new HumanPlayer());
+        model.setSecond(new AIPlayer());
+        moveToSettings();
+    }
+    private void handleAVA() throws Exception {
+        model.setGameType(GameType.AIVsAI);
+        model.setFirst(new AIPlayer());
+        model.setSecond(new AIPlayer());
+        moveToSettings();
     }
 }
