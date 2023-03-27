@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.control.Label;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
@@ -32,15 +33,15 @@ public class GameScreen extends Application {
 
     @Override
     public void start(Stage stage) throws Exception { // sets up the stage
-        Group root = new Group(); // sets the root of the scene
-        Scene scene = new Scene(root, sceneX, sceneY); // sets the scene
+        VBox root = new VBox(); // sets the root of the scene
 
-        addChildrenToRoot(root); // adds lines and dots to the scene
 
+        Scene scene = new Scene(root); // sets the scene
         stage.setScene(scene);
         stage.show();
     }
 
+    /*
     public void addChildrenToRoot(Group root) { // adds all ui elements to the stage root
         root.getChildren().addAll(labels);
         for(int i=0;i<gridSize;i++) {
@@ -49,6 +50,7 @@ public class GameScreen extends Application {
             root.getChildren().addAll(verticalLines[i]);
         }
     }
+     */
 
     // getters
     public Label[] getLabels() {return labels;}
