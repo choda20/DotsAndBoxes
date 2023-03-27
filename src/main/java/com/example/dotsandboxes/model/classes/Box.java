@@ -1,22 +1,20 @@
 package com.example.dotsandboxes.model.classes;
 
-import javafx.scene.shape.Line;
-
 import java.util.ArrayList;
 
 public class Box {
-    private ArrayList<Line> lines; // lines forming the box
+    private ArrayList<ModelLine> lines; // lines forming the box
     private int connectedLines; // number of connected lines
     private boolean  isComplete; // indicates if all the lines are connected
 
-    public Box(ArrayList<Line> lines) { // constructor
+    public Box(ArrayList<ModelLine> lines) { // constructor
         this.lines = lines;
         int connectedLines = 0;
         boolean  isComplete = false;
     }
 
     // getters
-    public ArrayList<Line> getLines() {
+    public ArrayList<ModelLine> getLines() {
         return lines;
     }
     public int getConnectedLines() {
@@ -30,7 +28,7 @@ public class Box {
             isComplete = true;
         }
     }
-    public boolean hasLine(Line line) {
+    public boolean hasLine(ModelLine line) {
         return  lines.contains(line);
     } // returns true if a line is in the box, and false otherwise
 }
