@@ -37,7 +37,7 @@ public class GameScreenController {
                 lines[i][j].setStrokeWidth(5);
                 lines[i][j].setOnMouseClicked((mouseEvent -> {
                     Line clickedLine = (Line) mouseEvent.getSource();
-                    model.checkValidMove(clickedLine);
+                    model.perfomMove(clickedLine);
                     updateScores(view.getLabels(),model.getFirst().getScore(),model.getSecond().getScore());
                 }));
                 lines[i][j].setOnMouseEntered((mouseEvent -> {
@@ -87,7 +87,7 @@ public class GameScreenController {
     public void updateScores(Label[] labels, int p1Score, int p2Score) { // updates scores in label text after a move was taken, and shows the winner if the game has ended
         labels[1].setText(view.getStaticScoreTextP1() + " " + p1Score);
         labels[2].setText(view.getStaticScoreTextP2()+ " " + p2Score);
-        if (!model.gameStatus()) {
+        if (!model.isGameOver()) {
             Pair<Integer,String> results = model.getWinner();
             if (results.getKey().intValue() == 0) {
                 labels[0].setText(results.getValue() + " Won!");

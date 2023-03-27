@@ -41,12 +41,12 @@ public class Game {
     public void setFirst(Player first) {this.first = first;}
     public void setSecond(Player second) {this.second = second;}
 
-    public boolean gameStatus() { // returns true if the game is in progress, otherwise false
+    public boolean isGameOver() { // returns true if the game is in progress, otherwise false
         return !((first.getScore() + second.getScore()) == (gameBoard.getGridSize()-1)*(gameBoard.getGridSize()-1));}
     public void swapTurn() {
         turn = turn == PlayerNumber.first ? PlayerNumber.second : PlayerNumber.first;
     } // moves to next turn
-    public boolean checkValidMove(Line line) { // returns true if a move made by a player is valid, false otherwise
+    public boolean perfomMove(Line line) { // returns true if a move made by a player is valid, false otherwise
         if (line.getStroke() == Color.YELLOW || line.getStroke() == Color.TRANSPARENT) {
             line.setStroke(Color.RED);
             int scoreObtained = gameBoard.checkBoxFormed(line);
@@ -57,14 +57,14 @@ public class Game {
             if (scoreObtained == 0) {
                 swapTurn();
             }
-            gameOver();
+            considerGameOver();
             return true;
         } else {
             return false;
         }
     }
-    public void gameOver() { // disables all ui elements that can be clicked if the game has ended
-        if (!gameStatus()) {
+    public void considerGameOver() { // disables all ui elements that can be clicked if the game has ended
+        if (!isGameOver()) {
             gameBoard.disableAllLines();
         }
     }
