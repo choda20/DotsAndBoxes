@@ -11,10 +11,11 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.stage.Stage;
 
-import java.io.File;
 
 public class TitleScreenController {
     private TitleScreen view; // screen view
@@ -26,7 +27,7 @@ public class TitleScreenController {
         this.stage = stage;
 
         setButtonActions(view.getHVH(),view.getHVA(),view.getAVA());
-        setButtonStyles(view.getHVH(),view.getHVA(),view.getAVA());
+        setButtonStyles(new Button[]{view.getHVH(),view.getHVA(),view.getAVA()});
         setLabelStyle(view.getTitle());
         view.start(stage); // starts the application
     }
@@ -38,13 +39,18 @@ public class TitleScreenController {
     }
     private void setLabelStyle(Label title) { // styles the screen title
         title.setAlignment(Pos.CENTER);
-        title.setStyle("-fx-font-size: 50px;");
-        title.setTextFill(Color.BLUE);
+        title.setStyle("-fx-font-size: 100px;");
+        Stop[] stops = new Stop[] { new Stop(0.4, Color.web("#CC0033")),new Stop(0.5, Color.rgb(0, 0, 255, 0.5)), new Stop(1, Color.BLUE) };
+        LinearGradient gradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
+        title.setTextFill(gradient);
     }
-    private void setButtonStyles(Button HVH, Button HVA, Button AVA) { // styles the Buttons on screen
-        HVH.setPadding(new Insets(10,20,10,20));
-        HVA.setPadding(new Insets(10,20,10,20));
-        AVA.setPadding(new Insets(10,20,10,20));
+    private void setButtonStyles(Button[] buttons) { // styles the Buttons on screen
+        for (int i=0; i<buttons.length;i++) {
+            buttons[i].setPadding(new Insets(10, 20, 10, 20));
+            buttons[i].setPrefHeight(50);
+            buttons[i].setPrefWidth(200);
+            buttons[i].setStyle("-fx-background-color: radial-gradient(radius 50%, #FF3B61, #FE8373); -fx-background-radius: 50px; -fx-text-fill: white; -fx-font-size: 17;");
+        }
     }
     private void setButtonActions(Button HVH, Button HVA, Button AVA) { // sets up button reactions to being pressed
         HVH.setOnAction(buttonEvent -> {
