@@ -6,7 +6,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.GridPane;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 
@@ -20,10 +22,9 @@ public class SettingsScreen extends Application {
     private TextField p2Field; // field that gets the name of the second player as an input
     private TextField gridField; // field that gets the grid size as an input
     private Button moveToGame; // moves the stage to the game screen
-    private int sceneX; //x-axis size of the app window
-    private int sceneY; //y-axis size of the app window
+    private Background background;
 
-    public SettingsScreen(int sceneX,int sceneY) { // constructor
+    public SettingsScreen(Background background) { // constructor
         this.title = new Label("Settings");
         this.p1Name = new Label("Player 1 name: ");
         this.errorText = new Label("Invalid Values!");
@@ -33,8 +34,7 @@ public class SettingsScreen extends Application {
         this.p2Field = new TextField();
         this.gridField = new TextField();
         this.moveToGame = new Button("Begin Game!");
-        this.sceneX = sceneX;
-        this.sceneY = sceneY;
+        this.background = background;
     }
 
     public void start(Stage stage) throws Exception { // sets up the stage and shows the screen
@@ -42,6 +42,7 @@ public class SettingsScreen extends Application {
         root.setAlignment(Pos.CENTER);
         root.setHgap(25);
         root.setVgap(25);
+        root.setBackground(background);
 
         root.add(title,0,0,2,1);
         root.add(p1Name,0,1);
@@ -53,14 +54,12 @@ public class SettingsScreen extends Application {
         root.add(moveToGame,0,4);
         root.add(errorText,0,5);
 
-        Scene scene = new Scene(root, sceneX, sceneY); // sets the scene
+        Scene scene = new Scene(root,stage.getWidth(),stage.getHeight()); // sets the scene
         stage.setScene(scene);
         stage.show();
     }
 
     // getters
-    public int getSceneX() {return sceneX;}
-    public int getSceneY() {return sceneY;}
     public String getP1Input() {return p1Field.getText();}
     public TextField getP1Field() {return p1Field;}
     public String getP2Input() {return p2Field.getText();}
@@ -72,6 +71,7 @@ public class SettingsScreen extends Application {
     public Label getTitle() {return title;}
     public TextField getGridField() {return gridField;}
     public Button getMoveToGame() {return moveToGame;}
+    public Background getBackground() {return background;}
 
     public int getGridInput() { // returns the grid size entered by the user
         int number;

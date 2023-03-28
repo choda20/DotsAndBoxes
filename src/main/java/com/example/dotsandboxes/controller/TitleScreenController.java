@@ -11,7 +11,10 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
+import java.io.File;
 
 public class TitleScreenController {
     private TitleScreen view; // screen view
@@ -30,7 +33,7 @@ public class TitleScreenController {
 
 
     private void moveToSettings() throws Exception { // moves the app to the settings screen after a button was pressed
-        SettingsScreen settingsView = new SettingsScreen(view.getSceneX(), view.getSceneY());
+        SettingsScreen settingsView = new SettingsScreen(view.getBackground());
         SettingsScreenController settingsController = new SettingsScreenController(settingsView,model,stage);
     }
     private void setLabelStyle(Label title) { // styles the screen title

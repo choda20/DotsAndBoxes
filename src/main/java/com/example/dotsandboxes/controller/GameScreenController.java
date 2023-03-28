@@ -28,13 +28,12 @@ public class GameScreenController implements PropertyChangeListener {
         this.view = view;
         this.gridSize = model.getGameBoard().getGridSize();
 
-        double startingX = view.getSceneX()/2-(gridSize*50)/2; // will be used to center the board
-        double startingY = view.getSceneY()/2-(gridSize*50)/2; // same as startingX
-
         model.addPropertyChangeListener(this); // registers the controller as a listener to the model
-        buildViewBoard(startingX,startingY);
+        // buildViewBoard(startingX,startingY);
+        /*
         enableAllLines();
         setLabels(view.getLabels(),startingX,startingY); // initializes labels
+         */
         view.start(stage);
     }
 
@@ -96,26 +95,7 @@ public class GameScreenController implements PropertyChangeListener {
         disableLine(clickedLine);
         model.performMove(row,column,lineType);
     }
-    public void buildViewBoard(double sceneX,double sceneY) { // initializes the game board
-        initializeLines(sceneX,sceneY,20);
-        initializeDots(sceneX,sceneY,20);
-    }
-    // matrix initializers
-    public void initializeLines(double startingX,double startingY, int padding) {
-        for (int i=0;i<gridSize;i++) {
-            for (int j = 0; j < gridSize-1; j++) {
-                view.getHorizontalLines()[i][j] = new Line(startingX+(j*75) + 7,startingY+(i*75)+padding,startingX+((j+1)*75) - 7,startingY+((i)*75)+padding);
-                view.getVerticalLines()[i][j] = new Line(startingY+(i*75),startingY+(j*75)+ 7 + padding,startingY+(i*75),startingY+((j+1)*75)- 7+ padding);
-            }
-        }
-    }
-    public void initializeDots(double startingX,double startingY, int padding) {
-        for (int i=0;i<gridSize;i++) {
-            for (int j = 0; j < gridSize; j++) {
-                view.getDots()[i][j] = new Circle(startingX+(j*75),startingY+(i*75)+padding,5);
-            }
-        }
-    }
+
     public void disableAllLines() { // disables all mouse events
         for (int i=0;i<gridSize;i++) {
             for(int j=0;j<gridSize-1;j++) {

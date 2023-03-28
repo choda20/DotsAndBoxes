@@ -37,7 +37,7 @@ public class SettingsScreenController {
             model.getFirst().setName(p1);
             model.getSecond().setName(p2);
             model.setGameBoard(new Board(gridSize));
-            GameScreen gameView = new GameScreen(view.getSceneX(), view.getSceneY(),model.getGameBoard().getGridSize());
+            GameScreen gameView = new GameScreen(model.getGameBoard().getGridSize(),view.getBackground());
             GameScreenController gameController = new GameScreenController(model, gameView, stage);
         }
     }
