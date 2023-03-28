@@ -39,7 +39,7 @@ public class GameScreen extends Application {
 
 
 
-        Scene scene = new Scene(root,stage.getWidth(),stage.getHeight()); // sets the scene
+        Scene scene = new Scene(root); // sets the scene
         stage.setScene(scene);
         stage.show();
     }

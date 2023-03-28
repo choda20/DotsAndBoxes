@@ -4,8 +4,10 @@ import com.example.dotsandboxes.controller.TitleScreenController;
 import com.example.dotsandboxes.model.classes.Game;
 import com.example.dotsandboxes.view.TitleScreen;
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -21,6 +23,9 @@ public class Main extends Application {
         primaryStage.setTitle("Dots&Boxes by Itay Aziz Kadchoda");
         File appIconFile = new File("src/main/java/com/example/dotsandboxes/assets/appicon.jpg");
         primaryStage.getIcons().add(new Image(appIconFile.getCanonicalPath()));
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        primaryStage.setWidth(screenBounds.getWidth());
+        primaryStage.setHeight(screenBounds.getHeight());
 
         File backgroundFile = new File("src/main/java/com/example/dotsandboxes/assets/background.png");
         Image backgroundImageImage = new Image(backgroundFile.getCanonicalPath());

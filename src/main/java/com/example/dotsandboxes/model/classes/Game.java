@@ -71,6 +71,28 @@ public class Game {
         return new Pair<>(0,second.getName());
     }
 
+    public void insertNamesAndGrid(String p1Name,String p2Name,String gridSize) {
+        boolean valid = true;
+        int number;
+
+        try {
+            number = Integer.parseInt(gridSize);
+        }
+        catch (NumberFormatException e) {
+            number = 0;
+        }
+
+        if (p1Name.isBlank() || p2Name.isBlank() || number <= 1) {
+            valid = false;
+        } else {
+            first.setName(p1Name);
+            second.setName(p2Name);
+            setGameBoard(new Board(number));
+        }
+
+        PropertyChangeEvent event = new PropertyChangeEvent(this,"insertNamesAndGrid","",valid);
+        pcs.firePropertyChange(event);
+    }
     // registers and deletes observer listeners
     public void addPropertyChangeListener(PropertyChangeListener listener) {pcs.addPropertyChangeListener(listener);}
     public void removePropertyChangeListener(PropertyChangeListener listener) {pcs.removePropertyChangeListener(listener);}

@@ -1,6 +1,7 @@
 package com.example.dotsandboxes.view;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -8,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
@@ -38,23 +40,24 @@ public class SettingsScreen extends Application {
     }
 
     public void start(Stage stage) throws Exception { // sets up the stage and shows the screen
-        GridPane root = new GridPane();
+        VBox root = new VBox();
         root.setAlignment(Pos.CENTER);
-        root.setHgap(25);
-        root.setVgap(25);
         root.setBackground(background);
+        root.setSpacing(25);
 
-        root.add(title,0,0,2,1);
-        root.add(p1Name,0,1);
-        root.add(p1Field,1,1);
-        root.add(p2Name,0,2);
-        root.add(p2Field,1,2);
-        root.add(gridSize,0,3);
-        root.add(gridField,1,3);
-        root.add(moveToGame,0,4);
-        root.add(errorText,0,5);
+        GridPane inputFields = new GridPane();
+        inputFields.setAlignment(Pos.CENTER);
+        inputFields.setHgap(25);
+        inputFields.setVgap(25);
+        inputFields.add(p1Name,0,1);
+        inputFields.add(p1Field,1,1);
+        inputFields.add(p2Name,0,2);
+        inputFields.add(p2Field,1,2);
+        inputFields.add(gridSize,0,3);
+        inputFields.add(gridField,1,3);
 
-        Scene scene = new Scene(root,stage.getWidth(),stage.getHeight()); // sets the scene
+        root.getChildren().addAll(title,inputFields,moveToGame,errorText);
+        Scene scene = new Scene(root); // sets the scene
         stage.setScene(scene);
         stage.show();
     }
@@ -64,6 +67,7 @@ public class SettingsScreen extends Application {
     public TextField getP1Field() {return p1Field;}
     public String getP2Input() {return p2Field.getText();}
     public TextField getP2Field() {return p2Field;}
+    public String getGridInput() {return gridField.getText();}
     public Label getErrorText() {return errorText;}
     public Label getGridSize() {return gridSize;}
     public Label getP1Name() {return p1Name;}
@@ -73,14 +77,4 @@ public class SettingsScreen extends Application {
     public Button getMoveToGame() {return moveToGame;}
     public Background getBackground() {return background;}
 
-    public int getGridInput() { // returns the grid size entered by the user
-        int number;
-        try {
-            number = Integer.parseInt(gridField.getText());
-        }
-        catch (NumberFormatException e) {
-            number = 0;
-        }
-        return number;
-    }
 }

@@ -40,7 +40,7 @@ public class TitleScreen extends Application {
         Scale scale = new Scale(width/1920,height/1080,0,0);
         root.getTransforms().add(scale);
 
-        Scene scene = new Scene(root, width, height); // sets the scene
+        Scene scene = new Scene(root); // sets the scene
         stage.setScene(scene);
         stage.show();
     }
