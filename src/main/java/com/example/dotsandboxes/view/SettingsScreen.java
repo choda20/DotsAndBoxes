@@ -64,16 +64,13 @@ public class SettingsScreen extends Application {
 
     // getters
     public String getP1Input() {return p1Field.getText();}
-    public TextField getP1Field() {return p1Field;}
     public String getP2Input() {return p2Field.getText();}
-    public TextField getP2Field() {return p2Field;}
     public String getGridInput() {return gridField.getText();}
     public Label getErrorText() {return errorText;}
     public Label getGridSize() {return gridSize;}
     public Label getP1Name() {return p1Name;}
     public Label getP2Name() {return p2Name;}
     public Label getTitle() {return title;}
-    public TextField getGridField() {return gridField;}
     public Button getMoveToGame() {return moveToGame;}
     public Background getBackground() {return background;}
 

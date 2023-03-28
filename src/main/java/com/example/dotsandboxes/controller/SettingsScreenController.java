@@ -59,6 +59,7 @@ public class SettingsScreenController implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getNewValue().equals(true)) {
             try {
+                model.removePropertyChangeListener(this);
                 GameScreen gameView = new GameScreen(model.getGameBoard().getGridSize(),view.getBackground());
                 GameScreenController gameController = new GameScreenController(model, gameView, stage);
             } catch (Exception e) {
