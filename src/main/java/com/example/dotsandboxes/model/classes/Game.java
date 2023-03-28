@@ -6,6 +6,7 @@ import com.example.dotsandboxes.model.enums.MoveResult;
 import com.example.dotsandboxes.model.enums.PlayerNumber;
 import javafx.util.Pair;
 
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -32,30 +33,29 @@ public class Game {
         this.turn = PlayerNumber.first;
     }
 
-    public boolean isGameOver() { // returns true if the game is in progress, otherwise false
+    private boolean isGameOver() { // returns true if the game is in progress, otherwise false
         return !((first.getScore() + second.getScore()) == (gameBoard.getGridSize()-1)*(gameBoard.getGridSize()-1));}
 
-    public void swapTurn() {
+    private void swapTurn() {
         turn = turn == PlayerNumber.first ? PlayerNumber.second : PlayerNumber.first;
     } // moves to next turn
 
-    public MoveResult performMove(int row, int column, LineType lineType) { // returns true if a move made by a player is valid, false otherwise
+    public MoveResult performMove(int row, int column, LineType lineType) {
         ModelLine[][] lines = lineType.equals(LineType.horizontal) ? gameBoard.getHorizontalLines() : gameBoard.getVerticalLines();
         ModelLine line = lines[row][column];
         if (!line.isConnected()) {
             line.connectLine();
             line.setOwner(turn);
             int scoreObtained = gameBoard.checkBoxFormed(line);
-            if (turn == PlayerNumber.first)
-                first.setScore(first.getScore() + scoreObtained);
-            else
-                second.setScore(second.getScore() + scoreObtained);
-            if (scoreObtained == 0) {
-                swapTurn();
-            }
+            getCurrent().setScore(getCurrent().getScore() + scoreObtained);
+            if (scoreObtained == 0) {swapTurn();}
             MoveResult result = !isGameOver() ? MoveResult.gameOver : MoveResult.valid;
             PropertyChangeEvent event = new PropertyChangeEvent(this,"performMove",line,result);
             pcs.firePropertyChange(event);
+            if (gameType.equals(GameType.HumanVsAI) && turn.equals(PlayerNumber.second)) {
+                Pair<Point,LineType> move = getCurrent().play(gameBoard);
+                performMove(move.getKey().x,move.getKey().y,move.getValue());
+            }
             return result;
         }
         return MoveResult.invalid;
@@ -75,13 +75,8 @@ public class Game {
         boolean valid = true;
         int number;
 
-        try {
-            number = Integer.parseInt(gridSize);
-        }
-        catch (NumberFormatException e) {
-            number = 0;
-        }
-
+        try {number = Integer.parseInt(gridSize);}
+        catch (NumberFormatException e) {number = 0;}
         if (p1Name.isBlank() || p2Name.isBlank() || number <= 1 || number > 10) {
             valid = false;
         } else {

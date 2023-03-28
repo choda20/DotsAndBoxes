@@ -152,6 +152,7 @@ public class GameScreenController implements PropertyChangeListener {
         LinearGradient turnColor = model.getTurn().equals(PlayerNumber.first) ? p1Gradient : p2Gradient;
         Line[][] lineMatrix = changedLine.isHorizontal() ? view.getHorizontalLines() : view.getVerticalLines();
         lineMatrix[changedLine.getRow()][changedLine.getColumn()].setStroke(lineColor);
+        disableLine(lineMatrix[changedLine.getRow()][changedLine.getColumn()]);
 
         view.getLabels()[1].setText(model.getFirst().getName() + "'s score: " + model.getFirst().getScore());
         view.getLabels()[2].setText(model.getSecond().getName() + "'s score:  " + model.getSecond().getScore());

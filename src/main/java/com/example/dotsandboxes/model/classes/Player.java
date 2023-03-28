@@ -1,5 +1,10 @@
 package com.example.dotsandboxes.model.classes;
 
+import com.example.dotsandboxes.model.enums.LineType;
+import javafx.util.Pair;
+
+import java.awt.*;
+
 public abstract class Player {
     protected String name; // the player's name
     protected int score; // the player's score
@@ -16,6 +21,6 @@ public abstract class Player {
     public void setName(String name) {this.name = name;}
     public void setScore(int score) {this.score = score;}
 
-    public abstract Board play(Board gameBoard); // abstract function that configures how the player makes a move
+    public abstract Pair<Point, LineType> play(Board gameBoard); // abstract function that configures how the player makes a move
 
 }

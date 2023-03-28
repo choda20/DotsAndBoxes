@@ -27,7 +27,7 @@ public class Board {
         initializeBoxes();
     }
 
-    public void initializeLines() {
+    private void initializeLines() {
         for (int i=0;i<gridSize;i++) {
             for (int j = 0; j < gridSize-1; j++) {
                 horizontalLines[i][j] = new ModelLine(i,j,true,false);
@@ -35,7 +35,7 @@ public class Board {
             }
         }
     }
-    public void initializeBoxes() {
+    private void initializeBoxes() {
         for (int i=0;i<gridSize-1;i++) {
             for (int j = 0; j < gridSize-1; j++) {
                 boxes[i][j] = new Box(new ArrayList<ModelLine>());
@@ -64,7 +64,7 @@ public class Board {
         }
     }
 
-    public Pair<Integer,Box[]> getParentBoxes(ModelLine line) { // returns a Box array containing the boxes a line is a part of, and an Integer containing the length of the array
+    private Pair<Integer,Box[]> getParentBoxes(ModelLine line) { // returns a Box array containing the boxes a line is a part of, and an Integer containing the length of the array
         Box[] results = new Box[2];
         int resultIndex = 0;
         for (int i = 0; i < gridSize-1; i++) {
@@ -86,9 +86,4 @@ public class Board {
     public ModelLine[][] getHorizontalLines() {return horizontalLines;}
     public ModelLine[][] getVerticalLines() {return verticalLines;}
     public int getGridSize() {return gridSize;}
-
-    // setters
-    public void setHorizontalLines(ModelLine[][] horizontalLines) {this.horizontalLines = horizontalLines;}
-    public void setVerticalLines(ModelLine[][] verticalLines) {this.verticalLines = verticalLines;}
-    public void setGridSize(int gridSize) {this.gridSize = gridSize;}
 }
