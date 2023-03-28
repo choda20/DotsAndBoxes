@@ -1,6 +1,8 @@
 package com.example.dotsandboxes.view;
 
 import javafx.application.Application;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.Scene;
 import javafx.scene.layout.Background;
@@ -33,49 +35,29 @@ public class GameScreen extends Application {
     public void start(Stage stage) throws Exception { // sets up the stage
         VBox root = new VBox(); // sets the root of the scene
         root.setBackground(background);
+        root.setAlignment(Pos.CENTER);
+        root.setSpacing(25);
 
         VBox labelContainer = new VBox(labels[0],labels[1],labels[2]);
-        labelContainer.setSpacing(10);
+        labelContainer.setAlignment(Pos.CENTER);
+        labelContainer.setSpacing(15);
+        Group matrix = new Group();
+        addToMatrix(matrix);
 
-
-
+        root.getChildren().addAll(labelContainer,matrix);
         Scene scene = new Scene(root); // sets the scene
         stage.setScene(scene);
         stage.show();
     }
 
-    /*
-    public void addChildrenToRoot(Group root) { // adds all ui elements to the stage root
-        root.getChildren().addAll(labels);
-        for(int i=0;i<gridSize;i++) {
-            root.getChildren().addAll(dots[i]);
-            root.getChildren().addAll(horizontalLines[i]);
-            root.getChildren().addAll(verticalLines[i]);
-        }
-    }
-
-    public void buildViewBoard(double sceneX,double sceneY) { // initializes the game board
-        initializeLines(sceneX,sceneY,20);
-        initializeDots(sceneX,sceneY,20);
-    }
-    // matrix initializers
-    public void initializeLines(double startingX,double startingY, int padding) {
+    private void addToMatrix(Group matrix) {
         for (int i=0;i<gridSize;i++) {
-            for (int j = 0; j < gridSize-1; j++) {
-                view.getHorizontalLines()[i][j] = new Line(startingX+(j*75) + 7,startingY+(i*75)+padding,startingX+((j+1)*75) - 7,startingY+((i)*75)+padding);
-                view.getVerticalLines()[i][j] = new Line(startingY+(i*75),startingY+(j*75)+ 7 + padding,startingY+(i*75),startingY+((j+1)*75)- 7+ padding);
+            for(int j=0;j<gridSize-1;j++) {
+                matrix.getChildren().addAll(dots[i][j],horizontalLines[i][j],verticalLines[i][j]);
             }
+            matrix.getChildren().add(dots[i][gridSize-1]);
         }
     }
-    public void initializeDots(double startingX,double startingY, int padding) {
-        for (int i=0;i<gridSize;i++) {
-            for (int j = 0; j < gridSize; j++) {
-                view.getDots()[i][j] = new Circle(startingX+(j*75),startingY+(i*75)+padding,5);
-            }
-        }
-    }
-     */
-
     // getters
     public Label[] getLabels() {return labels;}
     public Circle[][] getDots() {return dots;}

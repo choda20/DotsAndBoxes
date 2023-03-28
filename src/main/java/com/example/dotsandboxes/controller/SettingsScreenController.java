@@ -6,6 +6,7 @@ import com.example.dotsandboxes.view.SettingsScreen;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -28,8 +29,15 @@ public class SettingsScreenController implements PropertyChangeListener {
 
         setLabelStyle(view.getTitle(),new Label[]{view.getP1Name(),view.getP2Name(),view.getGridSize()},view.getErrorText());
         configureMoveToGame(view.getMoveToGame());
+        configureFontForFields(new TextField[]{view.getP1Field(),view.getP2Field(),view.getGridField()});
 
         view.start(stage);
+    }
+
+    private void configureFontForFields(TextField[] fields) {
+        for (int i=0;i<fields.length;i++) {
+            fields[i].setStyle("-fx-font-size: 17px;");
+        }
     }
 
     private void setLabelStyle(Label title,Label[] inputFields,Label errorText) { // styles the labels on screen

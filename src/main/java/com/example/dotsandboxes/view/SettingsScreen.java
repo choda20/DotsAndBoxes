@@ -66,6 +66,9 @@ public class SettingsScreen extends Application {
     public String getP1Input() {return p1Field.getText();}
     public String getP2Input() {return p2Field.getText();}
     public String getGridInput() {return gridField.getText();}
+    public TextField getGridField() {return gridField;}
+    public TextField getP1Field() {return p1Field;}
+    public TextField getP2Field() {return p2Field;}
     public Label getErrorText() {return errorText;}
     public Label getGridSize() {return gridSize;}
     public Label getP1Name() {return p1Name;}

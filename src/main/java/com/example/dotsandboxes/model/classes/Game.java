@@ -82,7 +82,7 @@ public class Game {
             number = 0;
         }
 
-        if (p1Name.isBlank() || p2Name.isBlank() || number <= 1) {
+        if (p1Name.isBlank() || p2Name.isBlank() || number <= 1 || number > 10) {
             valid = false;
         } else {
             first.setName(p1Name);
