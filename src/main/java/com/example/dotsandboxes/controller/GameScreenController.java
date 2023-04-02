@@ -2,6 +2,7 @@ package com.example.dotsandboxes.controller;
 
 import com.example.dotsandboxes.model.classes.Game;
 import com.example.dotsandboxes.model.classes.ModelLine;
+import com.example.dotsandboxes.model.enums.GameType;
 import com.example.dotsandboxes.model.enums.LineType;
 import com.example.dotsandboxes.model.enums.MoveResult;
 import com.example.dotsandboxes.model.enums.PlayerNumber;

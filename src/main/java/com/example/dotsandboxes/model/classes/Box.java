@@ -22,11 +22,12 @@ public class Box {
     }
     public boolean getIsComplete() {return isComplete;}
 
-    public void incConnectedLines() { // increases number of connected lines, and sets isComplete to true if the box is complete
+    public int incConnectedLines() { // increases number of connected lines, and sets isComplete to true if the box is complete
         connectedLines+=1;
         if(connectedLines == 4) {
             isComplete = true;
         }
+        return connectedLines;
     }
     public boolean hasLine(ModelLine line) {
         return  lines.contains(line);

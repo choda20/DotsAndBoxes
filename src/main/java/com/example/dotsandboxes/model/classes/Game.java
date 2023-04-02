@@ -1,5 +1,7 @@
 package com.example.dotsandboxes.model.classes;
 
+import com.example.dotsandboxes.AI.AIModel;
+import com.example.dotsandboxes.AI.AIPlayer;
 import com.example.dotsandboxes.model.enums.GameType;
 import com.example.dotsandboxes.model.enums.LineType;
 import com.example.dotsandboxes.model.enums.MoveResult;
@@ -53,7 +55,7 @@ public class Game {
             PropertyChangeEvent event = new PropertyChangeEvent(this,"performMove",line,result);
             pcs.firePropertyChange(event);
             if (gameType.equals(GameType.HumanVsAI) && turn.equals(PlayerNumber.second)) {
-                Pair<Point,LineType> move = getCurrent().play(gameBoard);
+                Pair<Point,LineType> move = getCurrent().play(first.score,second.score,new Board(gameBoard));
                 performMove(move.getKey().x,move.getKey().y,move.getValue());
             }
             return result;

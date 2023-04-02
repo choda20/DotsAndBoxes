@@ -1,5 +1,7 @@
 package com.example.dotsandboxes.model.classes;
 
+import com.example.dotsandboxes.AI.AIModel;
+import com.example.dotsandboxes.AI.AIPlayer;
 import com.example.dotsandboxes.model.enums.LineType;
 import javafx.util.Pair;
 
@@ -21,6 +23,6 @@ public abstract class Player {
     public void setName(String name) {this.name = name;}
     public void setScore(int score) {this.score = score;}
 
-    public abstract Pair<Point, LineType> play(Board gameBoard); // abstract function that configures how the player makes a move
+    public abstract Pair<Point, LineType> play(int p1Score, int p2Score, Board gameBoard); // abstract function that configures how the player makes a move
 
 }

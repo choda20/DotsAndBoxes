@@ -1,6 +1,6 @@
 package com.example.dotsandboxes.controller;
 
-import com.example.dotsandboxes.model.classes.AIPlayer;
+import com.example.dotsandboxes.AI.AIPlayer;
 import com.example.dotsandboxes.model.classes.Game;
 import com.example.dotsandboxes.model.classes.HumanPlayer;
 import com.example.dotsandboxes.model.enums.GameType;

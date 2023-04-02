@@ -9,15 +9,13 @@ public class Board {
     private ModelLine[][] verticalLines; // (gridSize)*(gridSize-1) matrix containing all the vertical  lines in the game
     private Box[][] boxes; // (gridSize-1)*(gridSize) matrix containing the boxes in the game
 
-    public Board() {} // empty constructor
-    public Board(Board board) { // constructor to make a board from an existing board
+    public Board(Board board) {
         this.gridSize = board.getGridSize();
+        this.boxes = board.getBoxes();
         this.horizontalLines = board.getHorizontalLines();
         this.verticalLines = board.getVerticalLines();
-        this.boxes = board.getBoxes();
-        initializeLines();
-        initializeBoxes();
     }
+    public Board() {} // empty constructor
     public Board(int gridSize) { // full constructor
         this.gridSize = gridSize;
         this.horizontalLines = new ModelLine[gridSize][gridSize-1]; // array of horizontal lines
@@ -51,14 +49,18 @@ public class Board {
         Pair<Integer,Box[]> parentData = getParentBoxes(line);
         Box[] parents = parentData.getValue();
         int numberOfParents = parentData.getKey().intValue();
+        int score;
         switch (numberOfParents) {
             case 1:
                 parents[numberOfParents-1].incConnectedLines();
-                return parents[numberOfParents-1].getIsComplete() ? 1 : 0;
+                score = parents[numberOfParents-1].getIsComplete() ? 1 : 0;
+
+                return score;
             case 2:
                 parents[numberOfParents-1].incConnectedLines();
                 parents[numberOfParents-2].incConnectedLines();
-                return (parents[numberOfParents-1].getIsComplete() ? 1 : 0) + (parents[numberOfParents-2].getIsComplete() ? 1 : 0);
+                score = (parents[numberOfParents-1].getIsComplete() ? 1 : 0) + (parents[numberOfParents-2].getIsComplete() ? 1 : 0);
+                return score;
             default:
                 return 0;
         }
@@ -80,7 +82,6 @@ public class Board {
         }
         return new Pair<>(resultIndex,results);
     }
-
     // getters
     public Box[][] getBoxes() {return boxes;}
     public ModelLine[][] getHorizontalLines() {return horizontalLines;}
