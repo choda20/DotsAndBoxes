@@ -17,6 +17,7 @@ public class Box {
         this.connectedLines = connectedLines;
         this.isComplete = isComplete;
     }
+
     public Box copy() {
         Box newBox = new Box(lines,connectedLines,isComplete);
         return newBox;

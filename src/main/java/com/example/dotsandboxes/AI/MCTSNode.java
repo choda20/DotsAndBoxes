@@ -53,20 +53,4 @@ public class MCTSNode {
             System.out.println();
         }
     }
-    public void printChildren() {
-        int i,j,k;
-        for (i=0;i<children.size();i++) {
-            for (j=0;j<children.get(i).getBoard().getGridSize();j++) {
-                for (k=0;k<children.get(i).getBoard().getGridSize()-1;k++) {
-                    System.out.print(children.get(i).getBoard().getHorizontalLines()[j][k].isConnected() + " ");
-                }
-                System.out.println();
-                for (k=0;k<children.get(i).getBoard().getGridSize()-1;k++) {
-                    System.out.print(children.get(i).getBoard().getVerticalLines()[j][k].isConnected() + " ");
-                }
-                System.out.println();
-            }
-            System.out.println();
-        }
-    }
 }

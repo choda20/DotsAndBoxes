@@ -1,6 +1,7 @@
 package com.example.dotsandboxes.model.classes;
 import javafx.util.Pair;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class Board {
@@ -46,41 +47,39 @@ public class Board {
     }
 
     public int checkBoxFormed(ModelLine line) { // checks if a newly connected line completes boxes, and returns the points obtained from it(0-2)
-        Pair<Integer,Box[]> parentData = getParentBoxes(line);
-        Box[] parents = parentData.getValue();
-        int numberOfParents = parentData.getKey().intValue();
+        List<Box> parentData = getParentBoxes(line);
+        int numberOfParents = parentData.size();
         int score;
         switch (numberOfParents) {
             case 1:
-                parents[numberOfParents-1].incConnectedLines();
-                score = parents[numberOfParents-1].getIsComplete() ? 1 : 0;
-
+                parentData.get(0).incConnectedLines();
+                score = parentData.get(0).getIsComplete() ? 1 : 0;
                 return score;
             case 2:
-                parents[numberOfParents-1].incConnectedLines();
-                parents[numberOfParents-2].incConnectedLines();
-                score = (parents[numberOfParents-1].getIsComplete() ? 1 : 0) + (parents[numberOfParents-2].getIsComplete() ? 1 : 0);
+                parentData.get(0).incConnectedLines();
+                parentData.get(1).incConnectedLines();
+                score = (parentData.get(0).getIsComplete() ? 1 : 0) + (parentData.get(1).getIsComplete() ? 1 : 0);
                 return score;
             default:
                 return 0;
         }
     }
 
-    private Pair<Integer,Box[]> getParentBoxes(ModelLine line) { // returns a Box array containing the boxes a line is a part of, and an Integer containing the length of the array
-        Box[] results = new Box[2];
+    private List<Box> getParentBoxes(ModelLine line) { // returns a Box array containing the boxes a line is a part of, and an Integer containing the length of the array
+        List<Box> results = new ArrayList<>();
         int resultIndex = 0;
         for (int i = 0; i < gridSize-1; i++) {
             for (int j = 0; j < gridSize-1; j++) {
                 if (boxes[i][j].hasLine(line)) {
-                    results[resultIndex] = boxes[i][j];
+                    results.add(boxes[i][j]);
                     resultIndex+=1;
                     if (resultIndex >= 2) {
-                        return new Pair<>(resultIndex,results);
+                        return results;
                     }
                 }
             }
         }
-        return new Pair<>(resultIndex,results);
+        return results;
     }
     // getters
     public Box[][] getBoxes() {return boxes;}

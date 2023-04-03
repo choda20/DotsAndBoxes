@@ -153,10 +153,11 @@ public class GameScreenController implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        ModelLine changedLine = (ModelLine) evt.getOldValue();
+        Pair<ModelLine,PlayerNumber> changedLineAndOwner = (Pair<ModelLine,PlayerNumber>) evt.getOldValue();
+        ModelLine changedLine = changedLineAndOwner.getKey();
         MoveResult result = (MoveResult) evt.getNewValue();
 
-        LinearGradient lineColor = changedLine.getOwner().equals(PlayerNumber.first) ? p1Gradient : p2Gradient;
+        LinearGradient lineColor = changedLineAndOwner.getValue().equals(PlayerNumber.first) ? p1Gradient : p2Gradient;
         LinearGradient turnColor = model.getTurn().equals(PlayerNumber.first) ? p1Gradient : p2Gradient;
         Line[][] lineMatrix = changedLine.isHorizontal() ? view.getHorizontalLines() : view.getVerticalLines();
         lineMatrix[changedLine.getRow()][changedLine.getColumn()].setStroke(lineColor);

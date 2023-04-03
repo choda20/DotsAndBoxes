@@ -19,7 +19,7 @@ public class MCTS {
         this.player = player;
     }
 
-    public AIBoard MCTSCalc() {
+    public ModelLine MCTSCalc() {
         System.out.println("Starting MCTS!");
         Instant start = Instant.now();
 
@@ -28,38 +28,33 @@ public class MCTS {
         MCTSNode tree = new MCTSNode(gameBoard);
 
         while (counter < computations) {
-            System.out.println("Counter at: " + counter);
             counter++;
-
             //SELECT
             MCTSNode promisingNode = selectPromisingNode(tree);
-            System.out.println("Selected promising node");
 
             //EXPAND
             MCTSNode selected = promisingNode;
             if (selected.getBoard().getGameStatus().equals(AIGameStatus.GameInProgress)) {
                 selected = expandNodeAndReturnRandom(promisingNode);
             }
-            System.out.println("Expanded node");
 
             //SIMULATE
             AIGameStatus playoutResult = simulateLightPlayout(selected);
-            System.out.println("Simulated");
 
             //PROPAGATE
             backPropagation(playoutResult, selected);
-            System.out.println("BackPropagated");
         }
-        System.out.println("Ended While");
         MCTSNode best = tree.getChildWithMaxScore();
 
         Instant end = Instant.now();
         long milis = end.toEpochMilli() - start.toEpochMilli();
+        ModelLine move = best.getBoard().getLastMove();
 
         System.out.println("Did " + counter + " expansions/simulations within " + milis + " milis");
         System.out.println("Best move scored " + best.getChildWithMaxScore() + " and was visited " + best.getVisits() + " times");
-
-        return best.getBoard();
+        System.out.println("Move was made at: " + move.getRow() + "," + move.getColumn() + " on horizontal line: " + move.isHorizontal());
+        best.printNode();
+        return move;
     }
 
     // if node is already a leaf, return the leaf
@@ -68,16 +63,13 @@ public class MCTS {
         AIBoard board = node.getBoard();
         Random generator = new Random();
 
-        for (AIBoard move : board.getAvlMoves()) {
+        for (AIBoard move : board.getAvlNextMoves()) {
             MCTSNode child = new MCTSNode(move);
             child.parent = node;
             node.addChild(child);
 
             result = child;
         }
-        result.printNode();
-        System.out.println();
-        node.printNode();
         int random = generator.nextInt(node.getChildren().size());
         return node.getChildren().get(random);
     }
@@ -112,22 +104,26 @@ public class MCTS {
             return node.getBoard().getGameStatus();
         }
 
+        int counter = 1;
+        AIBoard move;
+        MCTSNode child;
         while (node.getBoard().getGameStatus().equals(AIGameStatus.GameInProgress)) {
-            AIBoard move = node.getBoard().getRandomMove();
-            MCTSNode child = new MCTSNode(move);
-            child.parent = node;
-            node.addChild(child);
+            if (counter < 25) {
+                move = node.getBoard().getRandomMove();
+                child = new MCTSNode(move);
+                child.parent = node;
+                node.addChild(child);
 
-            node = child;
+                node = child;
+                counter++;
+            }
         }
-
         return node.getBoard().getGameStatus();
     }
 
     private MCTSNode selectPromisingNode(MCTSNode tree) {
         MCTSNode node = tree;
         while (node.getChildren().size() != 0) {
-            System.out.println("what");
             node = UCT.findBestNodeWithUCT(node);
         }
         return node;

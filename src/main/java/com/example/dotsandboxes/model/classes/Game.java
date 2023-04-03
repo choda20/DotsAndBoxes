@@ -46,12 +46,11 @@ public class Game {
         ModelLine line = lines[row][column];
         if (!line.isConnected()) {
             line.connectLine();
-            line.setOwner(turn);
             int scoreObtained = gameBoard.checkBoxFormed(line);
             getCurrent().setScore(getCurrent().getScore() + scoreObtained);
-            if (scoreObtained == 0) {swapTurn();}
             MoveResult result = !isGameOver() ? MoveResult.gameOver : MoveResult.valid;
-            PropertyChangeEvent event = new PropertyChangeEvent(this,"performMove",line,result);
+            PropertyChangeEvent event = new PropertyChangeEvent(this,"performMove",new Pair<ModelLine,PlayerNumber>(line,turn),result);
+            if (scoreObtained == 0) {swapTurn();}
             pcs.firePropertyChange(event);
             if (gameType.equals(GameType.HumanVsAI) && turn.equals(PlayerNumber.second)) {
                 Pair<Point,LineType> move = getCurrent().play();

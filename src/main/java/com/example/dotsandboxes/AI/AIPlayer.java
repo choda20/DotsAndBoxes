@@ -25,18 +25,34 @@ public class AIPlayer extends Player implements PropertyChangeListener {
         this.model = new AIBoard();
     }
     public Pair<Point, LineType> play()  {
-        moveAlgorithm = new MCTS(new AIBoard(model),1000, PlayerNumber.second);
-        moveAlgorithm.MCTSCalc();
-        System.out.println("ENDED");
-        return new Pair<Point,LineType>(new Point(-1,-1),LineType.horizontal);
+        System.out.println("Board before MTCS: ");
+        printBoard();
+        moveAlgorithm = new MCTS(new AIBoard(model),500, PlayerNumber.second);
+        ModelLine move = moveAlgorithm.MCTSCalc();
+        return new Pair<Point,LineType>(new Point(move.getRow(),move.getColumn()),move.isHorizontal() ? LineType.horizontal : LineType.vertical);
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        ModelLine changedLine = (ModelLine) evt.getOldValue();
+        Pair<ModelLine,PlayerNumber> changedLineAndOwner = (Pair<ModelLine,PlayerNumber>) evt.getOldValue();
+        ModelLine changedLine = changedLineAndOwner.getKey();
         MoveResult result = (MoveResult) evt.getNewValue();
         model.performMove(changedLine.getRow(),changedLine.getColumn(),changedLine.isHorizontal() ? LineType.horizontal : LineType.vertical);
     }
 
+    public void printBoard() {
+        int j,k;
+        for (j=0;j<model.getGridSize();j++) {
+            for (k=0;k<model.getGridSize()-1;k++) {
+                System.out.print(model.getHorizontalLines()[j][k].isConnected() + " ");
+            }
+            System.out.println();
+            for (k=0;k<model.getGridSize()-1;k++) {
+                System.out.print(model.getVerticalLines()[j][k].isConnected() + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
     public AIBoard getModel() {return model;}
 }

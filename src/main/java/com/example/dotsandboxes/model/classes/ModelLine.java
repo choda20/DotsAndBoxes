@@ -7,7 +7,6 @@ public class ModelLine {
     private int row;
     private boolean isHorizontal;
     private boolean isConnected;
-    private PlayerNumber owner;
 
     public ModelLine(int row, int column, boolean isHorizontal, boolean isConnected) {
         this.column = column;
@@ -23,12 +22,10 @@ public class ModelLine {
 
     // getters
     public int getColumn() {return column;}
-    public PlayerNumber getOwner() {return owner;}
     public int getRow() {return row;}
     public boolean isConnected() {return isConnected;}
     public boolean isHorizontal() {return isHorizontal;}
 
     // setters
-    public void setOwner(PlayerNumber owner) {this.owner = owner;}
     public void connectLine() {this.isConnected = true;}
 }
