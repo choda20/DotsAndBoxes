@@ -16,6 +16,11 @@ public class ModelLine {
         this.isHorizontal = isHorizontal;
     }
 
+    public ModelLine copy() {
+        ModelLine newLine = new ModelLine(row,column,isHorizontal,isConnected);
+        return newLine;
+    }
+
     // getters
     public int getColumn() {return column;}
     public PlayerNumber getOwner() {return owner;}

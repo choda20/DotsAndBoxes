@@ -40,6 +40,9 @@ public class GameScreenController implements PropertyChangeListener {
         this.p2Gradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stopsP2);
 
         model.addPropertyChangeListener(this); // registers the controller as a listener to the model
+        if (model.getGameType().equals(GameType.HumanVsAI)) {
+            model.addPropertyChangeListener((PropertyChangeListener) model.getSecond());
+        }
 
         setLabels(view.getLabels()); // initializes labels
         buildViewBoard(stage.getWidth(),stage.getHeight());
@@ -57,7 +60,11 @@ public class GameScreenController implements PropertyChangeListener {
                 final int row = i,column = j;
                 lines[i][j].setOnMouseClicked((mouseEvent -> {
                     Line clickedLine = (Line) mouseEvent.getSource();
-                    registerMove(clickedLine,row,column,lineType);
+                    try {
+                        registerMove(clickedLine,row,column,lineType);
+                    } catch (CloneNotSupportedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }));
                 lines[i][j].setOnMouseEntered((mouseEvent -> {
                     Line hoveredLine = (Line) mouseEvent.getSource();
@@ -75,7 +82,7 @@ public class GameScreenController implements PropertyChangeListener {
             }
         }
     }
-    public void registerMove(Line clickedLine, int row, int column, LineType lineType) {
+    public void registerMove(Line clickedLine, int row, int column, LineType lineType) throws CloneNotSupportedException {
         disableLine(clickedLine);
         model.performMove(row,column,lineType);
     }

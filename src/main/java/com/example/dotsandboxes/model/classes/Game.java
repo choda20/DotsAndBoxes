@@ -1,6 +1,5 @@
 package com.example.dotsandboxes.model.classes;
 
-import com.example.dotsandboxes.AI.AIModel;
 import com.example.dotsandboxes.AI.AIPlayer;
 import com.example.dotsandboxes.model.enums.GameType;
 import com.example.dotsandboxes.model.enums.LineType;
@@ -42,7 +41,7 @@ public class Game {
         turn = turn == PlayerNumber.first ? PlayerNumber.second : PlayerNumber.first;
     } // moves to next turn
 
-    public MoveResult performMove(int row, int column, LineType lineType) {
+    public MoveResult performMove(int row, int column, LineType lineType) throws CloneNotSupportedException {
         ModelLine[][] lines = lineType.equals(LineType.horizontal) ? gameBoard.getHorizontalLines() : gameBoard.getVerticalLines();
         ModelLine line = lines[row][column];
         if (!line.isConnected()) {
@@ -55,7 +54,7 @@ public class Game {
             PropertyChangeEvent event = new PropertyChangeEvent(this,"performMove",line,result);
             pcs.firePropertyChange(event);
             if (gameType.equals(GameType.HumanVsAI) && turn.equals(PlayerNumber.second)) {
-                Pair<Point,LineType> move = getCurrent().play(first.score,second.score,new Board(gameBoard));
+                Pair<Point,LineType> move = getCurrent().play();
                 performMove(move.getKey().x,move.getKey().y,move.getValue());
             }
             return result;
@@ -85,6 +84,10 @@ public class Game {
             first.setName(p1Name);
             second.setName(p2Name);
             setGameBoard(new Board(number));
+            if (gameType.equals(GameType.HumanVsAI)) {
+                AIPlayer aiPlayer = (AIPlayer) second;
+                aiPlayer.getModel().setGridSize(number);
+            }
         }
 
         PropertyChangeEvent event = new PropertyChangeEvent(this,"insertNamesAndGrid","",valid);

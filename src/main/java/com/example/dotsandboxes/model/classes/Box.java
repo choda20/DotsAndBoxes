@@ -12,6 +12,15 @@ public class Box {
         int connectedLines = 0;
         boolean  isComplete = false;
     }
+    public Box(ArrayList<ModelLine> lines,int connectedLines,boolean isComplete) {
+        this.lines = new ArrayList<ModelLine>(lines);
+        this.connectedLines = connectedLines;
+        this.isComplete = isComplete;
+    }
+    public Box copy() {
+        Box newBox = new Box(lines,connectedLines,isComplete);
+        return newBox;
+    }
 
     // getters
     public ArrayList<ModelLine> getLines() {
