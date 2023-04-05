@@ -104,19 +104,15 @@ public class MCTS {
             return node.getBoard().getGameStatus();
         }
 
-        int counter = 1;
         AIBoard move;
         MCTSNode child;
         while (node.getBoard().getGameStatus().equals(AIGameStatus.GameInProgress)) {
-            if (counter < 25) {
-                move = node.getBoard().getRandomMove();
-                child = new MCTSNode(move);
-                child.parent = node;
-                node.addChild(child);
+            move = node.getBoard().getRandomMove();
+            child = new MCTSNode(move);
+            child.parent = node;
+            node.addChild(child);
 
-                node = child;
-                counter++;
-            }
+            node = child;
         }
         return node.getBoard().getGameStatus();
     }

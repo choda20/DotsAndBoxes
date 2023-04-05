@@ -4,7 +4,6 @@ import com.example.dotsandboxes.model.classes.Box;
 import com.example.dotsandboxes.model.classes.ModelLine;
 import com.example.dotsandboxes.model.enums.LineType;
 import com.example.dotsandboxes.model.enums.PlayerNumber;
-import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,6 @@ public class AIBoard {
     private int firstScore; // player 1
     private int secondScore; // player 2
     private PlayerNumber turn; // represents the current player, first for first and second for second
-    private int gridSize; // desired board size
     private AIGameStatus gameStatus;
     private List<ModelLine> avlLines;
     private ModelLine[][] horizontalLines; // (gridSize)*(gridSize-1) matrix containing all the horizontal lines in the game
@@ -31,7 +29,7 @@ public class AIBoard {
         this.generator = new Random();
     } // empty constructor
     public AIBoard(AIBoard board) {
-        this.gridSize = board.getGridSize();
+        int gridSize = board.getGridSize();
         this.firstScore = board.getFirstScore();
         this.secondScore = board.getSecondScore();
         this.turn = board.getTurn();
@@ -67,15 +65,14 @@ public class AIBoard {
         }
     }
     public void setGridSize(int gridSize) {
-        this.gridSize = gridSize;
         this.boxes = new Box[gridSize-1][gridSize-1];
         this.horizontalLines = new ModelLine[gridSize][gridSize-1]; // array of horizontal lines
         this.verticalLines = new ModelLine[gridSize][gridSize-1]; // array of vertical lines
         this.avlLines = new ArrayList<ModelLine>();
-        initializeLines();
-        initializeBoxes();
+        initializeLines(gridSize);
+        initializeBoxes(gridSize);
     }
-    private void initializeLines() {
+    private void initializeLines(int gridSize) {
         for (int i=0;i<gridSize;i++) {
             for (int j = 0; j < gridSize-1; j++) {
                 horizontalLines[i][j] = new ModelLine(i,j,true,false);
@@ -85,7 +82,7 @@ public class AIBoard {
             }
         }
     }
-    private void initializeBoxes() {
+    private void initializeBoxes(int gridSize) {
         for (int i=0;i<gridSize-1;i++) {
             for (int j = 0; j < gridSize-1; j++) {
                 boxes[i][j] = new Box(new ArrayList<ModelLine>());
@@ -118,8 +115,8 @@ public class AIBoard {
     private List<Box> getParentBoxes(ModelLine line) { // returns a Box array containing the boxes a line is a part of, and an Integer containing the length of the array
         List<Box> results = new ArrayList<>();
         int resultIndex = 0;
-        for (int i = 0; i < gridSize-1; i++) {
-            for (int j = 0; j < gridSize-1; j++) {
+        for (int i = 0; i < getGridSize()-1; i++) {
+            for (int j = 0; j < getGridSize()-1; j++) {
                 if (boxes[i][j].hasLine(line)) {
                     results.add(boxes[i][j]);
                     resultIndex+=1;
@@ -132,7 +129,7 @@ public class AIBoard {
         return results;
     }
     public boolean isGameOngoing() { // returns true if the game is in progress, otherwise false
-        boolean ongoing =  !((firstScore + secondScore) == ((gridSize-1)*(gridSize-1)));
+        boolean ongoing =  !((firstScore + secondScore) == ((getGridSize()-1)*(getGridSize()-1)));
         if (!ongoing) {
             updateGameStatus();
         }
@@ -181,7 +178,7 @@ public class AIBoard {
     public int getFirstScore() {return firstScore;}
     public PlayerNumber getTurn() {return turn;}
     public int getSecondScore() {return secondScore;}
-    public int getGridSize() {return gridSize;}
+    public int getGridSize() {return horizontalLines.length;}
     public AIGameStatus getGameStatus() {return gameStatus;}
     public List<ModelLine> getAvlLines() {return avlLines;}
     public ModelLine getLastMove() {return lastMove;}
