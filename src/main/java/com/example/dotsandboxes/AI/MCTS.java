@@ -1,6 +1,8 @@
 package com.example.dotsandboxes.AI;
 
 import com.example.dotsandboxes.model.classes.ModelLine;
+import com.example.dotsandboxes.model.enums.LineType;
+import javafx.util.Pair;
 
 
 import java.time.Instant;
@@ -10,11 +12,15 @@ import java.util.stream.Collectors;
 
 public class MCTS {
     private final AIBoard gameBoard;
+    private final int playerId;
+    private final int opponentId;
     private final int computations;
 
     public MCTS(AIBoard gameBoard,int computations) {
         this.computations = computations;
         this.gameBoard = gameBoard;
+        this.playerId = 1;
+        this.opponentId = 0;
     }
 
     public ModelLine MCTSCalc() {
@@ -37,10 +43,10 @@ public class MCTS {
             }
 
             //SIMULATE
-            GameStatus playoutResult = simulateLightPlayout(selected);
+            int playoutResult = simulateLightPlayout(selected);
 
             //PROPAGATE
-            backPropagation(playoutResult, selected);
+            backPropagation(selected);
         }
         MCTSNode best = tree.getChildWithMaxScore();
         Instant end = Instant.now();
@@ -72,46 +78,43 @@ public class MCTS {
         return node.getChildren().get(random);
     }
 
-    private void backPropagation(GameStatus status, MCTSNode selected) {
+    private void backPropagation(MCTSNode selected) {
         MCTSNode node = selected;
-
+        int currentPlayer, accumulated = selected.getBoard().getCurrentPlayer() == playerId ? 50: -50;
         while (node != null) { // look for the root
             node.incVisits();
-            if (node.getBoard().getLastGameStatus().equals(GameStatus.Player2Turn)) {
+            currentPlayer = 1 - node.getBoard().getCurrentPlayer();
+            if (currentPlayer == playerId) {
                 node.incScore();
             }
+            accumulated = node.getScore() + accumulated;
+            node.setScore(accumulated);
             node = node.parent;
         }
     }
 
-    /**
-     *
-     * "Light playout" is to indicate that each move is chosen totally randomly,
-     * in contrast to using some heuristic
-     *
-     */
-    private GameStatus simulateLightPlayout(MCTSNode promisingNode) {
-        MCTSNode node = new MCTSNode(promisingNode.getBoard());
-        node.parent = promisingNode.parent;
-        GameStatus boardStatus = node.getBoard().getGameStatus();
-        AIBoard move;
-        MCTSNode child;
-        if (boardStatus.equals(GameStatus.Player1Won) || node.getBoard().getLastGameStatus().equals(GameStatus.Player1Turn)) {
-            node.parent.setScore(Integer.MIN_VALUE);
-            return node.getBoard().getLastGameStatus();
-        }
+    private int simulateLightPlayout(MCTSNode promisingNode) {
+        MCTSNode node = promisingNode;
+        AIBoard board;
+        Pair<Integer,ModelLine> bestMove;
+        ModelLine move;
+        Random rand = new Random();
 
-        while (node.getBoard().getGameStatus().equals(GameStatus.Player1Turn) || node.getBoard().getGameStatus().equals(GameStatus.Player2Turn) ) {
-            move = node.getBoard().getRandomMove();
-            child = new MCTSNode(move);
+        while (node.getBoard().isGameOngoing()) {
+            bestMove = node.getBoard().getBestMove();
+            move = bestMove.getValue();
+            board = new AIBoard(new AIBoard(node.getBoard()));
+            board.performMove(move.getRow(),move.getColumn(),move.isHorizontal() ? LineType.horizontal : LineType.vertical);
+            MCTSNode child = new MCTSNode(board);
+            child.setScore(bestMove.getKey());
             child.parent = node;
             node.addChild(child);
 
             node = child;
         }
-
-        return node.getBoard().getLastGameStatus();
+        return node.getBoard().getCurrentPlayer();
     }
+
 
     private MCTSNode selectPromisingNode(MCTSNode tree) {
         MCTSNode node = tree;

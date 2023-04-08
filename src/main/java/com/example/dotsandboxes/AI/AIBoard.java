@@ -2,7 +2,6 @@ package com.example.dotsandboxes.AI;
 
 import com.example.dotsandboxes.model.classes.ModelLine;
 import com.example.dotsandboxes.model.enums.LineType;
-import com.example.dotsandboxes.model.enums.PlayerNumber;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -12,8 +11,7 @@ import java.util.Random;
 public class AIBoard {
     private int firstScore; // player 1
     private int secondScore; // player 2
-    private GameStatus gameStatus;
-    private GameStatus lastGameStatus;
+    private int currentPlayer;
     private List<ModelLine> avlLines;
     private ModelLine[][] horizontalLines; // (gridSize)*(gridSize-1) matrix containing all the horizontal lines in the game
     private ModelLine[][] verticalLines; // (gridSize)*(gridSize-1) matrix containing all the vertical  lines in the game
@@ -23,15 +21,14 @@ public class AIBoard {
     public AIBoard() {
         this.firstScore = 0;
         this.secondScore = 0;
-        this.gameStatus = GameStatus.Player1Turn;
+        this.currentPlayer = 0;
         this.generator = new Random();
     } // empty constructor
     public AIBoard(AIBoard board) {
         int gridSize = board.getGridSize();
-        this.firstScore = board.getFirstScore();
-        this.secondScore = board.getSecondScore();
-        this.gameStatus = board.getGameStatus();
-        this.lastGameStatus = board.getLastGameStatus();
+        this.firstScore = board.firstScore;
+        this.secondScore = board.secondScore;
+        this.currentPlayer = board.currentPlayer;
         this.generator = new Random();
 
         this.avlLines = new ArrayList<>();
@@ -39,8 +36,8 @@ public class AIBoard {
         this.verticalLines = new ModelLine[gridSize][gridSize-1];
         for (int i=0;i<gridSize;i++) {
             for(int j=0;j<gridSize-1;j++) {
-                this.horizontalLines[i][j] = board.getHorizontalLines()[i][j].copy();
-                this.verticalLines[i][j] = board.getVerticalLines()[i][j].copy();
+                this.horizontalLines[i][j] = board.horizontalLines[i][j].copy();
+                this.verticalLines[i][j] = board.verticalLines[i][j].copy();
                 if (!horizontalLines[i][j].isConnected())
                     avlLines.add(horizontalLines[i][j]);
                 if (!verticalLines[i][j].isConnected())
@@ -84,43 +81,27 @@ public class AIBoard {
     }
 
     public boolean isGameOngoing() { // returns true if the game is in progress, otherwise false
-        boolean ongoing =  !((firstScore + secondScore) == ((getGridSize()-1)*(getGridSize()-1)));
-        if (!ongoing) {
-            updateGameStatus();
-        }
-        return ongoing;
+        return !((firstScore + secondScore) == ((getGridSize()-1)*(getGridSize()-1)));
     }
 
     public void performMove(int row, int column, LineType lineType) {
         ModelLine[][] lines = lineType.equals(LineType.horizontal) ? horizontalLines : verticalLines;
         ModelLine line = lines[row][column];
-        line.connectLine();
-        int scoreObtained = checkBoxFormed(line);
-        increaseCurrentScore(scoreObtained);
-        if (scoreObtained == 0) {
-            lastGameStatus = gameStatus;
-            gameStatus = gameStatus.equals(GameStatus.Player1Turn) ? GameStatus.Player2Turn : GameStatus.Player1Turn;
+        if (!line.isConnected()) {
+            line.connectLine();
+            int scoreObtained = checkBoxFormed(line);
+            increaseCurrentScore(scoreObtained);
+            avlLines.remove(line);
+            if (scoreObtained == 0 && !isGameOngoing()) {
+                currentPlayer = 1 - currentPlayer;
+            }
+            this.lastMove = line;
         }
-        avlLines.remove(line);
-        this.lastMove = line;
-        isGameOngoing();
     }
 
-    public void updateGameStatus() { // returns 0 if tie, 1 if player 1 won, 2 if player 2 won. i
-        lastGameStatus = gameStatus;
-        if (firstScore == secondScore) {
-            gameStatus = GameStatus.Tie;
-        }
-        else if (firstScore > secondScore) {
-            gameStatus = GameStatus.Player1Won;
-        }
-        else {
-            gameStatus = GameStatus.Player2Won;
-        }
-    }
 
     public void increaseCurrentScore(int scoreObtained) {
-        if (gameStatus.equals(gameStatus.Player1Turn)) {
+        if (currentPlayer == 0) {
             firstScore += scoreObtained;
         }
         else {
@@ -142,12 +123,35 @@ public class AIBoard {
         final int randomMove = generator.nextInt(nextMoves.size());
         return nextMoves.get(randomMove);
     }
-    public int[] lastMoveBoxes() {
-        int x = lastMove.getRow();
-        int y = lastMove.getColumn();
+    public Pair<Integer,ModelLine> getBestMove() {
+        ModelLine bestMove = avlLines.get(0);
+        int bestScore = - 1, score;
+
+        for (ModelLine move: avlLines) {
+            score = evaluateMove(move);
+            if (score > bestScore) {
+                bestMove = move;
+                bestScore = score;
+            }
+        }
+        avlLines.remove(bestMove);
+        return new Pair<Integer, ModelLine>(bestScore,bestMove);
+    }
+    private int evaluateMove(ModelLine move) {
+        move.connectLine();
+        int score = checkBoxFormed(move);
+        int[] leftBoxes = checkLeftBoxes(move);
+        score -= ((leftBoxes[0] == 2 ? 1 : 0) + (leftBoxes[1] == 2 ? 1 : 0));
+        move.disconnectLine();
+        return score;
+    }
+
+    public int[] checkLeftBoxes(ModelLine line) {
+        int x = line.getRow();
+        int y = line.getColumn();
         int columnLength = horizontalLines[0].length;
         int[] connectedLines = new int[2];
-        if (lastMove.isHorizontal()) {
+        if (line.isHorizontal()) {
             connectedLines[0] = (x>0 && x < getGridSize() && y < columnLength) ? ((horizontalLines[x-1][y].isConnected() ? 1 : 0) + (verticalLines[y+1][x-1].isConnected() ? 1 : 0) + (verticalLines[y][x-1].isConnected() ? 1 : 0)): 0;
             connectedLines[1] = (x < columnLength && y < columnLength) ? (horizontalLines[x+1][y].isConnected() ? 1 : 0) + (verticalLines[y][x].isConnected() ? 1 : 0) + (verticalLines[y+1][x].isConnected() ? 1 : 0): 0;
         }
@@ -159,21 +163,14 @@ public class AIBoard {
     }
 
     public Pair<Boolean,int[]> leavesBoxOpen() {
-        int[] lastMoveBoxes = lastMoveBoxes();
-        if (!lastGameStatus.equals(gameStatus) || lastMoveBoxes[0]++ == 2 || lastMoveBoxes[1]++ == 2)
+        int[] lastMoveBoxes = checkLeftBoxes(lastMove);
+        if (lastMoveBoxes[0]++ == 2 || lastMoveBoxes[1]++ == 2)
             return new Pair<>(true,lastMoveBoxes);
         return new Pair<>(false,lastMoveBoxes);
     }
     // getters
-    public ModelLine[][] getHorizontalLines() {return horizontalLines;}
-    public ModelLine[][] getVerticalLines() {return verticalLines;}
-    public int getFirstScore() {return firstScore;}
-    public int getSecondScore() {return secondScore;}
-    public int getGridSize() {return horizontalLines.length;}
-    public GameStatus getGameStatus() {return gameStatus;}
-    public List<ModelLine> getAvlLines() {return avlLines;}
-    public ModelLine getLastMove() {return lastMove;}
-    public GameStatus getLastGameStatus() {return lastGameStatus;}
-    public int getScoreDifference() {return secondScore-firstScore;}
 
+    public int getGridSize() {return horizontalLines.length;}
+    public ModelLine getLastMove() {return lastMove;}
+    public int getCurrentPlayer() {return currentPlayer;}
 }

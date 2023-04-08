@@ -9,6 +9,7 @@ import java.util.List;
 
 public class MCTSNode {
     private AIBoard board;
+    private int moveEval;
     private int visits;
     private int score;
     private List<MCTSNode> children = new ArrayList<>();
@@ -41,9 +42,11 @@ public class MCTSNode {
     public AIBoard getBoard() {return board;}
     public int getScore() {return score;}
     public int getVisits() {return visits;}
+    public int getMoveEval() {return moveEval;}
 
     //setters
     public void setScore(int score) {this.score = score;}
+    public void setMoveEval(int moveEval) {this.moveEval = moveEval;}
 
     public void incVisits() {this.visits++;}
     public void decVisits() {this.visits--;}
