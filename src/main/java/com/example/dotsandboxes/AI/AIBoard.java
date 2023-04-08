@@ -116,13 +116,7 @@ public class AIBoard {
         }
         return avlMoves;
     }
-    public AIBoard getRandomMove() {
-        List<AIBoard> nextMoves = getAvlNextMoves();
-        if (nextMoves.isEmpty())
-            return null;
-        final int randomMove = generator.nextInt(nextMoves.size());
-        return nextMoves.get(randomMove);
-    }
+
     public Pair<Integer,ModelLine> getBestMove() {
         ModelLine bestMove = avlLines.get(0);
         int bestScore = - 1, score;
@@ -162,15 +156,10 @@ public class AIBoard {
         return connectedLines;
     }
 
-    public Pair<Boolean,int[]> leavesBoxOpen() {
-        int[] lastMoveBoxes = checkLeftBoxes(lastMove);
-        if (lastMoveBoxes[0]++ == 2 || lastMoveBoxes[1]++ == 2)
-            return new Pair<>(true,lastMoveBoxes);
-        return new Pair<>(false,lastMoveBoxes);
-    }
     // getters
-
     public int getGridSize() {return horizontalLines.length;}
     public ModelLine getLastMove() {return lastMove;}
     public int getCurrentPlayer() {return currentPlayer;}
+    public List<ModelLine> getAvlLines() {return avlLines;}
+    public int getScoreDifference() {return secondScore-firstScore;}
 }

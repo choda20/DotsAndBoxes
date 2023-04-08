@@ -61,7 +61,6 @@ public class MCTS {
 
     // if node is already a leaf, return the leaf
     private MCTSNode expandNodeAndReturnRandom(MCTSNode node) {
-        MCTSNode result = node;
         MCTSNode child;
         AIBoard board = node.getBoard();
         Random generator = new Random();
@@ -70,26 +69,28 @@ public class MCTS {
         for (AIBoard move : board.getAvlNextMoves()) {
             child = new MCTSNode(move);
             child.parent = node;
+            child.setScore(child.getBoard().getScoreDifference());
             node.addChild(child);
-
-            result = child;
         }
         int random = generator.nextInt(node.getChildren().size());
         return node.getChildren().get(random);
     }
 
     private void backPropagation(MCTSNode selected) {
-        MCTSNode node = selected;
-        int currentPlayer, accumulated = selected.getBoard().getCurrentPlayer() == playerId ? 50: -50;
+        MCTSNode node = selected, previous;
+        int currentPlayer, penalty = selected.getBoard().getCurrentPlayer() == playerId ? 50: -50, accumulated = 0;
         while (node != null) { // look for the root
             node.incVisits();
             currentPlayer = 1 - node.getBoard().getCurrentPlayer();
             if (currentPlayer == playerId) {
                 node.incScore();
             }
-            accumulated = node.getScore() + accumulated;
-            node.setScore(accumulated);
+            node.setScore(node.getScore()+accumulated);
+            accumulated = node.getScore();
+            previous = node;
             node = node.parent;
+            if (node != null && node.parent == null)
+                previous.setScore(penalty+previous.getScore());
         }
     }
 
@@ -100,13 +101,13 @@ public class MCTS {
         ModelLine move;
         Random rand = new Random();
 
-        while (node.getBoard().isGameOngoing()) {
+        while (node.getBoard().isGameOngoing() && node.getBoard().getAvlLines().size()>0) {
             bestMove = node.getBoard().getBestMove();
             move = bestMove.getValue();
             board = new AIBoard(new AIBoard(node.getBoard()));
             board.performMove(move.getRow(),move.getColumn(),move.isHorizontal() ? LineType.horizontal : LineType.vertical);
             MCTSNode child = new MCTSNode(board);
-            child.setScore(bestMove.getKey());
+            child.setScore(board.getScoreDifference());
             child.parent = node;
             node.addChild(child);
 
