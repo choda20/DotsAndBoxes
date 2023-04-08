@@ -77,20 +77,18 @@ public class MCTS {
     }
 
     private void backPropagation(MCTSNode selected) {
-        MCTSNode node = selected, previous;
-        int currentPlayer, penalty = selected.getBoard().getCurrentPlayer() == playerId ? 50: -50, accumulated = 0;
+        MCTSNode node = selected,  previous = null;
+        int currentPlayer, penalty = selected.getBoard().getCurrentPlayer() == playerId ? 5: -7, accumulated = penalty;
         while (node != null) { // look for the root
             node.incVisits();
             currentPlayer = 1 - node.getBoard().getCurrentPlayer();
             if (currentPlayer == playerId) {
                 node.incScore();
             }
-            node.setScore(node.getScore()+accumulated);
-            accumulated = node.getScore();
+            if (previous != null && previous.getScore() > node.getScore())
+                node.setScore(previous.getScore());
             previous = node;
             node = node.parent;
-            if (node != null && node.parent == null)
-                previous.setScore(penalty+previous.getScore());
         }
     }
 
@@ -100,7 +98,7 @@ public class MCTS {
         Pair<Integer,ModelLine> bestMove;
         ModelLine move;
         Random rand = new Random();
-
+        boolean best = true;
         while (node.getBoard().isGameOngoing() && node.getBoard().getAvlLines().size()>0) {
             bestMove = node.getBoard().getBestMove();
             move = bestMove.getValue();
@@ -108,6 +106,10 @@ public class MCTS {
             board.performMove(move.getRow(),move.getColumn(),move.isHorizontal() ? LineType.horizontal : LineType.vertical);
             MCTSNode child = new MCTSNode(board);
             child.setScore(board.getScoreDifference());
+            if (best) {
+                child.setScore(Integer.MAX_VALUE / 2 + board.getScoreDifference());
+                best = false;
+            }
             child.parent = node;
             node.addChild(child);
 
