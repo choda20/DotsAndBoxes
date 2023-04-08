@@ -2,9 +2,9 @@ package com.example.dotsandboxes.AI;
 
 import com.example.dotsandboxes.model.classes.ModelLine;
 import com.example.dotsandboxes.model.enums.LineType;
+import com.example.dotsandboxes.model.enums.PlayerNumber;
 import javafx.util.Pair;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -24,7 +24,6 @@ public class AIBoard {
         this.firstScore = 0;
         this.secondScore = 0;
         this.gameStatus = GameStatus.Player1Turn;
-        //this.lastGameStatus = GameStatus.Player1Turn;
         this.generator = new Random();
     } // empty constructor
     public AIBoard(AIBoard board) {
@@ -34,6 +33,7 @@ public class AIBoard {
         this.gameStatus = board.getGameStatus();
         this.lastGameStatus = board.getLastGameStatus();
         this.generator = new Random();
+        this.lastMove = board.getLastMove();
 
         this.avlLines = new ArrayList<>();
         this.horizontalLines = new ModelLine[gridSize][gridSize-1];
@@ -95,18 +95,16 @@ public class AIBoard {
     public void performMove(int row, int column, LineType lineType) {
         ModelLine[][] lines = lineType.equals(LineType.horizontal) ? horizontalLines : verticalLines;
         ModelLine line = lines[row][column];
-        if (!line.isConnected()) {
-            line.connectLine();
-            int scoreObtained = checkBoxFormed(line);
-            increaseCurrentScore(scoreObtained);
-            if (scoreObtained == 0) {
-                lastGameStatus = gameStatus;
-                gameStatus = gameStatus.equals(GameStatus.Player1Turn) ? GameStatus.Player2Turn : GameStatus.Player1Turn;
-            }
-            avlLines.remove(line);
-            this.lastMove = line;
-            isGameOngoing();
+        line.connectLine();
+        int scoreObtained = checkBoxFormed(line);
+        increaseCurrentScore(scoreObtained);
+        if (scoreObtained == 0) {
+            lastGameStatus = gameStatus;
+            gameStatus = gameStatus.equals(GameStatus.Player1Turn) ? GameStatus.Player2Turn : GameStatus.Player1Turn;
         }
+        avlLines.remove(line);
+        this.lastMove = line;
+        isGameOngoing();
     }
 
     public void updateGameStatus() { // returns 0 if tie, 1 if player 1 won, 2 if player 2 won. i
@@ -130,7 +128,6 @@ public class AIBoard {
             secondScore += scoreObtained;
         }
     }
-
     public List<AIBoard> getAvlNextMoves() {
         List<AIBoard> avlMoves = new ArrayList<>();
         for(int i=0;i<avlLines.size();i++) {
@@ -179,4 +176,5 @@ public class AIBoard {
     public ModelLine getLastMove() {return lastMove;}
     public GameStatus getLastGameStatus() {return lastGameStatus;}
     public int getScoreDifference() {return secondScore-firstScore;}
+
 }

@@ -16,16 +16,33 @@ public class ModelLine {
     }
 
     public ModelLine copy() {
-        ModelLine newLine = new ModelLine(row,column,isHorizontal,isConnected);
+        ModelLine newLine = new ModelLine(row, column, isHorizontal, isConnected);
         return newLine;
     }
 
     // getters
-    public int getColumn() {return column;}
-    public int getRow() {return row;}
-    public boolean isConnected() {return isConnected;}
-    public boolean isHorizontal() {return isHorizontal;}
+    public int getColumn() {
+        return column;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public boolean isConnected() {
+        return isConnected;
+    }
+
+    public boolean isHorizontal() {
+        return isHorizontal;
+    }
 
     // setters
-    public void connectLine() {this.isConnected = true;}
+    public void connectLine() {
+        this.isConnected = true;
+    }
+
+    public void disconnectLine() {
+        this.isConnected = false;
+    }
 }

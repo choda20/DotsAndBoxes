@@ -1,7 +1,7 @@
 package com.example.dotsandboxes.AI;
 
 import com.example.dotsandboxes.model.classes.ModelLine;
-import javafx.util.Pair;
+
 
 import java.time.Instant;
 import java.util.Random;
@@ -30,7 +30,7 @@ public class MCTS {
 
             //EXPAND
             MCTSNode selected = promisingNode;
-            if (selected.getStatus().equals(GameStatus.Player1Turn) || selected.getStatus().equals(GameStatus.Player2Turn)) {
+            if (selected.getBoard().isGameOngoing()) {
                 selected = expandNodeAndReturnRandom(promisingNode);
             }
 
@@ -43,7 +43,7 @@ public class MCTS {
         MCTSNode best = tree.getChildWithMaxScore();
         Instant end = Instant.now();
         long milis = end.toEpochMilli() - start.toEpochMilli();
-        ModelLine move = best.getMove();
+        ModelLine move = best.getBoard().getLastMove();
 
         System.out.println("Did " + counter + " expansions/simulations within " + milis + " milis");
         System.out.println("Best move scored " + best.getChildWithMaxScore() + " and was visited " + best.getVisits() + " times");
@@ -55,15 +55,18 @@ public class MCTS {
     private MCTSNode expandNodeAndReturnRandom(MCTSNode node) {
         MCTSNode result = node;
         MCTSNode child;
+        AIBoard board = node.getBoard();
         Random generator = new Random();
 
-        for (AIBoard move : gameBoard.getAvlNextMoves()) {
-            child = new MCTSNode(move);
-            child.parent = node;
-            node.addChild(child);
-            if (move.leavesOpenBox()) {
+
+        for (AIBoard move : board.getAvlNextMoves()) {
+            child = new MCTSNode(gameBoard);
+            if (move.leavesBoxOpen().getKey()) {
                 child.setScore(Integer.MIN_VALUE);
             }
+            child.parent = node;
+            node.addChild(child);
+
             result = child;
         }
         int random = generator.nextInt(node.getChildren().size());
@@ -105,7 +108,7 @@ public class MCTS {
             child = new MCTSNode(move);
             child.parent = node;
             node.addChild(child);
-            if (move.leavesOpenBox()) {
+            if (move.leavesBoxOpen().getKey()) {
                 child.setScore(Integer.MIN_VALUE);
             }
             node = child;
@@ -122,12 +125,4 @@ public class MCTS {
         return node;
     }
 
-    private void adjustScore(MCTSNode node) {
-        Pair<Boolean,int[]> moveResult = node.getBoard().leavesBoxOpen();
-        if (moveResult.getKey()) {
-            node.setScore(Integer.MIN_VALUE);
-        }
-        if (node.getBoard().hasOpenBox())
-            node.setScore(Integer.MAX_VALUE);
-    }
 }
