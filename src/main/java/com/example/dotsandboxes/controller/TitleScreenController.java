@@ -26,8 +26,8 @@ public class TitleScreenController {
         this.view = view;
         this.stage = stage;
 
-        setButtonActions(view.getHVH(),view.getHVA(),view.getAVA());
-        setButtonStyles(new Button[]{view.getHVH(),view.getHVA(),view.getAVA()});
+        setButtonActions(view.getHVH(),view.getHVA());
+        setButtonStyles(new Button[]{view.getHVH(),view.getHVA()});
         setLabelStyle(view.getTitle());
         view.start(stage); // starts the application
     }
@@ -52,7 +52,7 @@ public class TitleScreenController {
             buttons[i].setStyle("-fx-background-color: radial-gradient(radius 50%, #FF3B61, #FE8373); -fx-background-radius: 50px; -fx-text-fill: white; -fx-font-size: 17;");
         }
     }
-    private void setButtonActions(Button HVH, Button HVA, Button AVA) { // sets up button reactions to being pressed
+    private void setButtonActions(Button HVH, Button HVA) { // sets up button reactions to being pressed
         HVH.setOnAction(buttonEvent -> {
             try {
                 handleHVH();
@@ -64,14 +64,6 @@ public class TitleScreenController {
         HVA.setOnAction(buttonEvent -> {
             try {
                 handleHVA();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        AVA.setOnAction(buttonEvent -> {
-            try {
-                handleAVA();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -88,12 +80,6 @@ public class TitleScreenController {
     private void handleHVA() throws Exception {
         model.setGameType(GameType.HumanVsAI);
         model.setFirst(new HumanPlayer());
-        model.setSecond(new AIPlayer());
-        moveToSettings();
-    }
-    private void handleAVA() throws Exception {
-        model.setGameType(GameType.AIVsAI);
-        model.setFirst(new AIPlayer());
         model.setSecond(new AIPlayer());
         moveToSettings();
     }

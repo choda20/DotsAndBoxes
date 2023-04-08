@@ -27,7 +27,7 @@ public class AIPlayer extends Player implements PropertyChangeListener {
     public Pair<Point, LineType> play()  {
         System.out.println("Board before MTCS: ");
         printBoard();
-        moveAlgorithm = new MCTS(new AIBoard(model),100, PlayerNumber.second);
+        moveAlgorithm = new MCTS(new AIBoard(model),5000);
         ModelLine move = moveAlgorithm.MCTSCalc();
         return new Pair<Point,LineType>(new Point(move.getRow(),move.getColumn()),move.isHorizontal() ? LineType.horizontal : LineType.vertical);
     }

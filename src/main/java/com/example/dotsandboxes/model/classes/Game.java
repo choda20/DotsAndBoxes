@@ -41,7 +41,7 @@ public class Game {
         turn = turn == PlayerNumber.first ? PlayerNumber.second : PlayerNumber.first;
     } // moves to next turn
 
-    public MoveResult performMove(int row, int column, LineType lineType) throws CloneNotSupportedException {
+    public void performMove(int row, int column, LineType lineType) throws CloneNotSupportedException {
         ModelLine[][] lines = lineType.equals(LineType.horizontal) ? gameBoard.getHorizontalLines() : gameBoard.getVerticalLines();
         ModelLine line = lines[row][column];
         if (!line.isConnected()) {
@@ -52,13 +52,11 @@ public class Game {
             PropertyChangeEvent event = new PropertyChangeEvent(this,"performMove",new Pair<ModelLine,PlayerNumber>(line,turn),result);
             if (scoreObtained == 0) {swapTurn();}
             pcs.firePropertyChange(event);
-            if (gameType.equals(GameType.HumanVsAI) && turn.equals(PlayerNumber.second)) {
+            if (gameType.equals(GameType.HumanVsAI) && turn.equals(PlayerNumber.second) && !result.equals(MoveResult.gameOver)) {
                 Pair<Point,LineType> move = getCurrent().play();
                 performMove(move.getKey().x,move.getKey().y,move.getValue());
             }
-            return result;
         }
-        return MoveResult.invalid;
     }
 
     public Pair<Integer,String> getWinner() { // returns 0 if somebody won, 1 if a tie occurred. if a tie occurs a blank name is returned, otherwise the winners name is returned

@@ -16,20 +16,18 @@ public class TitleScreen extends Application {
     private Label title; // window title
     private Button HVH; // button the enters a HVH game
     private Button HVA; // button the enters a HVA game
-    private Button AVA; // button the enters a AVA game
     private Background background;
 
     public TitleScreen(Background background) { // constructor
         this.title = new Label("Dots&Boxes");
         this.HVH = new Button("Human Vs Human");
         this.HVA = new Button("Human Vs Ai");
-        this.AVA = new Button("Ai Vs Ai");
         this.background = background;
     }
 
     @Override
     public void start(Stage stage) throws Exception { // sets up the window scene
-        VBox root = new VBox(title, HVH, HVA, AVA);
+        VBox root = new VBox(title, HVH, HVA);
         root.setAlignment(Pos.CENTER);
         root.setSpacing(10);
         root.setBackground(background);
@@ -49,6 +47,5 @@ public class TitleScreen extends Application {
     public Label getTitle() {return title;}
     public Button getHVH() {return HVH;}
     public Button getHVA() {return HVA;}
-    public Button getAVA() {return AVA;}
     public Background getBackground() {return background;}
 }

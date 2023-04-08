@@ -1,9 +1,7 @@
 package com.example.dotsandboxes.AI;
 
-import com.example.dotsandboxes.model.classes.Board;
 import com.example.dotsandboxes.model.classes.ModelLine;
-import com.example.dotsandboxes.model.enums.LineType;
-import com.example.dotsandboxes.model.enums.PlayerNumber;
+import javafx.util.Pair;
 
 import java.time.Instant;
 import java.util.Random;
@@ -11,12 +9,10 @@ import java.util.Random;
 public class MCTS {
     private final AIBoard gameBoard;
     private final int computations;
-    private final PlayerNumber player;
 
-    public MCTS(AIBoard gameBoard,int computations,PlayerNumber player) {
+    public MCTS(AIBoard gameBoard,int computations) {
         this.computations = computations;
         this.gameBoard = gameBoard;
-        this.player = player;
     }
 
     public ModelLine MCTSCalc() {
@@ -34,57 +30,56 @@ public class MCTS {
 
             //EXPAND
             MCTSNode selected = promisingNode;
-            if (selected.getBoard().getGameStatus().equals(AIGameStatus.GameInProgress)) {
+            if (selected.getStatus().equals(GameStatus.Player1Turn) || selected.getStatus().equals(GameStatus.Player2Turn)) {
                 selected = expandNodeAndReturnRandom(promisingNode);
             }
 
             //SIMULATE
-            AIGameStatus playoutResult = simulateLightPlayout(selected);
+            GameStatus playoutResult = simulateLightPlayout(selected);
 
             //PROPAGATE
             backPropagation(playoutResult, selected);
         }
         MCTSNode best = tree.getChildWithMaxScore();
-
         Instant end = Instant.now();
         long milis = end.toEpochMilli() - start.toEpochMilli();
-        ModelLine move = best.getBoard().getLastMove();
+        ModelLine move = best.getMove();
 
         System.out.println("Did " + counter + " expansions/simulations within " + milis + " milis");
         System.out.println("Best move scored " + best.getChildWithMaxScore() + " and was visited " + best.getVisits() + " times");
         System.out.println("Move was made at: " + move.getRow() + "," + move.getColumn() + " on horizontal line: " + move.isHorizontal());
-        best.printNode();
         return move;
     }
 
     // if node is already a leaf, return the leaf
     private MCTSNode expandNodeAndReturnRandom(MCTSNode node) {
         MCTSNode result = node;
-        AIBoard board = node.getBoard();
+        MCTSNode child;
         Random generator = new Random();
 
-        for (AIBoard move : board.getAvlNextMoves()) {
-            MCTSNode child = new MCTSNode(move);
+        for (AIBoard move : gameBoard.getAvlNextMoves()) {
+            child = new MCTSNode(move);
             child.parent = node;
             node.addChild(child);
-
+            if (move.leavesOpenBox()) {
+                child.setScore(Integer.MIN_VALUE);
+            }
             result = child;
         }
         int random = generator.nextInt(node.getChildren().size());
         return node.getChildren().get(random);
     }
 
-    private void backPropagation(AIGameStatus playerNumber, MCTSNode selected) {
+    private void backPropagation(GameStatus status, MCTSNode selected) {
         MCTSNode node = selected;
 
         while (node != null) { // look for the root
             node.incVisits();
-            if (node.getBoard().getLastPlayer().equals(playerNumber)) {
+            if (node.getBoard().getLastGameStatus().equals(status))
                 node.incScore();
-            }
-
             node = node.parent;
         }
+
     }
 
     /**
@@ -93,27 +88,29 @@ public class MCTS {
      * in contrast to using some heuristic
      *
      */
-
-    private AIGameStatus simulateLightPlayout(MCTSNode promisingNode) {
+    private GameStatus simulateLightPlayout(MCTSNode promisingNode) {
         MCTSNode node = new MCTSNode(promisingNode.getBoard());
         node.parent = promisingNode.parent;
-        AIGameStatus boardStatus = node.getBoard().getGameStatus();
+        GameStatus boardStatus = node.getBoard().getGameStatus();
 
-        if (boardStatus.equals(AIGameStatus.OpponentWon)) {
+        if (boardStatus.equals(GameStatus.Player1Won)) {
             node.parent.setScore(Integer.MIN_VALUE);
             return node.getBoard().getGameStatus();
         }
 
         AIBoard move;
         MCTSNode child;
-        while (node.getBoard().getGameStatus().equals(AIGameStatus.GameInProgress)) {
+        while (node.getBoard().getGameStatus().equals(GameStatus.Player1Turn) || node.getBoard().getGameStatus().equals(GameStatus.Player2Turn)) {
             move = node.getBoard().getRandomMove();
             child = new MCTSNode(move);
             child.parent = node;
             node.addChild(child);
-
+            if (move.leavesOpenBox()) {
+                child.setScore(Integer.MIN_VALUE);
+            }
             node = child;
         }
+        node.setScore(node.getBoard().getScoreDifference());
         return node.getBoard().getGameStatus();
     }
 
@@ -123,5 +120,14 @@ public class MCTS {
             node = UCT.findBestNodeWithUCT(node);
         }
         return node;
+    }
+
+    private void adjustScore(MCTSNode node) {
+        Pair<Boolean,int[]> moveResult = node.getBoard().leavesBoxOpen();
+        if (moveResult.getKey()) {
+            node.setScore(Integer.MIN_VALUE);
+        }
+        if (node.getBoard().hasOpenBox())
+            node.setScore(Integer.MAX_VALUE);
     }
 }
