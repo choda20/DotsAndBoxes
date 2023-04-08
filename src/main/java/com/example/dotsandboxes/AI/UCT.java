@@ -4,13 +4,12 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class UCT {
-    public static double uctValue(
-            int totalVisit, double nodeWinScore, int nodeVisit) {
+    public static double uctValue(int totalVisit, double nodeWinScore, int nodeVisit) {
         if (nodeVisit == 0) {
-            return Integer.MAX_VALUE;
+            return 0;
         }
         return ((double) nodeWinScore / (double) nodeVisit)
-                + 1.41 * Math.sqrt(Math.log(totalVisit) / (double) nodeVisit);
+                + (1.41 * Math.sqrt(Math.log(totalVisit) / (double) nodeVisit));
     }
 
     public static MCTSNode findBestNodeWithUCT(MCTSNode node) {

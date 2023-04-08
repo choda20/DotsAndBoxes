@@ -25,9 +25,7 @@ public class AIPlayer extends Player implements PropertyChangeListener {
         this.model = new AIBoard();
     }
     public Pair<Point, LineType> play()  {
-        System.out.println("Board before MTCS: ");
-        printBoard();
-        moveAlgorithm = new MCTS(new AIBoard(model),5000);
+        moveAlgorithm = new MCTS(new AIBoard(model),2500);
         ModelLine move = moveAlgorithm.MCTSCalc();
         return new Pair<Point,LineType>(new Point(move.getRow(),move.getColumn()),move.isHorizontal() ? LineType.horizontal : LineType.vertical);
     }
@@ -40,19 +38,5 @@ public class AIPlayer extends Player implements PropertyChangeListener {
         model.performMove(changedLine.getRow(),changedLine.getColumn(),changedLine.isHorizontal() ? LineType.horizontal : LineType.vertical);
     }
 
-    public void printBoard() {
-        int j,k;
-        for (j=0;j<model.getGridSize();j++) {
-            for (k=0;k<model.getGridSize()-1;k++) {
-                System.out.print(model.getHorizontalLines()[j][k].isConnected() + " ");
-            }
-            System.out.println();
-            for (k=0;k<model.getGridSize()-1;k++) {
-                System.out.print(model.getVerticalLines()[j][k].isConnected() + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
     public AIBoard getModel() {return model;}
 }

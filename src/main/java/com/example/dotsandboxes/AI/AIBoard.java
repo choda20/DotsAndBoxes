@@ -33,7 +33,6 @@ public class AIBoard {
         this.gameStatus = board.getGameStatus();
         this.lastGameStatus = board.getLastGameStatus();
         this.generator = new Random();
-        this.lastMove = board.getLastMove();
 
         this.avlLines = new ArrayList<>();
         this.horizontalLines = new ModelLine[gridSize][gridSize-1];

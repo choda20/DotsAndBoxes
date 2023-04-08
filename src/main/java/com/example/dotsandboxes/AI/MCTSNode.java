@@ -15,7 +15,9 @@ public class MCTSNode {
     MCTSNode parent = null;
 
     public MCTSNode(AIBoard initBoard) {
-        this.board = new AIBoard(initBoard);
+        this.board = initBoard;
+        this.visits = 0;
+        this.score = 0;
     }
 
     void addChild(MCTSNode node) {
