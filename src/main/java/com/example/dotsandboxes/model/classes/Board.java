@@ -1,7 +1,5 @@
 package com.example.dotsandboxes.model.classes;
-import javafx.util.Pair;
-import java.util.ArrayList;
-import java.util.List;
+
 
 
 public class Board {
@@ -20,7 +18,7 @@ public class Board {
 
     /**
      * function that creates all the lines in the game based on the gridSize parameter
-     * run time O(n*(n-1)) when n = gridSize, and 2(n*(n-1)) is the total amount of lines
+     * run time O(n/2) when n = total amount of lines in the game
      * @param gridSize
      */
     private void initializeLines(int gridSize) {

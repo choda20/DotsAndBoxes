@@ -14,12 +14,12 @@ import java.beans.PropertyChangeSupport;
 
 
 public class Game {
-    private PropertyChangeSupport pcs; // the observer
-    Player first; // player 1
-    Player second; // player 2
-    PlayerNumber turn; // represents the current player, first for first and second for second
-    GameType gameType; // represents the type of the game(HVH,HVA,AVA)
-    Board gameBoard; // the board
+    private PropertyChangeSupport pcs; // variable
+    private Player first; // represents player 1
+    private Player second; //represents player 2
+    private PlayerNumber turn; // represents the current player, first for first and second for second
+    private GameType gameType; // represents the type of the game(HVH,HVA,AVA)
+    private Board gameBoard; //represents the board
 
     public Game() {
         pcs = new PropertyChangeSupport(this);
