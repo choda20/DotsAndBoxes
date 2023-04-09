@@ -228,9 +228,7 @@ public class AIBoard {
     public int getGridSize() {return horizontalLines.length;}
     public ModelLine getLastMove() {return lastMove;}
     public int getCurrentPlayer() {return currentPlayer;}
-    public List<ModelLine> getOkLines() {return okLines;}
-    public List<ModelLine> getWorstLines() {return worstLines;}
-    public List<ModelLine> getBestLines() {return bestLines;}
+
 
     public int getScoreDifference() {return secondScore-firstScore;}
     public List<ModelLine> getBestMoves() {

@@ -15,11 +15,7 @@ import java.beans.PropertyChangeListener;
 public class AIPlayer extends Player implements PropertyChangeListener {
     AIBoard model;
     MCTS moveAlgorithm;
-    public AIPlayer(String name,int score) {
-        this.score = score;
-        this.name = name;
-        this.model = new AIBoard();
-    }
+
     public AIPlayer() {
         this.score = 0;
         this.model = new AIBoard();

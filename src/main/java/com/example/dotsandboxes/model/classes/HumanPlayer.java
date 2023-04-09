@@ -14,5 +14,5 @@ public class HumanPlayer extends Player{
     public HumanPlayer() {
         this.score = 0;
     } // empty constructor
-    public Pair<Point, LineType> play(){return new Pair<Point,LineType>(new Point(-1,-1),LineType.horizontal);} // function that configures a human players move, will be implemented when AI is added
+    public Pair<Point, LineType> play(){return new Pair<Point,LineType>(new Point(-1,-1),LineType.horizontal);}
 }

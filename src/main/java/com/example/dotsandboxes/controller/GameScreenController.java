@@ -129,18 +129,6 @@ public class GameScreenController implements PropertyChangeListener {
         }
     }
 
-    public void disableAllLines() { // disables all mouse events
-        for (int i=0;i<gridSize;i++) {
-            for(int j=0;j<gridSize-1;j++) {
-                view.getHorizontalLines()[i][j].setOnMouseClicked(event -> {});
-                view.getHorizontalLines()[i][j].setOnMouseEntered(event -> {});
-                view.getHorizontalLines()[i][j].setOnMouseExited(event -> {});
-                view.getVerticalLines()[i][j].setOnMouseClicked(event -> {});
-                view.getVerticalLines()[i][j].setOnMouseEntered(event -> {});
-                view.getVerticalLines()[i][j].setOnMouseExited(event -> {});
-            }
-        }
-    }
     public void disableLine(Line line) {
         line.setOnMouseClicked(event -> {});
         line.setOnMouseEntered(event -> {});
@@ -165,7 +153,7 @@ public class GameScreenController implements PropertyChangeListener {
 
         view.getLabels()[1].setText(model.getFirst().getName() + "'s score: " + model.getFirst().getScore());
         view.getLabels()[2].setText(model.getSecond().getName() + "'s score:  " + model.getSecond().getScore());
-        if (result == MoveResult.gameOver) {
+        if (result.equals(MoveResult.gameOver)) {
             Pair<Integer,String> results = model.getWinner();
             if (results.getKey().intValue() == 0) {
                 view.getLabels()[0].setText(results.getValue() + " Won!");
