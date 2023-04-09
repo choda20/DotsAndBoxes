@@ -147,7 +147,7 @@ public class GameScreenController implements PropertyChangeListener {
 
         LinearGradient lineColor = changedLineAndOwner.getValue().equals(PlayerNumber.first) ? p1Gradient : p2Gradient;
         LinearGradient turnColor = model.getTurn().equals(PlayerNumber.first) ? p1Gradient : p2Gradient;
-        Line[][] lineMatrix = changedLine.isHorizontal() ? view.getHorizontalLines() : view.getVerticalLines();
+        Line[][] lineMatrix = changedLine.getIsHorizontal() ? view.getHorizontalLines() : view.getVerticalLines();
         lineMatrix[changedLine.getRow()][changedLine.getColumn()].setStroke(lineColor);
         disableLine(lineMatrix[changedLine.getRow()][changedLine.getColumn()]);
 

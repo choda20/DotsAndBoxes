@@ -78,16 +78,16 @@ public class AIBoard {
         int y = line.getColumn();
         int columnLength = horizontalLines[0].length;
         int score = 0;
-        if (line.isHorizontal()) {
-            if (x>0 && x < getGridSize() && y < columnLength && horizontalLines[x-1][y].isConnected() && verticalLines[y][x-1].isConnected() && verticalLines[y+1][x-1].isConnected())
+        if (line.getIsHorizontal()) {
+            if (x>0 && x < getGridSize() && y < columnLength && horizontalLines[x-1][y].getIsConnected() && verticalLines[y][x-1].getIsConnected() && verticalLines[y+1][x-1].getIsConnected())
                 score += 1;
-            if (x < columnLength && y < columnLength && horizontalLines[x+1][y].isConnected() && verticalLines[y][x].isConnected() && verticalLines[y+1][x].isConnected())
+            if (x < columnLength && y < columnLength && horizontalLines[x+1][y].getIsConnected() && verticalLines[y][x].getIsConnected() && verticalLines[y+1][x].getIsConnected())
                 score += 1;
         }
         else {
-            if (x > 0 && x < getGridSize() && y < columnLength && verticalLines[x-1][y].isConnected() && horizontalLines[y][x-1].isConnected() && horizontalLines[y+1][x-1].isConnected())
+            if (x > 0 && x < getGridSize() && y < columnLength && verticalLines[x-1][y].getIsConnected() && horizontalLines[y][x-1].getIsConnected() && horizontalLines[y+1][x-1].getIsConnected())
                 score += 1;
-            if(x < columnLength && y < columnLength && verticalLines[x+1][y].isConnected() && horizontalLines[y][x].isConnected() && horizontalLines[y+1][x].isConnected())
+            if(x < columnLength && y < columnLength && verticalLines[x+1][y].getIsConnected() && horizontalLines[y][x].getIsConnected() && horizontalLines[y+1][x].getIsConnected())
                 score += 1;
         }
         return score;
@@ -100,7 +100,7 @@ public class AIBoard {
     public void performMove(int row, int column, LineType lineType) {
         ModelLine[][] lines = lineType.equals(LineType.horizontal) ? horizontalLines : verticalLines;
         ModelLine line = lines[row][column];
-        if (!line.isConnected()) {
+        if (!line.getIsConnected()) {
             line.connectLine();
             int scoreObtained = checkBoxFormed(line);
             increaseCurrentScore(scoreObtained);
@@ -126,7 +126,7 @@ public class AIBoard {
         List<ModelLine> avlLines = getBestMoves();
         for(int i=0;i<avlLines.size();i++) {
             avlMoves.add(new AIBoard(this));
-            avlMoves.get(i).performMove(avlLines.get(i).getRow(),avlLines.get(i).getColumn(),avlLines.get(i).isHorizontal() ? LineType.horizontal : LineType.vertical);
+            avlMoves.get(i).performMove(avlLines.get(i).getRow(),avlLines.get(i).getColumn(),avlLines.get(i).getIsHorizontal() ? LineType.horizontal : LineType.vertical);
         }
 
         return avlMoves;
@@ -161,13 +161,13 @@ public class AIBoard {
         int y = line.getColumn();
         int columnLength = horizontalLines[0].length;
         int[] connectedLines = new int[2];
-        if (line.isHorizontal()) {
-            connectedLines[0] = (x>0 && x < getGridSize() && y < columnLength) ? ((horizontalLines[x-1][y].isConnected() ? 1 : 0) + (verticalLines[y+1][x-1].isConnected() ? 1 : 0) + (verticalLines[y][x-1].isConnected() ? 1 : 0)): 0;
-            connectedLines[1] = (x < columnLength && y < columnLength) ? (horizontalLines[x+1][y].isConnected() ? 1 : 0) + (verticalLines[y][x].isConnected() ? 1 : 0) + (verticalLines[y+1][x].isConnected() ? 1 : 0): 0;
+        if (line.getIsHorizontal()) {
+            connectedLines[0] = (x>0 && x < getGridSize() && y < columnLength) ? ((horizontalLines[x-1][y].getIsConnected() ? 1 : 0) + (verticalLines[y+1][x-1].getIsConnected() ? 1 : 0) + (verticalLines[y][x-1].getIsConnected() ? 1 : 0)): 0;
+            connectedLines[1] = (x < columnLength && y < columnLength) ? (horizontalLines[x+1][y].getIsConnected() ? 1 : 0) + (verticalLines[y][x].getIsConnected() ? 1 : 0) + (verticalLines[y+1][x].getIsConnected() ? 1 : 0): 0;
         }
         else {
-            connectedLines[0] = (x > 0 && x < getGridSize() && y < columnLength) ? ((verticalLines[x - 1][y].isConnected() ? 1 : 0) + (horizontalLines[y][x - 1].isConnected() ? 1 : 0) + (horizontalLines[y + 1][x - 1].isConnected() ? 1 : 0)) : 0;
-            connectedLines[1] = (x < columnLength && y < columnLength) ? (verticalLines[x + 1][y].isConnected() ? 1 : 0) + (horizontalLines[y][x].isConnected() ? 1 : 0) + (horizontalLines[y + 1][x].isConnected() ? 1 : 0) : 0;
+            connectedLines[0] = (x > 0 && x < getGridSize() && y < columnLength) ? ((verticalLines[x - 1][y].getIsConnected() ? 1 : 0) + (horizontalLines[y][x - 1].getIsConnected() ? 1 : 0) + (horizontalLines[y + 1][x - 1].getIsConnected() ? 1 : 0)) : 0;
+            connectedLines[1] = (x < columnLength && y < columnLength) ? (verticalLines[x + 1][y].getIsConnected() ? 1 : 0) + (horizontalLines[y][x].getIsConnected() ? 1 : 0) + (horizontalLines[y + 1][x].getIsConnected() ? 1 : 0) : 0;
         }
         return connectedLines;
     }
@@ -195,24 +195,24 @@ public class AIBoard {
         int x = line.getRow();
         int y = line.getColumn();
         int columnLength = horizontalLines[0].length;
-        if (line.isHorizontal()) {
+        if (line.getIsHorizontal()) {
             if (x>0 && x < getGridSize() && y < columnLength) {
                 List<ModelLine> otherLines = new ArrayList<>(Arrays.asList(new ModelLine[]{horizontalLines[x - 1][y], verticalLines[y + 1][x - 1], verticalLines[y][x - 1]}));
-                lines.add(otherLines.stream().filter(listLine -> listLine.isConnected() == false).collect(Collectors.toList()));
+                lines.add(otherLines.stream().filter(listLine -> listLine.getIsConnected() == false).collect(Collectors.toList()));
             }
             if (x < columnLength && y < columnLength) {
                 List<ModelLine> otherLines = new ArrayList<>(Arrays.asList(new ModelLine[]{horizontalLines[x+1][y], verticalLines[y][x], verticalLines[y+1][x]}));
-                lines.add(otherLines.stream().filter(listLine -> listLine.isConnected() == false).collect(Collectors.toList()));
+                lines.add(otherLines.stream().filter(listLine -> listLine.getIsConnected() == false).collect(Collectors.toList()));
             }
         }
         else {
             if (x > 0 && x < getGridSize() && y < columnLength) {
                 List<ModelLine> otherLines = new ArrayList<>(Arrays.asList(new ModelLine[]{verticalLines[x - 1][y], horizontalLines[y][x - 1], horizontalLines[y + 1][x - 1]}));
-                lines.add(otherLines.stream().filter(listLine -> listLine.isConnected() == false).collect(Collectors.toList()));
+                lines.add(otherLines.stream().filter(listLine -> listLine.getIsConnected() == false).collect(Collectors.toList()));
             }
             if (x < columnLength && y < columnLength) {
                 List<ModelLine> otherLines = new ArrayList<>(Arrays.asList(new ModelLine[]{verticalLines[x + 1][y], horizontalLines[y][x], horizontalLines[y + 1][x]}));
-                lines.add(otherLines.stream().filter(listLine -> listLine.isConnected() == false).collect(Collectors.toList()));
+                lines.add(otherLines.stream().filter(listLine -> listLine.getIsConnected() == false).collect(Collectors.toList()));
             }
         }
         for(int i=0;i<lines.size();i++)

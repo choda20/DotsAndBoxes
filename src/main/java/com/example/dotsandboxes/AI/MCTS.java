@@ -55,7 +55,7 @@ public class MCTS {
 
         System.out.println("Did " + counter + " expansions/simulations within " + milis + " milis");
         System.out.println("Best move scored " + best.getChildWithMaxScore() + " and was visited " + best.getVisits() + " times");
-        System.out.println("Move was made at: " + move.getRow() + "," + move.getColumn() + " on horizontal line: " + move.isHorizontal() + "\n");
+        System.out.println("Move was made at: " + move.getRow() + "," + move.getColumn() + " on horizontal line: " + move.getIsHorizontal() + "\n");
         return move;
     }
 
@@ -103,7 +103,7 @@ public class MCTS {
             bestMove = node.getBoard().getBestMove();
             move = bestMove.getValue();
             board = new AIBoard(new AIBoard(node.getBoard()));
-            board.performMove(move.getRow(),move.getColumn(),move.isHorizontal() ? LineType.horizontal : LineType.vertical);
+            board.performMove(move.getRow(),move.getColumn(),move.getIsHorizontal() ? LineType.horizontal : LineType.vertical);
             MCTSNode child = new MCTSNode(board);
             child.setScore(board.getScoreDifference());
             if (best) {

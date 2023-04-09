@@ -30,7 +30,7 @@ public class AIPlayer extends Player implements PropertyChangeListener {
     public Pair<Point, LineType> play()  {
         moveAlgorithm = new MCTS(new AIBoard(model),500);
         ModelLine move = moveAlgorithm.MCTSCalc();
-        return new Pair<Point,LineType>(new Point(move.getRow(),move.getColumn()),move.isHorizontal() ? LineType.horizontal : LineType.vertical);
+        return new Pair<Point,LineType>(new Point(move.getRow(),move.getColumn()),move.getIsHorizontal() ? LineType.horizontal : LineType.vertical);
     }
 
     /**
@@ -43,7 +43,7 @@ public class AIPlayer extends Player implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent evt) {
         Pair<ModelLine,PlayerNumber> changedLineAndOwner = (Pair<ModelLine,PlayerNumber>) evt.getOldValue();
         ModelLine changedLine = changedLineAndOwner.getKey();
-        model.performMove(changedLine.getRow(),changedLine.getColumn(),changedLine.isHorizontal() ? LineType.horizontal : LineType.vertical);
+        model.performMove(changedLine.getRow(),changedLine.getColumn(),changedLine.getIsHorizontal() ? LineType.horizontal : LineType.vertical);
     }
 
     // general getters

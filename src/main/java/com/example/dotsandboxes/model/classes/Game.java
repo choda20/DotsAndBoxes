@@ -55,7 +55,7 @@ public class Game {
     public void performMove(int row, int column, LineType lineType) {
         ModelLine[][] lines = lineType.equals(LineType.horizontal) ? gameBoard.getHorizontalLines() : gameBoard.getVerticalLines();
         ModelLine line = lines[row][column];
-        if (!line.isConnected()) {
+        if (!line.getIsConnected()) {
             line.connectLine();
             int scoreObtained = gameBoard.checkBoxFormed(line);
             getCurrent().setScore(getCurrent().getScore() + scoreObtained);

@@ -41,16 +41,16 @@ public class Board {
         int y = line.getColumn();
         int columnLength = horizontalLines[0].length;
         int score = 0;
-        if (line.isHorizontal()) {
-            if (x>0 && x < getGridSize() && y < columnLength && horizontalLines[x-1][y].isConnected() && verticalLines[y][x-1].isConnected() && verticalLines[y+1][x-1].isConnected())
+        if (line.getIsHorizontal()) {
+            if (x>0 && x < getGridSize() && y < columnLength && horizontalLines[x-1][y].getIsConnected() && verticalLines[y][x-1].getIsConnected() && verticalLines[y+1][x-1].getIsConnected())
                 score += 1;
-            if (x < columnLength && y < columnLength && horizontalLines[x+1][y].isConnected() && verticalLines[y][x].isConnected() && verticalLines[y+1][x].isConnected())
+            if (x < columnLength && y < columnLength && horizontalLines[x+1][y].getIsConnected() && verticalLines[y][x].getIsConnected() && verticalLines[y+1][x].getIsConnected())
                 score += 1;
         }
         else {
-            if (x > 0 && x < getGridSize() && y < columnLength && verticalLines[x-1][y].isConnected() && horizontalLines[y][x-1].isConnected() && horizontalLines[y+1][x-1].isConnected())
+            if (x > 0 && x < getGridSize() && y < columnLength && verticalLines[x-1][y].getIsConnected() && horizontalLines[y][x-1].getIsConnected() && horizontalLines[y+1][x-1].getIsConnected())
                 score += 1;
-            if(x < columnLength && y < columnLength && verticalLines[x+1][y].isConnected() && horizontalLines[y][x].isConnected() && horizontalLines[y+1][x].isConnected())
+            if(x < columnLength && y < columnLength && verticalLines[x+1][y].getIsConnected() && horizontalLines[y][x].getIsConnected() && horizontalLines[y+1][x].getIsConnected())
                 score += 1;
         }
         return score;
