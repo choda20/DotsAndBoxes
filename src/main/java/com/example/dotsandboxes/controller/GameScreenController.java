@@ -24,12 +24,18 @@ import java.beans.PropertyChangeListener;
 
 public class GameScreenController implements PropertyChangeListener {
     private Game model; // the game model
-    private GameScreen view; // the game screen view
+    private GameScreen view; // the screens view
     private int gridSize; // the grid size
-    private LinearGradient p1Gradient;
-    private LinearGradient p2Gradient;
+    private LinearGradient p1Gradient; // text gradient for player 1
+    private LinearGradient p2Gradient; // text gradient for player 2
 
-
+    /**
+     * partial constructor
+     * @param view the screen view containing all ui elements
+     * @param model the game model containing the game data
+     * @param stage the app windows in which the ui is displayed
+     * @throws Exception
+     */
     public GameScreenController(Game model, GameScreen view, Stage stage) throws Exception { // constructor
         this.model = model;
         this.view = view;

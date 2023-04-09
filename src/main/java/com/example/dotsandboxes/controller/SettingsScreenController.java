@@ -17,9 +17,17 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 public class SettingsScreenController implements PropertyChangeListener {
-    private SettingsScreen view; // screen view
-    private Game model; // game model
+    private SettingsScreen view; // the screens view
+    private Game model; // the game model
     private Stage stage; // the app window
+
+    /**
+     * full constructor
+     * @param view the screen view containing all ui elements
+     * @param model the game model containing the game data
+     * @param stage the app windows in which the ui is displayed
+     * @throws Exception
+     */
     public SettingsScreenController(SettingsScreen view, Game model, Stage stage) throws Exception { // constructor
         this.model = model;
         this.stage = stage;

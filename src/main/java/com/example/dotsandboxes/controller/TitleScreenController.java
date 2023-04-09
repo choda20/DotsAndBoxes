@@ -18,9 +18,18 @@ import javafx.stage.Stage;
 
 
 public class TitleScreenController {
-    private TitleScreen view; // screen view
-    private Game model; // game model
+    private TitleScreen view; // the screens view
+    private Game model; // the game model
     private Stage stage; // the app window
+
+    /**
+     * full constructor. sets up button actions for all view buttons, styles all view buttons and labels,
+     * and shows the app window
+     * @param view the screen view containing all ui elements
+     * @param model the game model containing the game data
+     * @param stage the app windows in which the ui is displayed
+     * @throws Exception
+     */
     public TitleScreenController(TitleScreen view, Game model, Stage stage) throws Exception { // constructor
         this.model = model;
         this.view = view;
@@ -33,10 +42,19 @@ public class TitleScreenController {
     }
 
 
+    /**
+     * function that moves the stage to the settings screen(moves to the settings screen)
+     * @throws Exception
+     */
     private void moveToSettings() throws Exception { // moves the app to the settings screen after a button was pressed
         SettingsScreen settingsView = new SettingsScreen(view.getBackground());
         SettingsScreenController settingsController = new SettingsScreenController(settingsView,model,stage);
     }
+
+    /**
+     * function that styles the view title
+     * @param title the title to be styled
+     */
     private void setLabelStyle(Label title) { // styles the screen title
         title.setAlignment(Pos.CENTER);
         title.setStyle("-fx-font-size: 100px;");
@@ -44,6 +62,11 @@ public class TitleScreenController {
         LinearGradient gradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
         title.setTextFill(gradient);
     }
+
+    /**
+     * function that styles all view buttons
+     * @param buttons array of all view buttons
+     */
     private void setButtonStyles(Button[] buttons) { // styles the Buttons on screen
         for (int i=0; i<buttons.length;i++) {
             buttons[i].setPadding(new Insets(10, 20, 10, 20));
@@ -52,6 +75,12 @@ public class TitleScreenController {
             buttons[i].setStyle("-fx-background-color: radial-gradient(radius 50%, #FF3B61, #FE8373); -fx-background-radius: 50px; -fx-text-fill: white; -fx-font-size: 17;");
         }
     }
+
+    /**
+     * function that links button to their respective on-tap function
+     * @param HVH human vs human game button
+     * @param HVA human vs AI game button
+     */
     private void setButtonActions(Button HVH, Button HVA) { // sets up button reactions to being pressed
         HVH.setOnAction(buttonEvent -> {
             try {
@@ -70,13 +99,22 @@ public class TitleScreenController {
         });
     }
 
-    // functions that configures the buttons to set the model game type, and change the screen to the settings screen
+    /**
+     * function that activates when human vs human button is pressed,
+     * sets up the model to a HVH game and moves to the settings screen
+     * @throws Exception
+     */
     private void handleHVH() throws Exception {
         model.setGameType(GameType.HumanVsHuman);
         model.setFirst(new HumanPlayer());
         model.setSecond(new HumanPlayer());
         moveToSettings();
     }
+    /**
+     * function that activates when human vs AI button is pressed,
+     * sets up the model to a HVA game and moves to the settings screen
+     * @throws Exception
+     */
     private void handleHVA() throws Exception {
         model.setGameType(GameType.HumanVsAI);
         model.setFirst(new HumanPlayer());
