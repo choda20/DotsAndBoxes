@@ -14,41 +14,52 @@ import java.beans.PropertyChangeSupport;
 
 
 public class Game {
-    private PropertyChangeSupport pcs; // variable
+    private PropertyChangeSupport pcs; // holds the observer that is used to notify listeners when changes in the board occur
     private Player first; // represents player 1
     private Player second; //represents player 2
     private PlayerNumber turn; // represents the current player, first for first and second for second
     private GameType gameType; // represents the type of the game(HVH,HVA,AVA)
     private Board gameBoard; //represents the board
 
+    /**
+     * empty constructor that initializes the observer and turn
+     */
     public Game() {
         pcs = new PropertyChangeSupport(this);
         this.turn = PlayerNumber.first;
     } // empty constructor
 
-    public Game(Player first, Player second, GameType gameType, Board gameBoard) { // full constructor
-        this.gameType = gameType;
-        this.first = first;
-        this.second = second;
-        this.gameBoard = gameBoard;
-        this.turn = PlayerNumber.first;
-    }
-
-    private boolean isGameOver() { // returns true if the game is in progress, otherwise false
+    /**
+     * function that determines if the game has yet to end
+     * @return true if the game is in progress, otherwise false
+     */
+    private boolean isGameInProgress() { // returns true if the game is in progress, otherwise false
         return !((first.getScore() + second.getScore()) == (gameBoard.getGridSize()-1)*(gameBoard.getGridSize()-1));}
 
+    /**
+     * function that swaps the current turn, practically moves to the next turn
+     */
     private void swapTurn() {
         turn = turn == PlayerNumber.first ? PlayerNumber.second : PlayerNumber.first;
-    } // moves to next turn
+    }
 
-    public void performMove(int row, int column, LineType lineType) throws CloneNotSupportedException {
+    /**
+     * function that registers a move to the game board, and notifies all listeners
+     * that it was made. additionally, if an AI player exists it tells it to perform a move on
+     * its turn and calls itself recursively to perform it.
+     * @param row the row the line is in
+     * @param column the column the line is in
+     * @param lineType represents the type of line the move was made on
+     *                 (used to determine which line array to use)
+     */
+    public void performMove(int row, int column, LineType lineType) {
         ModelLine[][] lines = lineType.equals(LineType.horizontal) ? gameBoard.getHorizontalLines() : gameBoard.getVerticalLines();
         ModelLine line = lines[row][column];
         if (!line.isConnected()) {
             line.connectLine();
             int scoreObtained = gameBoard.checkBoxFormed(line);
             getCurrent().setScore(getCurrent().getScore() + scoreObtained);
-            MoveResult result = !isGameOver() ? MoveResult.gameOver : MoveResult.valid;
+            MoveResult result = !isGameInProgress() ? MoveResult.gameOver : MoveResult.valid;
             PropertyChangeEvent event = new PropertyChangeEvent(this,"performMove",new Pair<ModelLine,PlayerNumber>(line,turn),result);
             if (scoreObtained == 0) {swapTurn();}
             pcs.firePropertyChange(event);
@@ -59,7 +70,12 @@ public class Game {
         }
     }
 
-    public Pair<Integer,String> getWinner() { // returns 0 if somebody won, 1 if a tie occurred. if a tie occurs a blank name is returned, otherwise the winners name is returned
+    /**
+     * function that is used to get the current winner of the game (can be called to see which player is leading)
+     * @return a Pair that hold an integer that represents the outcome of the game(0 if somebody won, 1 if a tie occurred)
+     * as well as a String with the Winners name(if there is a tie a blank name is returned)
+     */
+    public Pair<Integer,String> getWinner() {
         if (first.getScore() == second.getScore()) {
             return new Pair<>(1,"");
         }
@@ -69,6 +85,15 @@ public class Game {
         return new Pair<>(0,second.getName());
     }
 
+    /**
+     * function that gets all setting form field inputs and validates them.
+     * if the inputs are valid it enters them to their respective variable.
+     * @param p1Name the entered name of the first player, can be anything as long as it is not
+     *               an empty string
+     * @param p2Name the entered name of the second player, can be anything as long as it is not
+     *      *               an empty string
+     * @param gridSize the entered gridSize, can be a number ranging from 2-10 (included)
+     */
     public void insertNamesAndGrid(String p1Name,String p2Name,String gridSize) {
         boolean valid = true;
         int number;
@@ -90,11 +115,21 @@ public class Game {
         PropertyChangeEvent event = new PropertyChangeEvent(this,"insertNamesAndGrid","",valid);
         pcs.firePropertyChange(event);
     }
-    // registers and deletes observer listeners
+
+    /**
+     * registers a new listener to the observer notify list
+     * @param listener
+     */
     public void addPropertyChangeListener(PropertyChangeListener listener) {pcs.addPropertyChangeListener(listener);}
+
+    /**
+     * removes a listener from the observer notify list
+     * @param listener
+     */
     public void removePropertyChangeListener(PropertyChangeListener listener) {pcs.removePropertyChangeListener(listener);}
 
-    // getters
+
+    //general getters
     public PlayerNumber getTurn() {return turn;}
     public GameType getGameType() {return gameType;}
     public Board getGameBoard() {return gameBoard;}
@@ -102,7 +137,7 @@ public class Game {
     public Player getFirst() {return first;}
     public Player getCurrent() {return turn == PlayerNumber.first ? first: second;}
 
-    // setters
+    //general setters
     public void setGameType(GameType type) {this.gameType = type;}
     public void setGameBoard(Board gameBoard) {this.gameBoard = gameBoard;}
     public void setFirst(Player first) {this.first = first;}
