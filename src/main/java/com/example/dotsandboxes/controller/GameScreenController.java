@@ -30,7 +30,8 @@ public class GameScreenController implements PropertyChangeListener {
     private LinearGradient p2Gradient; // text gradient for player 2
 
     /**
-     * partial constructor
+     * partial constructor that initializes all class fields, adds the object as a listener to the
+     * model(also adds the AI if it is HVA), styles and configures all view elements and shows the app window
      * @param view the screen view containing all ui elements
      * @param model the game model containing the game data
      * @param stage the app windows in which the ui is displayed
@@ -52,12 +53,18 @@ public class GameScreenController implements PropertyChangeListener {
 
         setLabels(view.getLabels()); // initializes labels
         buildViewBoard(stage.getWidth(),stage.getHeight());
-        enableAllLines();
+        setMouseSettings(view.getHorizontalLines(),LineType.horizontal);
+        setMouseSettings(view.getVerticalLines(),LineType.vertical);
 
         view.start(stage);
 
     }
 
+    /**
+     * function that configures line reactions to being pressed, hovered on, and hover on exited.
+     * @param lines 2D array of lines
+     * @param lineType the type of lines in the array
+     */
     public void setMouseSettings(Line[][] lines, LineType lineType) { // sets up line reactions to mouse events
         for (int i=0;i<gridSize;i++) {
             for (int j = 0; j < gridSize - 1; j++) {
@@ -66,11 +73,7 @@ public class GameScreenController implements PropertyChangeListener {
                 final int row = i,column = j;
                 lines[i][j].setOnMouseClicked((mouseEvent -> {
                     Line clickedLine = (Line) mouseEvent.getSource();
-                    try {
-                        registerMove(clickedLine,row,column,lineType);
-                    } catch (CloneNotSupportedException e) {
-                        throw new RuntimeException(e);
-                    }
+                    registerMove(clickedLine,row,column,lineType);
                 }));
                 lines[i][j].setOnMouseEntered((mouseEvent -> {
                     Line hoveredLine = (Line) mouseEvent.getSource();
@@ -88,11 +91,26 @@ public class GameScreenController implements PropertyChangeListener {
             }
         }
     }
-    public void registerMove(Line clickedLine, int row, int column, LineType lineType) throws CloneNotSupportedException {
+
+    /**
+     * function that activates when an unconnected line is pressed,
+     * the function disable all line reactions and preforms a move on the line
+     * in the game model
+     * @param clickedLine the line that was clicked on
+     * @param row the lines row in a line array
+     * @param column the lines column in a line array
+     * @param lineType the type of the line
+     */
+    public void registerMove(Line clickedLine, int row, int column, LineType lineType) {
         disableLine(clickedLine);
         model.performMove(row,column,lineType);
     }
-    public void setLabels(Label[] labels) { // configures the screen labels
+
+    /**
+     * function that configures all on-screen labels
+     * @param labels all view labels
+     */
+    public void setLabels(Label[] labels) {
         // shows current player
         labels[0] = new Label();
         labels[0].setText(model.getCurrent().getName() + "'s turn");
@@ -115,36 +133,45 @@ public class GameScreenController implements PropertyChangeListener {
         labels[2].setTextFill(p2Gradient);
     }
 
+    /**
+     * function that configures all view matrix(sets their location on the screen)
+     * @param width screen width
+     * @param height screen height
+     */
     public void buildViewBoard(double width,double height) { // initializes the game board
         double constraint = Math.min(width,height);
         double spaceBetweenDots = (constraint/gridSize)/2;
         double startingHeight = height/2;
         double startingWidth = width/4;
         double dotRadius = 7.5;
-        initializeLinesDots(startingWidth,startingHeight,spaceBetweenDots,dotRadius);
-    }
-    // matrix initializers
-    public void initializeLinesDots(double startingX,double startingY, double SBD,double dotRadius) {
         for (int i=0;i<gridSize;i++) {
             for (int j = 0; j < gridSize-1; j++) {
-                view.getHorizontalLines()[i][j] = new Line(startingX+(j*SBD)+dotRadius,startingY+(i*SBD),startingX+((j+1)*SBD)- dotRadius,startingY+((i)*SBD));
-                view.getVerticalLines()[i][j] = new Line(startingX+(i*SBD),startingY+(j*SBD)+dotRadius,startingX+(i*SBD),startingY+((j+1)*SBD)-dotRadius);
-                view.getDots()[i][j] = new Circle(startingX+(j*SBD),startingY+(i*SBD),dotRadius);
+                view.getHorizontalLines()[i][j] = new Line(startingWidth+(j*spaceBetweenDots)+dotRadius,startingHeight+(i*spaceBetweenDots),startingWidth+((j+1)*spaceBetweenDots)- dotRadius,startingHeight+((i)*spaceBetweenDots));
+                view.getVerticalLines()[i][j] = new Line(startingWidth+(i*spaceBetweenDots),startingHeight+(j*spaceBetweenDots)+dotRadius,startingWidth+(i*spaceBetweenDots),startingHeight+((j+1)*spaceBetweenDots)-dotRadius);
+                view.getDots()[i][j] = new Circle(startingWidth+(j*spaceBetweenDots),startingHeight+(i*spaceBetweenDots),dotRadius);
             }
-            view.getDots()[i][gridSize-1] = new Circle(startingX+((gridSize-1)*SBD),startingY+(i*SBD),dotRadius);
-        }
-    }
+            view.getDots()[i][gridSize-1] = new Circle(startingWidth+((gridSize-1)*spaceBetweenDots),startingHeight+(i*spaceBetweenDots),dotRadius);
+        }    }
 
+    /**
+     * function that disables all reactions for a line
+     * @param line the line to be disabled
+     */
     public void disableLine(Line line) {
         line.setOnMouseClicked(event -> {});
         line.setOnMouseEntered(event -> {});
         line.setOnMouseExited(event -> {});
     }
-    public void enableAllLines() {
-        setMouseSettings(view.getHorizontalLines(),LineType.horizontal);
-        setMouseSettings(view.getVerticalLines(),LineType.vertical);
-    }
 
+    /**
+     * function that activates when a move was made on the model board.
+     * the function updates the color of the clicked line, the on screen scores and turn.
+     * if the game eneded the function will update the turn text to show the result.
+     * @param evt A PropertyChangeEvent object describing the event source
+     *          and the property that has changed.
+     *          old value = Pair<ModelLine,PlayerNumber> the clicked line and who clicked it,
+     *          new value = the result of the line connection(if the game ended)
+     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         Pair<ModelLine,PlayerNumber> changedLineAndOwner = (Pair<ModelLine,PlayerNumber>) evt.getOldValue();

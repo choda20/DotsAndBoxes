@@ -22,7 +22,9 @@ public class SettingsScreenController implements PropertyChangeListener {
     private Stage stage; // the app window
 
     /**
-     * full constructor
+     * full constructor. styles all view elements, configures all fields and MoveToGame button and
+     * shows the app window. also adds itself as a listener to the model so it could get updated on
+     * input field validation results
      * @param view the screen view containing all ui elements
      * @param model the game model containing the game data
      * @param stage the app windows in which the ui is displayed
@@ -42,12 +44,22 @@ public class SettingsScreenController implements PropertyChangeListener {
         view.start(stage);
     }
 
+    /**
+     * configures textField fonts
+     * @param fields array containing all view textFields
+     */
     private void configureFontForFields(TextField[] fields) {
         for (int i=0;i<fields.length;i++) {
             fields[i].setStyle("-fx-font-size: 17px;");
         }
     }
 
+    /**
+     * styles all on screen labels
+     * @param title the window title
+     * @param inputFields array of all input fields
+     * @param errorText error text that shows up when validation fails
+     */
     private void setLabelStyle(Label title,Label[] inputFields,Label errorText) { // styles the labels on screen
         title.setAlignment(Pos.CENTER);
         title.setStyle("-fx-font-size: 75px;");
@@ -64,6 +76,10 @@ public class SettingsScreenController implements PropertyChangeListener {
         }
     }
 
+    /**
+     * configures the button used to send input field inputs to the model for validation
+     * @param MTG the button in question
+     */
     private void configureMoveToGame(Button MTG) {
         MTG.setPrefHeight(40);
         MTG.setPrefWidth(160);
@@ -71,6 +87,13 @@ public class SettingsScreenController implements PropertyChangeListener {
         MTG.setOnAction(actionEvent -> {model.insertNamesAndGrid(view.getP1Input(),view.getP2Input(),view.getGridInput());});
     }
 
+    /**
+     * function that activates after model validation, if the inputs are valid it will
+     * pass the stage to the game screen(move to it). if not, the error text will be shown.
+     * @param evt A PropertyChangeEvent object describing the event source
+     *          and the property that has changed.
+     *          old value = "", new value = true if inputs are valid, otherwise false
+     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getNewValue().equals(true)) {
