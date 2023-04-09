@@ -99,7 +99,7 @@ public class MCTS {
         ModelLine move;
         Random rand = new Random();
         boolean best = true;
-        while (node.getBoard().isGameOngoing() && node.getBoard().getAvlLines().size()>0) {
+        while (node.getBoard().isGameOngoing() && node.getBoard().getBestMoves().size()>0) {
             bestMove = node.getBoard().getBestMove();
             move = bestMove.getValue();
             board = new AIBoard(new AIBoard(node.getBoard()));
