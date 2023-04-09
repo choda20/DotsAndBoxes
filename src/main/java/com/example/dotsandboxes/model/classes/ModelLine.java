@@ -4,7 +4,7 @@ public class ModelLine {
     private int column; // represents the column the line is in inside a line array
     private int row; // represents the row the line is in inside a line array
     private boolean isHorizontal; // represent the type of the line(horizontal if true, vertical if false)
-    private boolean isConnected; // represents if the line is connected(true if yes, false otherwise) 
+    private boolean isConnected; // represents if the line is connected(true if yes, false otherwise)
 
     /**
      * full constructor

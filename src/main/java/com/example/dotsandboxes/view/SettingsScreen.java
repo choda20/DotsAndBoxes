@@ -1,7 +1,6 @@
 package com.example.dotsandboxes.view;
 
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -10,12 +9,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 
 public class SettingsScreen extends Application {
-    private Label title; // windows title
+    private Label title; // the screen title
     private Label errorText; // error text that shows up when the user enters invalid values
     private Label p1Name; // p1Field title
     private Label p2Name; // p2Field title
@@ -23,9 +21,13 @@ public class SettingsScreen extends Application {
     private TextField p1Field; // field that gets the name of the first player as an input
     private TextField p2Field; // field that gets the name of the second player as an input
     private TextField gridField; // field that gets the grid size as an input
-    private Button moveToGame; // moves the stage to the game screen
-    private Background background;
+    private Button moveToGame; // button that moves the stage to the game screen if all inputs are valid
+    private Background background; // background Image used by the screen
 
+    /**
+     * constructor that initializes all class variables
+     * @param background the background image used by the screen
+     */
     public SettingsScreen(Background background) { // constructor
         this.title = new Label("Settings");
         this.p1Name = new Label("Player 1 name: ");
@@ -39,6 +41,11 @@ public class SettingsScreen extends Application {
         this.background = background;
     }
 
+    /**
+     * function that sets up the app window and displays it to the user
+     * @param stage the app window
+     * @throws Exception
+     */
     public void start(Stage stage) throws Exception { // sets up the stage and shows the screen
         VBox root = new VBox();
         root.setAlignment(Pos.CENTER);
@@ -62,7 +69,7 @@ public class SettingsScreen extends Application {
         stage.show();
     }
 
-    // getters
+    //general getters
     public String getP1Input() {return p1Field.getText();}
     public String getP2Input() {return p2Field.getText();}
     public String getGridInput() {return gridField.getText();}
