@@ -97,15 +97,13 @@ public class MCTS {
     private int simulateLightPlayout(MCTSNode promisingNode) {
         MCTSNode node = promisingNode;
         AIBoard board;
-        Pair<Integer,ModelLine> bestMove;
-        ModelLine move;
+        ModelLine bestMove;
         Random rand = new Random();
         boolean best = true;
         while (node.getBoard().isGameOngoing() && node.getBoard().getBestMoves().size()>0) {
             bestMove = node.getBoard().getBestMove();
-            move = bestMove.getValue();
             board = new AIBoard(new AIBoard(node.getBoard()));
-            board.performMove(move.getRow(),move.getColumn(),move.getIsHorizontal() ? LineType.horizontal : LineType.vertical);
+            board.performMove(bestMove.getRow(),bestMove.getColumn(),bestMove.getIsHorizontal() ? LineType.horizontal : LineType.vertical);
             MCTSNode child = new MCTSNode(board);
             child.setScore(board.getScoreDifference());
             if (best) {

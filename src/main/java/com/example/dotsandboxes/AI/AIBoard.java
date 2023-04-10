@@ -89,7 +89,7 @@ public class AIBoard {
      * @param type the line type(horizontal or vertical), used to determine which line array to use
      * @param lists an array of the old board line lists
      */
-    public void addLineToList(ModelLine line,LineType type,List<ModelLine>[] lists) {
+    private void addLineToList(ModelLine line,LineType type,List<ModelLine>[] lists) {
         ModelLine[][] lineArray = type.equals(LineType.horizontal) ? horizontalLines: verticalLines;
         if (lists[0].contains(line))
             okLines.add(lineArray[line.getRow()][line.getColumn()]);
@@ -153,7 +153,7 @@ public class AIBoard {
      * players score. used to increase the players score after a move.
      * @param scoreObtained to amount of points to increase the players score by
      */
-    public void increaseCurrentScore(int scoreObtained) {
+    private void increaseCurrentScore(int scoreObtained) {
         if (currentPlayer == 0) {
             firstScore += scoreObtained;
         }
@@ -200,7 +200,7 @@ public class AIBoard {
      * the moves are scored by the function evaluateMove.
      * @return
      */
-    public Pair<Integer,ModelLine> getBestMove() {
+    public ModelLine getBestMove() {
         List<ModelLine> avlLines = getBestMoves();
         ModelLine bestMove = avlLines.get(0);
         int bestScore = - 1, score;
@@ -213,7 +213,7 @@ public class AIBoard {
             }
         }
         removeLine(bestMove);
-        return new Pair<Integer, ModelLine>(bestScore,bestMove);
+        return bestMove;
     }
 
     /**
@@ -240,7 +240,7 @@ public class AIBoard {
      * if the value of an index is 1 it means the box was connected by the line,
      * however if it is 0 it means the line did not connect the box.
      */
-    public int[] checkLeftBoxes(ModelLine line) {
+    private int[] checkLeftBoxes(ModelLine line) {
         int x = line.getRow();
         int y = line.getColumn();
         int columnLength = horizontalLines[0].length;
@@ -262,7 +262,7 @@ public class AIBoard {
      * the line connection.
      * @param line the line that was connected
      */
-    public void adjustLinesBasedOnMove(ModelLine line) {
+    private void adjustLinesBasedOnMove(ModelLine line) {
         removeLine(line);
         List<List<ModelLine>> lines = getUnconnectedLines(line);
 
@@ -291,7 +291,7 @@ public class AIBoard {
      *      * and each column represents a line in the box that is not connected and needs to be moved
      *      * to a new available line list after the move.
      */
-    public List<List<ModelLine>> getUnconnectedLines(ModelLine line) {
+    private List<List<ModelLine>> getUnconnectedLines(ModelLine line) {
         List<List<ModelLine>> lines = new ArrayList<List<ModelLine>>();
         int x = line.getRow();
         int y = line.getColumn();
@@ -326,7 +326,7 @@ public class AIBoard {
      * would be pointless when you can just remove the line from all lists.
      * @param line the line to be removed
      */
-    public void removeLine(ModelLine line) {
+    private void removeLine(ModelLine line) {
         okLines.remove(line);
         bestLines.remove(line);
         worstLines.remove(line);
