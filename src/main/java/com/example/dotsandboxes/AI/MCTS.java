@@ -10,11 +10,16 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class MCTS {
-    private final AIBoard gameBoard;
-    private final int playerId;
-    private final int opponentId;
-    private final int computations;
+    private final AIBoard gameBoard; // the game board the algorithm should pick a move for
+    private final int playerId; // the id of the player who asked for a move
+    private final int opponentId; // the id of the opponent
+    private final int computations; // the amount of computations the algorithm is allowed
 
+    /**
+     * full constructor that initializes all class fields
+     * @param gameBoard the current game board
+     * @param computations the amount of computations allowed
+     */
     public MCTS(AIBoard gameBoard,int computations) {
         this.computations = computations;
         this.gameBoard = gameBoard;
@@ -22,6 +27,10 @@ public class MCTS {
         this.opponentId = 0;
     }
 
+    /**
+     * function that starts the MCTS algorithm
+     * @return the line selected by the algorithm
+     */
     public ModelLine MCTSCalc() {
         System.out.println("Starting MCTS!");
         Instant start = Instant.now();
@@ -58,11 +67,17 @@ public class MCTS {
         return move;
     }
 
-    // if node is already a leaf, return the leaf
+
+    /**
+     * function the expands the Monte Carlo tree by adding all "best" future
+     * boards available from the given node as children to said node.
+     * @param node a node to be expanded
+     * @return a random child of the parameter node, or the node itself if
+     * it is a leaf.
+     */
     private MCTSNode expandNodeAndReturnRandom(MCTSNode node) {
         MCTSNode child;
         AIBoard board = node.getBoard();
-        Random generator = new Random();
 
         for (AIBoard move : board.getAvlNextMoves()) {
             child = new MCTSNode(move);
@@ -73,51 +88,74 @@ public class MCTS {
 
         if (node.getChildren().size() == 0)
             return node;
+        Random generator = new Random();
         int random = generator.nextInt(node.getChildren().size());
         return node.getChildren().get(random);
     }
 
+    /**
+     * function that goes up from the give node to the root, while updating
+     * the number of visits for each node, and setting each node's score to the highest sum
+     * of its children's score.
+     * @param selected the node to get to the root from
+     */
     private void backPropagation(MCTSNode selected) {
         MCTSNode node = selected,  previous = null;
-        int currentPlayer, penalty = selected.getBoard().getCurrentPlayer() == playerId ? 5: -7, accumulated = penalty;
+        int currentPlayer;
         while (node != null) { // look for the root
             node.incVisits();
             currentPlayer = 1 - node.getBoard().getCurrentPlayer();
+
             if (currentPlayer == playerId) {
                 node.incScore();
             }
             if (previous != null && previous.getScore() > node.getScore())
                 node.setScore(previous.getScore());
+
             previous = node;
             node = node.getParent();
         }
     }
 
-    private int simulateLightPlayout(MCTSNode promisingNode) {
+    /**
+     * functions that simulates a full game from a given node, using the best possible
+     * move available. (the move is removed from the available moves lists each time so if the node
+     * will be simulated again a new move will be explored)
+     * the score of each node that is simulated is set to the difference between the player scores,
+     * meaning the highest rated leafs will be when the AI wins.
+     * @param promisingNode a node that seems promising for exploration
+     */
+    private void simulateLightPlayout(MCTSNode promisingNode) {
         MCTSNode node = promisingNode;
         AIBoard board;
         ModelLine bestMove;
         Random rand = new Random();
-        boolean best = true;
+
         while (node.getBoard().isGameOngoing() && node.getBoard().getBestMoves().size()>0) {
+
             bestMove = node.getBoard().getBestMove();
             board = new AIBoard(new AIBoard(node.getBoard()));
             board.performMove(bestMove.getRow(),bestMove.getColumn(),bestMove.getIsHorizontal() ? LineType.horizontal : LineType.vertical);
             MCTSNode child = new MCTSNode(board);
+
             child.setScore(board.getScoreDifference());
-            if (best) {
-                child.setScore(Integer.MAX_VALUE / 2 + board.getScoreDifference());
-                best = false;
-            }
+
+
             child.setParent(node);
             node.addChild(child);
 
             node = child;
         }
-        return node.getBoard().getCurrentPlayer();
     }
 
 
+    /**
+     * function that selects a promising node for exploration using the
+     * UCT formula. the function prioritizes unexplored children, so it will
+     * force pick an unexplored child without using UCT if one exists.
+     * @param tree the root of the Monte carlo tree
+     * @return the promising node to be explored
+     */
     private MCTSNode selectPromisingNode(MCTSNode tree) {
         MCTSNode node = tree;
         List<MCTSNode> unexploredChildren;
