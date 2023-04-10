@@ -2,7 +2,6 @@ package com.example.dotsandboxes.AI;
 
 import com.example.dotsandboxes.model.classes.ModelLine;
 import com.example.dotsandboxes.model.enums.LineType;
-import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,6 +98,14 @@ public class AIBoard {
             bestLines.add(lineArray[line.getRow()][line.getColumn()]);
     }
 
+    /**
+     * function that registers a move to the game board, and updated all line lists and
+     * player scores accordingly.
+     * @param row the row the line is in
+     * @param column the column the line is in
+     * @param lineType represents the type of line the move was made on
+     *                 (used to determine which line array to use)
+     */
     public void performMove(int row, int column, LineType lineType) {
         ModelLine[][] lines = lineType.equals(LineType.horizontal) ? horizontalLines : verticalLines;
         ModelLine line = lines[row][column];
@@ -121,21 +128,11 @@ public class AIBoard {
      * @return the score obtained from connecting the line, ranges from 0-2.
      */
     public int checkBoxFormed(ModelLine line) {
-        int x = line.getRow();
-        int y = line.getColumn();
-        int columnLength = horizontalLines[0].length;
         int score = 0;
-        if (line.getIsHorizontal()) {
-            if (x>0 && x < getGridSize() && y < columnLength && horizontalLines[x-1][y].getIsConnected() && verticalLines[y][x-1].getIsConnected() && verticalLines[y+1][x-1].getIsConnected())
-                score += 1;
-            if (x < columnLength && y < columnLength && horizontalLines[x+1][y].getIsConnected() && verticalLines[y][x].getIsConnected() && verticalLines[y+1][x].getIsConnected())
-                score += 1;
-        }
-        else {
-            if (x > 0 && x < getGridSize() && y < columnLength && verticalLines[x-1][y].getIsConnected() && horizontalLines[y][x-1].getIsConnected() && horizontalLines[y+1][x-1].getIsConnected())
-                score += 1;
-            if(x < columnLength && y < columnLength && verticalLines[x+1][y].getIsConnected() && horizontalLines[y][x].getIsConnected() && horizontalLines[y+1][x].getIsConnected())
-                score += 1;
+        int[] boxesAfterMove = checkLeftBoxes(line);
+        for(int box: boxesAfterMove) {
+            if (box == 3)
+                score++;
         }
         return score;
     }
@@ -233,12 +230,13 @@ public class AIBoard {
     }
 
     /**
-     * functions that checks if a box was completed after a line was connected.
+     * functions that checks how many lines are connected in boxes that
+     * a recently connected line is a part of.
      * @param line the line that was connected
      * @return an int array of length 2, where each index is a box a line is a part
-     * of (a line can be in 1-2 boxes), and has a value ranging from 0-1.
-     * if the value of an index is 1 it means the box was connected by the line,
-     * however if it is 0 it means the line did not connect the box.
+     * of (a line can be in 1-2 boxes), and has a value ranging from 0-3.
+     * the value of each index represents how many lines are connected in the box apart
+     * from the parameter line
      */
     private int[] checkLeftBoxes(ModelLine line) {
         int x = line.getRow();

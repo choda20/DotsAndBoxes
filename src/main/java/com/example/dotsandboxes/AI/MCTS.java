@@ -2,7 +2,6 @@ package com.example.dotsandboxes.AI;
 
 import com.example.dotsandboxes.model.classes.ModelLine;
 import com.example.dotsandboxes.model.enums.LineType;
-import javafx.util.Pair;
 
 
 import java.time.Instant;
@@ -43,7 +42,7 @@ public class MCTS {
             }
 
             //SIMULATE
-            int playoutResult = simulateLightPlayout(selected);
+            simulateLightPlayout(selected);
 
             //PROPAGATE
             backPropagation(selected);
