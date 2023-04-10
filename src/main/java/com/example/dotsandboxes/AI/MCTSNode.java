@@ -2,46 +2,57 @@ package com.example.dotsandboxes.AI;
 
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
+/**
+ * a class that represents a node in a Monte Carlo tree
+ */
 public class MCTSNode {
-    private AIBoard board;
-    private int visits;
-    private int score;
-    private List<MCTSNode> children = new ArrayList<>();
-    MCTSNode parent = null;
+    private AIBoard board;  // the state of the game in the board
+    private int visits; // the number of times the node was explored
+    private int score; // the score of the node
+    private List<MCTSNode> children; // a list of all possible actions on the board
+    MCTSNode parent; // the node that led to this board
 
+    /**
+     * full constructor that sets up the current board.
+     * @param initBoard the game board
+     */
     public MCTSNode(AIBoard initBoard) {
         this.board = initBoard;
         this.visits = 0;
         this.score = 0;
+        this.children = new ArrayList<>();
+        this.parent = null;
     }
 
+    /**
+     * function that adds the node parameter as a child to the current node
+     * @param node node to be made a child
+     */
     void addChild(MCTSNode node) {
         children.add(node);
     }
 
-    //getters
+    /**
+     * function that returns the child with the highest score
+     * @return highest scored child
+     * run time: O(n) when n=number of children
+     */
     MCTSNode getChildWithMaxScore() {
-        MCTSNode result = null;
-        if (!children.isEmpty()) {
-            result = children.get(0);
-            for (int i = 1; i < children.size(); i++) {
-                if (children.get(i).getScore() > result.getScore()) {
-                    result = children.get(i);
-                }
-            }
-        }
-        return result;
+        return children.stream().max(Comparator.comparingInt(MCTSNode::getScore)).orElse(null);
     }
+
+    public void incVisits() {this.visits++;}
+    public void incScore() {this.score++;}
+
+    //general getters
     public List<MCTSNode> getChildren() {return children;}
     public AIBoard getBoard() {return board;}
     public int getScore() {return score;}
     public int getVisits() {return visits;}
 
-    //setters
+    //general setters
     public void setScore(int score) {this.score = score;}
-
-    public void incVisits() {this.visits++;}
-    public void incScore() {this.score++;}
 }
