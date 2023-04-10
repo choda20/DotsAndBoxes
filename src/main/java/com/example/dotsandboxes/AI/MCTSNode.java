@@ -13,7 +13,7 @@ public class MCTSNode {
     private int visits; // the number of times the node was explored
     private int score; // the score of the node
     private List<MCTSNode> children; // a list of all possible actions on the board
-    MCTSNode parent; // the node that led to this board
+    private MCTSNode parent; // the node that led to this board
 
     /**
      * full constructor that sets up the current board.
@@ -48,7 +48,7 @@ public class MCTSNode {
      * function that increase the amount of times the node was visited by 1
      */
     public void incVisits() {this.visits++;}
-    
+
     /**
      * function that increase the nodes score by 1
      */
@@ -59,7 +59,9 @@ public class MCTSNode {
     public AIBoard getBoard() {return board;}
     public int getScore() {return score;}
     public int getVisits() {return visits;}
+    public MCTSNode getParent() {return parent;}
 
     //general setters
     public void setScore(int score) {this.score = score;}
+    public void setParent(MCTSNode parent) {this.parent = parent;}
 }

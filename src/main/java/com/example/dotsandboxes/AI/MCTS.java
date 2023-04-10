@@ -68,7 +68,7 @@ public class MCTS {
 
         for (AIBoard move : board.getAvlNextMoves()) {
             child = new MCTSNode(move);
-            child.parent = node;
+            child.setParent(node);
             child.setScore(child.getBoard().getScoreDifference());
             node.addChild(child);
         }
@@ -88,7 +88,7 @@ public class MCTS {
             if (previous != null && previous.getScore() > node.getScore())
                 node.setScore(previous.getScore());
             previous = node;
-            node = node.parent;
+            node = node.getParent();
         }
     }
 
@@ -110,7 +110,7 @@ public class MCTS {
                 child.setScore(Integer.MAX_VALUE / 2 + board.getScoreDifference());
                 best = false;
             }
-            child.parent = node;
+            child.setParent(node);
             node.addChild(child);
 
             node = child;
