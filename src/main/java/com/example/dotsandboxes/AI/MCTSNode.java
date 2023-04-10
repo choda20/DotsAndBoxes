@@ -44,7 +44,14 @@ public class MCTSNode {
         return children.stream().max(Comparator.comparingInt(MCTSNode::getScore)).orElse(null);
     }
 
+    /**
+     * function that increase the amount of times the node was visited by 1
+     */
     public void incVisits() {this.visits++;}
+    
+    /**
+     * function that increase the nodes score by 1
+     */
     public void incScore() {this.score++;}
 
     //general getters
