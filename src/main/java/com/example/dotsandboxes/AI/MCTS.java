@@ -50,10 +50,10 @@ public class MCTS {
         }
         MCTSNode best = tree.getChildWithMaxScore();
         Instant end = Instant.now();
-        long milis = end.toEpochMilli() - start.toEpochMilli();
+        long mills = end.toEpochMilli() - start.toEpochMilli();
         ModelLine move = best.getBoard().getLastMove();
 
-        System.out.println("Did " + counter + " expansions/simulations within " + milis + " milis");
+        System.out.println("Did " + counter + " expansions/simulations within " + mills + " mills");
         System.out.println("Best move scored " + best.getChildWithMaxScore() + " and was visited " + best.getVisits() + " times");
         System.out.println("Move was made at: " + move.getRow() + "," + move.getColumn() + " on horizontal line: " + move.getIsHorizontal() + "\n");
         return move;
@@ -65,13 +65,15 @@ public class MCTS {
         AIBoard board = node.getBoard();
         Random generator = new Random();
 
-
         for (AIBoard move : board.getAvlNextMoves()) {
             child = new MCTSNode(move);
             child.setParent(node);
             child.setScore(child.getBoard().getScoreDifference());
             node.addChild(child);
         }
+
+        if (node.getChildren().size() == 0)
+            return node;
         int random = generator.nextInt(node.getChildren().size());
         return node.getChildren().get(random);
     }

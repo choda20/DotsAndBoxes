@@ -31,7 +31,7 @@ public class MCTSNode {
      * function that adds the node parameter as a child to the current node
      * @param node node to be made a child
      */
-    void addChild(MCTSNode node) {
+    public void addChild(MCTSNode node) {
         children.add(node);
     }
 
@@ -40,7 +40,7 @@ public class MCTSNode {
      * @return highest scored child
      * run time: O(n) when n=number of children
      */
-    MCTSNode getChildWithMaxScore() {
+    public MCTSNode getChildWithMaxScore() {
         return children.stream().max(Comparator.comparingInt(MCTSNode::getScore)).orElse(null);
     }
 
