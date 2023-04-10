@@ -130,7 +130,7 @@ public class MCTS {
         AIBoard board;
         ModelLine bestMove;
         Random rand = new Random();
-
+        boolean best = true;
         while (node.getBoard().isGameOngoing() && node.getBoard().getBestMoves().size()>0) {
 
             bestMove = node.getBoard().getBestMove();
@@ -139,7 +139,10 @@ public class MCTS {
             MCTSNode child = new MCTSNode(board);
 
             child.setScore(board.getScoreDifference());
-
+            if (best) {
+                child.setScore(Integer.MAX_VALUE/3 + child.getBoard().getScoreDifference());
+                best = false;
+            }
 
             child.setParent(node);
             node.addChild(child);
@@ -159,11 +162,11 @@ public class MCTS {
     private MCTSNode selectPromisingNode(MCTSNode tree) {
         MCTSNode node = tree;
         List<MCTSNode> unexploredChildren;
-
+        Random generator = new Random();
         while (node.getChildren().size() != 0) {
             unexploredChildren = node.getChildren().stream().filter(c -> c.getVisits() == 0).collect(Collectors.toList());
             if (unexploredChildren.size() > 0) {
-                return unexploredChildren.get(0);
+                return unexploredChildren.get(generator.nextInt(unexploredChildren.size()));
             }
             node = UCT.findBestNodeWithUCT(node);
         }
