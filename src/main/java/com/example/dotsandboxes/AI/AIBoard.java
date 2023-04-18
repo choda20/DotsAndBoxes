@@ -262,22 +262,20 @@ public class AIBoard {
      */
     private void adjustLinesBasedOnMove(ModelLine line) {
         removeLine(line);
-        List<List<ModelLine>> lines = getUnconnectedLines(line);
+        List<ModelLine> lines = getUnconnectedLines(line);
+        int[] connectedLines;
 
         for(int i=0;i<lines.size();i++)
-            lines.get(i).stream().forEach(listLine -> removeLine(listLine));
+            lines.forEach(listLine -> removeLine(listLine));
 
         for (int i=0;i<lines.size();i++) {
-            if (lines.get(i).size() == 2) { // 2 means adding a line will open a box, so worst moves
-                worstLines.add(lines.get(i).get(0));
-                worstLines.add(lines.get(i).get(1));
-            } else if (lines.get(i).size() == 1) { // 1 means adding a line will close a box, so best move
-                bestLines.add(lines.get(i).get(0));
-            } else if (lines.get(i).size() == 3) { // 3 means that nothing notable will happen, so ok move
-                okLines.add(lines.get(i).get(0));
-                okLines.add(lines.get(i).get(1));
-                okLines.add(lines.get(i).get(2));
-            }
+            connectedLines = checkLeftBoxes(lines.get(i));
+            if (connectedLines[0] == 2 || connectedLines[1] == 2)
+                worstLines.add(lines.get(i));
+            else if (connectedLines[0] == 3 || connectedLines[1] == 3)
+                bestLines.add(lines.get(i));
+            else
+                okLines.add(lines.get(i));
         }
 
     }
@@ -289,29 +287,29 @@ public class AIBoard {
      *      * and each column represents a line in the box that is not connected and needs to be moved
      *      * to a new available line list after the move.
      */
-    private List<List<ModelLine>> getUnconnectedLines(ModelLine line) {
-        List<List<ModelLine>> lines = new ArrayList<List<ModelLine>>();
+    private List<ModelLine> getUnconnectedLines(ModelLine line) {
+        List<ModelLine> lines = new ArrayList<ModelLine>();
         int x = line.getRow();
         int y = line.getColumn();
         int columnLength = horizontalLines[0].length;
         if (line.getIsHorizontal()) {
             if (x>0 && x < getGridSize() && y < columnLength) {
                 List<ModelLine> otherLines = new ArrayList<>(Arrays.asList(new ModelLine[]{horizontalLines[x - 1][y], verticalLines[y + 1][x - 1], verticalLines[y][x - 1]}));
-                lines.add(otherLines.stream().filter(listLine -> listLine.getIsConnected() == false).collect(Collectors.toList()));
+                lines.addAll(otherLines.stream().filter(listLine -> listLine.getIsConnected() == false).collect(Collectors.toList()));
             }
             if (x < columnLength && y < columnLength) {
                 List<ModelLine> otherLines = new ArrayList<>(Arrays.asList(new ModelLine[]{horizontalLines[x+1][y], verticalLines[y][x], verticalLines[y+1][x]}));
-                lines.add(otherLines.stream().filter(listLine -> listLine.getIsConnected() == false).collect(Collectors.toList()));
+                lines.addAll(otherLines.stream().filter(listLine -> listLine.getIsConnected() == false).collect(Collectors.toList()));
             }
         }
         else {
             if (x > 0 && x < getGridSize() && y < columnLength) {
                 List<ModelLine> otherLines = new ArrayList<>(Arrays.asList(new ModelLine[]{verticalLines[x - 1][y], horizontalLines[y][x - 1], horizontalLines[y + 1][x - 1]}));
-                lines.add(otherLines.stream().filter(listLine -> listLine.getIsConnected() == false).collect(Collectors.toList()));
+                lines.addAll(otherLines.stream().filter(listLine -> listLine.getIsConnected() == false).collect(Collectors.toList()));
             }
             if (x < columnLength && y < columnLength) {
                 List<ModelLine> otherLines = new ArrayList<>(Arrays.asList(new ModelLine[]{verticalLines[x + 1][y], horizontalLines[y][x], horizontalLines[y + 1][x]}));
-                lines.add(otherLines.stream().filter(listLine -> listLine.getIsConnected() == false).collect(Collectors.toList()));
+                lines.addAll(otherLines.stream().filter(listLine -> listLine.getIsConnected() == false).collect(Collectors.toList()));
             }
         }
         return lines;

@@ -14,6 +14,8 @@ public class MCTS {
     private final int playerId; // the id of the player who asked for a move
     private final int opponentId; // the id of the opponent
     private final int computations; // the amount of computations the algorithm is allowed
+    private Random generator = new Random();
+
 
     /**
      * full constructor that initializes all class fields
@@ -25,6 +27,7 @@ public class MCTS {
         this.gameBoard = gameBoard;
         this.playerId = 1;
         this.opponentId = 0;
+        this.generator = new Random();
     }
 
     /**
@@ -88,7 +91,6 @@ public class MCTS {
 
         if (node.getChildren().size() == 0)
             return node;
-        Random generator = new Random();
         int random = generator.nextInt(node.getChildren().size());
         return node.getChildren().get(random);
     }
@@ -129,7 +131,7 @@ public class MCTS {
         MCTSNode node = promisingNode;
         AIBoard board;
         ModelLine bestMove;
-        Random rand = new Random();
+
         boolean best = true;
         while (node.getBoard().isGameOngoing() && node.getBoard().getBestMoves().size()>0) {
 
@@ -140,7 +142,7 @@ public class MCTS {
 
             child.setScore(board.getScoreDifference());
             if (best) {
-                child.setScore(Integer.MAX_VALUE/3 + child.getBoard().getScoreDifference());
+                child.setScore(child.getScore() + 100);
                 best = false;
             }
 
@@ -162,7 +164,6 @@ public class MCTS {
     private MCTSNode selectPromisingNode(MCTSNode tree) {
         MCTSNode node = tree;
         List<MCTSNode> unexploredChildren;
-        Random generator = new Random();
         while (node.getChildren().size() != 0) {
             unexploredChildren = node.getChildren().stream().filter(c -> c.getVisits() == 0).collect(Collectors.toList());
             if (unexploredChildren.size() > 0) {
