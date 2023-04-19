@@ -15,6 +15,7 @@ public class AIBoard {
     private int firstScore; // score of player 1(human)
     private int secondScore; // score of player 2(the AI)
     private int currentPlayer; // signifies the player that should act now, 0 for human, 1 for AI
+    private int lastPlayer;
     private List<ModelLine> bestLines; // a list of available lines that close a box
     private List<ModelLine> worstLines; // a list of available lines that when connected will make a box closable
     private List<ModelLine> okLines; // a list of available lines that will not close or leave a box to be closed
@@ -30,6 +31,7 @@ public class AIBoard {
         this.firstScore = 0;
         this.secondScore = 0;
         this.currentPlayer = 0;
+        this.lastPlayer = 0;
     }
 
     /**
@@ -64,7 +66,7 @@ public class AIBoard {
         this.firstScore = board.firstScore;
         this.secondScore = board.secondScore;
         this.currentPlayer = board.currentPlayer;
-
+        this.lastPlayer = board.lastPlayer;
         this.okLines = new ArrayList<>();
         this.worstLines = new ArrayList<>();
         this.bestLines = new ArrayList<>();
@@ -114,6 +116,7 @@ public class AIBoard {
             int scoreObtained = checkBoxFormed(line);
             increaseCurrentScore(scoreObtained);
             adjustLinesBasedOnMove(line);
+            lastPlayer = currentPlayer;
             if (scoreObtained == 0) {
                 currentPlayer = 1 - currentPlayer;
             }
@@ -270,10 +273,10 @@ public class AIBoard {
 
         for (int i=0;i<lines.size();i++) {
             connectedLines = checkLeftBoxes(lines.get(i));
-            if (connectedLines[0] == 2 || connectedLines[1] == 2)
-                worstLines.add(lines.get(i));
-            else if (connectedLines[0] == 3 || connectedLines[1] == 3)
+            if (connectedLines[0] == 3 || connectedLines[1] == 3)
                 bestLines.add(lines.get(i));
+            else if (connectedLines[0] == 2 || connectedLines[1] == 2)
+                worstLines.add(lines.get(i));
             else
                 okLines.add(lines.get(i));
         }
@@ -338,6 +341,5 @@ public class AIBoard {
     //general getters
     public int getGridSize() {return horizontalLines.length;}
     public ModelLine getLastMove() {return lastMove;}
-    public int getCurrentPlayer() {return currentPlayer;}
-
+    public int getLastPlayer() {return lastPlayer;}
 }

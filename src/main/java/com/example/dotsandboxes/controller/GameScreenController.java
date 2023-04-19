@@ -200,7 +200,9 @@ public class GameScreenController implements PropertyChangeListener {
         if (result.equals(MoveResult.gameOver)) {
             Pair<Integer, String> results = model.getWinner();
             if (results.getKey().intValue() == 0) {
-                LinearGradient color = results.getKey().equals(PlayerNumber.first) ? p1Gradient : p2Gradient;
+                LinearGradient color =
+                        results.getKey().equals(model.getFirst().getName()) ?
+                        p1Gradient : p2Gradient;
                 view.getLabels()[0].setText(results.getValue() + " Won!");
                 view.getLabels()[0].setTextFill(color);
             } else {

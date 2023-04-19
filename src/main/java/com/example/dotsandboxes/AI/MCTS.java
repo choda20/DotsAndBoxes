@@ -103,19 +103,20 @@ public class MCTS {
      */
     private void backPropagation(MCTSNode selected) {
         MCTSNode node = selected,  previous = null;
-        int currentPlayer;
+        int currentPlayer = node.getBoard().getLastPlayer();
         while (node != null) { // look for the root
             node.incVisits();
-            currentPlayer = 1 - node.getBoard().getCurrentPlayer();
 
+            if (previous != null && previous.getScore() > node.getScore())
+                node.setScore(previous.getScore());
             if (currentPlayer == playerId) {
                 node.incScore();
             }
-            if (previous != null && previous.getScore() > node.getScore())
-                node.setScore(previous.getScore());
 
             previous = node;
             node = node.getParent();
+            if (node != null)
+                currentPlayer = node.getBoard().getLastPlayer();
         }
     }
 
