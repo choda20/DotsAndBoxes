@@ -37,9 +37,10 @@ public class SettingsScreenController implements PropertyChangeListener {
 
         model.addPropertyChangeListener(this);
 
-        setLabelStyle(view.getTitle(),new Label[]{view.getP1Name(),view.getP2Name(),view.getGridSize()},view.getErrorText());
+        setLabelStyle(view.getTitle(),new Label[]{view.getP1Name(), view.getP2Name(),view.getGridSizeTitle()},view.getErrorText());
         configureMoveToGame(view.getMoveToGame());
-        configureFontForFields(new TextField[]{view.getP1Field(),view.getP2Field(),view.getGridField()});
+        configureFontForFields(new TextField[]{view.getP1Field(),view.getP2Field()});
+        view.getGridSizeBox().setStyle("-fx-font-size: 17px;");
 
         try {
             view.start(stage);
