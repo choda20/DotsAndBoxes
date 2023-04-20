@@ -37,9 +37,15 @@ public class Main extends Application {
         TitleScreenController titleController = new TitleScreenController(title,model,primaryStage);
     }
 
-    private Image getImageFromUrl(String url) {
+    /**
+     * function that gets a path of a local image(inside the project) and
+     * returns an Image class object based on the image.
+     * @param path image path from content root
+     * @return image object based on the image path
+     */
+    private Image getImageFromUrl(String path) {
         try {
-            File imageFile = new File(url);
+            File imageFile = new File(path);
             return new Image(imageFile.getCanonicalPath());
         }catch (Exception e) {
             System.out.println("App cannot be launched because image links are not valid.");
