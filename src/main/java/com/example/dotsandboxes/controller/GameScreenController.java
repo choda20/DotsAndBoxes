@@ -306,19 +306,24 @@ public class GameScreenController implements PropertyChangeListener {
     private void runAiInBG() {
         Player ai = model.getCurrent(); // the AI player
 
-        disableAllLines(); // disables all GUI elements
+        disableAllLines(); // makes it so the human player cannot make moves
 
         Thread aiThread = new Thread(() -> {
-            Pair<Point, LineType> AIMove = ai.makeMove(); // runs the AI move algorithm and returns the chosen move
+            // runs the AI move algorithm and returns the chosen move
+            Pair<Point, LineType> AIMove = ai.makeMove();
+
             Point lineRC = AIMove.getKey();
-            Platform.runLater(() -> { // runLater makes sure the functions
-                // inside execute on the main thread. this is because
-                // JavaFx elements cannot be modified from different threads,
-                // and any attempt to do so will cause a runtime exception.
 
-                model.performMove(lineRC.x, lineRC.y, AIMove.getValue()); // sends the move to the model
+            // runLater makes sure the functions inside execute on the JavaFx
+            // thread. this is because JavaFx elements should not be modified
+            // from different threads,and attempts to do so may cause
+            // exceptions.
+            Platform.runLater(() -> {
 
-                enableUnconnectedLines(); // re-enables all GUI elements
+                // sends the move to the model
+                model.performMove(lineRC.x, lineRC.y, AIMove.getValue());
+
+                enableUnconnectedLines(); // enables the human player to make move
             });
         });
         aiThread.start(); // starts the AI thread
