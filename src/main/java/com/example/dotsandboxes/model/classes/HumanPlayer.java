@@ -18,5 +18,5 @@ public class HumanPlayer extends Player{
      * a move is made through the UI and this class has no access to it.
      * @return a throwaway move since it is not used
      */
-    public Pair<Point, LineType> play(){return new Pair<Point,LineType>(new Point(-1,-1),LineType.horizontal);}
+    public Pair<Point, LineType> makeMove(){return new Pair<Point,LineType>(new Point(-1,-1),LineType.horizontal);}
 }

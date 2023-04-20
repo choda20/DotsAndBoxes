@@ -278,7 +278,7 @@ public class GameScreenController implements PropertyChangeListener {
         updateLabels(result);
 
         if (checkAiTurn(model.getGameType(),model.getTurn(),result))
-            RunAi();
+            runAiInBG();
     }
 
     /**
@@ -303,13 +303,13 @@ public class GameScreenController implements PropertyChangeListener {
      * GUI elements are disabled so the human player cannot interfere with
      * the board while the AI is thinking.
      */
-    private void RunAi() {
+    private void runAiInBG() {
         Player ai = model.getCurrent(); // the AI player
 
         disableAllLines(); // disables all GUI elements
 
         Thread aiThread = new Thread(() -> {
-            Pair<Point, LineType> AIMove = ai.play(); // runs the AI move algorithm and returns the chosen move
+            Pair<Point, LineType> AIMove = ai.makeMove(); // runs the AI move algorithm and returns the chosen move
             Point lineRC = AIMove.getKey();
             Platform.runLater(() -> { // runLater makes sure the functions
                 // inside execute on the main thread. this is because

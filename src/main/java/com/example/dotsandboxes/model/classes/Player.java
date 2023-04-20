@@ -31,5 +31,5 @@ public abstract class Player {
      * that was picked as a move, and a LineType that signifies which array the line is
      * in(LineType.Horizontal = horizontalLines and so on) stored in a Pair.
      */
-    public abstract Pair<Point, LineType> play(); // abstract function that configures how the player makes a move
+    public abstract Pair<Point, LineType> makeMove(); // abstract function that configures how the player makes a move
 }

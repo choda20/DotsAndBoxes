@@ -27,7 +27,7 @@ public class AIPlayer extends Player implements PropertyChangeListener {
      * Function that activates the algorithm the AI uses to choose a move and returns the chosen move
      * @return a Pair that holds information on the line the move should be made on
      */
-    public Pair<Point, LineType> play()  {
+    public Pair<Point, LineType> makeMove()  {
         moveAlgorithm = new MCTS(new AIBoard(model),750);
         ModelLine move = moveAlgorithm.MCTSCalc();
         return new Pair<Point,LineType>(new Point(move.getRow(),move.getColumn()),move.getIsHorizontal() ? LineType.horizontal : LineType.vertical);
