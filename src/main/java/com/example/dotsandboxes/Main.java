@@ -18,6 +18,10 @@ public class Main extends Application {
         launch(args);
     }
 
+    /**
+     * function that sets app the app icon, title and background image and
+     * starts the title screen
+     */
     @Override
     public void start(Stage primaryStage) {
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();

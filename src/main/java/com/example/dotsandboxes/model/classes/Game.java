@@ -44,9 +44,9 @@ public class Game {
     }
 
     /**
-     * function that registers a move to the game board, and notifies all listeners
-     * that it was made. additionally, if an AI player exists it tells it to perform a move on
-     * its turn and calls itself recursively to perform it.
+     * function that registers a move to the game board and updates player
+     * scores and the current turn accordingly. this function also notifies all
+     * listeners that a move was made.
      * @param row the row the line is in
      * @param column the column the line is in
      * @param lineType represents the type of line the move was made on

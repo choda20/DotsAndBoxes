@@ -18,9 +18,9 @@ import javafx.stage.Stage;
 
 
 public class TitleScreenController {
-    private TitleScreen view; // the screens view
-    private Game model; // the game model
-    private Stage stage; // the app window
+    private final TitleScreen view; // the screens view
+    private final Game model; // the game model
+    private final Stage stage; // the app window
 
     /**
      * full constructor. sets up button actions for all view buttons, styles all view buttons and labels,
@@ -28,7 +28,6 @@ public class TitleScreenController {
      * @param view the screen view containing all ui elements
      * @param model the game model containing the game data
      * @param stage the app windows in which the ui is displayed
-     * @throws Exception
      */
     public TitleScreenController(TitleScreen view, Game model, Stage stage) { // constructor
         this.model = model;
@@ -49,7 +48,6 @@ public class TitleScreenController {
 
     /**
      * function that moves the stage to the settings screen(moves to the settings screen)
-     * @throws Exception
      */
     private void moveToSettings()  { // moves the app to the settings screen after a button was pressed
         SettingsScreen settingsView = new SettingsScreen(view.getBackground());
@@ -73,11 +71,11 @@ public class TitleScreenController {
      * @param buttons array of all view buttons
      */
     private void setButtonStyles(Button[] buttons) { // styles the Buttons on screen
-        for (int i=0; i<buttons.length;i++) {
-            buttons[i].setPadding(new Insets(10, 20, 10, 20));
-            buttons[i].setPrefHeight(50);
-            buttons[i].setPrefWidth(200);
-            buttons[i].setStyle("-fx-background-color: radial-gradient(radius 50%, #FF3B61, #FE8373); -fx-background-radius: 50px; -fx-text-fill: white; -fx-font-size: 17;");
+        for (Button button : buttons) {
+            button.setPadding(new Insets(10, 20, 10, 20));
+            button.setPrefHeight(50);
+            button.setPrefWidth(200);
+            button.setStyle("-fx-background-color: radial-gradient(radius 50%, #FF3B61, #FE8373); -fx-background-radius: 50px; -fx-text-fill: white; -fx-font-size: 17;");
         }
     }
 
@@ -107,9 +105,8 @@ public class TitleScreenController {
     /**
      * function that activates when human vs human button is pressed,
      * sets up the model to a HVH game and moves to the settings screen
-     * @throws Exception
      */
-    private void handleHVH() throws Exception {
+    private void handleHVH() {
         model.setGameType(GameType.HumanVsHuman);
         model.setFirst(new HumanPlayer());
         model.setSecond(new HumanPlayer());
@@ -118,9 +115,8 @@ public class TitleScreenController {
     /**
      * function that activates when human vs AI button is pressed,
      * sets up the model to a HVA game and moves to the settings screen
-     * @throws Exception
      */
-    private void handleHVA() throws Exception {
+    private void handleHVA() {
         model.setGameType(GameType.HumanVsAI);
         model.setFirst(new HumanPlayer());
         model.setSecond(new AIPlayer());

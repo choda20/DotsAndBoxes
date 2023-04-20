@@ -40,7 +40,6 @@ public class GameScreenController implements PropertyChangeListener {
      * @param view  the screen view containing all ui elements
      * @param model the game model containing the game data
      * @param stage the app windows in which the ui is displayed
-     * @throws Exception
      */
     public GameScreenController(Game model, GameScreen view, Stage stage) { // constructor
         this.model = model;
@@ -233,9 +232,12 @@ public class GameScreenController implements PropertyChangeListener {
 
     /**
      * function that activates when a move was made on the model board.
-     * the function updates the color of the clicked line, the on-screen scores and turn.
-     * if the game ended the function will update the turn text to show the result.
-     *
+     * the function updates the color of the clicked line(updateLine function),
+     * the on-screen scores and turn and if the game ended the function will
+     * update the turn text to show the result(updateLabels function).
+     * additionally, if the game has an AI(checkAiTurn function) this
+     * function asks the AI to perform a move and sends it to the model    
+     * (RunAi() function)
      * @param evt A PropertyChangeEvent object describing the event source
      *            and the property that has changed.
      *            old value = Pair<ModelLine,PlayerNumber> the clicked line and who clicked it,
@@ -249,37 +251,35 @@ public class GameScreenController implements PropertyChangeListener {
 
         updateLine(changedLine, changedLineAndOwner.getValue());
         updateLabels(result);
-        if (!result.equals(MoveResult.gameOver))
-            checkAndRunAi();
+
+        if (checkAiTurn(model.getGameType(),model.getTurn(),result))
+            RunAi();
     }
 
-    private void checkAndRunAi() {
-        GameType gameType = model.getGameType();
-        PlayerNumber currentTurn = model.getTurn();
+    private boolean checkAiTurn(GameType gameType, PlayerNumber currentTurn, MoveResult result) {
+        boolean gameHasAi = gameType.equals(GameType.HumanVsAI);
+        boolean aiTurn = currentTurn.equals(PlayerNumber.second);
+        boolean ongoingGame = result.equals(MoveResult.valid);
+        return (gameHasAi && aiTurn && ongoingGame);
+    }
+    private void RunAi() {
+        Player ai = model.getCurrent();
 
-        if (gameType.equals(GameType.HumanVsAI) && currentTurn.equals(PlayerNumber.second)) {
-            Player ai = model.getCurrent();
+        disableMouseSettings(view.getHorizontalLines());
+        disableMouseSettings(view.getVerticalLines());
 
-            disableMouseSettings(view.getHorizontalLines());
-            disableMouseSettings(view.getVerticalLines());
+        Thread aiThread = new Thread(() -> {
+            Pair<Point, LineType> result = ai.play();
+            Point lineRC = result.getKey();
+            Platform.runLater(() -> {
 
-            Thread aiThread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Pair<Point, LineType> result = ai.play();
-                    Point lineRC = result.getKey();
-                    Platform.runLater(() -> {
+                model.performMove(lineRC.x, lineRC.y, result.getValue());
 
-                        model.performMove(lineRC.x, lineRC.y, result.getValue());
-
-                        setMouseSettings(view.getVerticalLines(),LineType.vertical);
-                        setMouseSettings(view.getHorizontalLines(),LineType.horizontal);
-                    });
-                }
+                setMouseSettings(view.getVerticalLines(),LineType.vertical);
+                setMouseSettings(view.getHorizontalLines(),LineType.horizontal);
             });
-
-            aiThread.start();
-        }
+        });
+        aiThread.start();
     }
 
     private void updateLine(ModelLine line,PlayerNumber owner){

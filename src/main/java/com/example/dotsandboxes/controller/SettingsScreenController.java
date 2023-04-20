@@ -17,18 +17,17 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 public class SettingsScreenController implements PropertyChangeListener {
-    private SettingsScreen view; // the screens view
-    private Game model; // the game model
-    private Stage stage; // the app window
+    private final SettingsScreen view; // the screens view
+    private final Game model; // the game model
+    private final Stage stage; // the app window
 
     /**
      * full constructor. styles all view elements, configures all fields and MoveToGame button and
-     * shows the app window. also adds itself as a listener to the model so it could get updated on
+     * shows the app window. also adds itself as a listener to the model, so it could get updated on
      * input field validation results
      * @param view the screen view containing all ui elements
      * @param model the game model containing the game data
      * @param stage the app windows in which the ui is displayed
-     * @throws Exception
      */
     public SettingsScreenController(SettingsScreen view, Game model, Stage stage) { // constructor
         this.model = model;
@@ -55,8 +54,8 @@ public class SettingsScreenController implements PropertyChangeListener {
      * @param fields array containing all view textFields
      */
     private void configureFontForFields(TextField[] fields) {
-        for (int i=0;i<fields.length;i++) {
-            fields[i].setStyle("-fx-font-size: 17px;");
+        for (TextField field : fields) {
+            field.setStyle("-fx-font-size: 17px;");
         }
     }
 
@@ -77,8 +76,8 @@ public class SettingsScreenController implements PropertyChangeListener {
         errorText.setTextFill(Color.RED);
         errorText.setStyle("-fx-font-size: 30px;");
 
-        for (int i=0;i<inputFields.length;i++) {
-            inputFields[i].setStyle("-fx-font-size: 17px;");
+        for (Label inputField : inputFields) {
+            inputField.setStyle("-fx-font-size: 17px;");
         }
     }
 
@@ -90,7 +89,7 @@ public class SettingsScreenController implements PropertyChangeListener {
         MTG.setPrefHeight(40);
         MTG.setPrefWidth(160);
         MTG.setStyle("-fx-background-color: radial-gradient(radius 50%, #FF3B61, #FE8373); -fx-background-radius: 50px; -fx-text-fill: white; -fx-font-size: 17;");
-        MTG.setOnAction(actionEvent -> {model.insertNamesAndGrid(view.getP1Input(),view.getP2Input(),view.getGridInput());});
+        MTG.setOnAction(actionEvent -> model.insertNamesAndGrid(view.getP1Input(),view.getP2Input(),view.getGridInput()));
     }
 
     /**
