@@ -2,11 +2,13 @@ package com.example.dotsandboxes.controller;
 
 import com.example.dotsandboxes.model.classes.Game;
 import com.example.dotsandboxes.model.classes.ModelLine;
+import com.example.dotsandboxes.model.classes.Player;
 import com.example.dotsandboxes.model.enums.GameType;
 import com.example.dotsandboxes.model.enums.LineType;
 import com.example.dotsandboxes.model.enums.MoveResult;
 import com.example.dotsandboxes.model.enums.PlayerNumber;
 import com.example.dotsandboxes.view.GameScreen;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
@@ -18,16 +20,18 @@ import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Hashtable;
 
 
 public class GameScreenController implements PropertyChangeListener {
-    private Game model; // the game model
-    private GameScreen view; // the screens view
-    private int gridSize; // the grid size
-    private LinearGradient p1Gradient; // text gradient for player 1
-    private LinearGradient p2Gradient; // text gradient for player 2
+    private final Game model; // the game model
+    private final GameScreen view; // the screens view
+    private final int gridSize; // the grid size
+    private final Hashtable<PlayerNumber,LinearGradient> playerGradients;
+
 
     /**
      * partial constructor that initializes all class fields, adds the object as a listener to the
@@ -38,14 +42,18 @@ public class GameScreenController implements PropertyChangeListener {
      * @param stage the app windows in which the ui is displayed
      * @throws Exception
      */
-    public GameScreenController(Game model, GameScreen view, Stage stage) throws Exception { // constructor
+    public GameScreenController(Game model, GameScreen view, Stage stage) { // constructor
         this.model = model;
         this.view = view;
         this.gridSize = model.getGameBoard().getGridSize();
+        this.playerGradients = new Hashtable<>();
+
         Stop[] stopsP1 = new Stop[]{new Stop(0, Color.web("#FE0944")), new Stop(1, Color.web("#FEAE96"))};
-        this.p1Gradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stopsP1);
+        LinearGradient p1Gradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stopsP1);
         Stop[] stopsP2 = new Stop[]{new Stop(0, Color.web("#008FFD")), new Stop(1, Color.web("#2A2A72"))};
-        this.p2Gradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stopsP2);
+        LinearGradient p2Gradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stopsP2);
+        playerGradients.put(PlayerNumber.first,p1Gradient);
+        playerGradients.put(PlayerNumber.second,p2Gradient);
 
         model.addPropertyChangeListener(this); // registers the controller as a listener to the model
         if (model.getGameType().equals(GameType.HumanVsAI)) {
@@ -53,12 +61,16 @@ public class GameScreenController implements PropertyChangeListener {
         }
 
         setLabels(view.getLabels()); // initializes labels
-        buildViewBoard(stage.getWidth(), stage.getHeight());
+        drawViewBoard(stage.getWidth(), stage.getHeight());
         setMouseSettings(view.getHorizontalLines(), LineType.horizontal);
         setMouseSettings(view.getVerticalLines(), LineType.vertical);
 
-        view.start(stage);
-
+        try {
+            view.start(stage);
+        } catch (Exception e) {
+            System.out.println("Game screen could not start.");
+            System.exit(1);
+        }
     }
 
     /**
@@ -67,29 +79,41 @@ public class GameScreenController implements PropertyChangeListener {
      * @param lines    2D array of lines
      * @param lineType the type of lines in the array
      */
-    public void setMouseSettings(Line[][] lines, LineType lineType) { // sets up line reactions to mouse events
+    private void setMouseSettings(Line[][] lines, LineType lineType) { //sets up line reactions to mouse events
+
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize - 1; j++) {
-                lines[i][j].setStroke(Color.TRANSPARENT);
-                lines[i][j].setStrokeWidth(5);
-                final int row = i, column = j;
-                lines[i][j].setOnMouseClicked((mouseEvent -> {
-                    Line clickedLine = (Line) mouseEvent.getSource();
-                    registerMove(clickedLine, row, column, lineType);
-                }));
-                lines[i][j].setOnMouseEntered((mouseEvent -> {
-                    Line hoveredLine = (Line) mouseEvent.getSource();
-                    if (hoveredLine.getStroke() != p1Gradient && hoveredLine.getStroke() != p2Gradient) {
+                if (isLineNotConnected(lines[i][j])) {
+                    lines[i][j].setStroke(Color.TRANSPARENT);
+                    lines[i][j].setStrokeWidth(7);
+
+                    final int row = i, column = j;
+
+                    lines[i][j].setOnMouseClicked((mouseEvent -> {
+                        Line clickedLine = (Line) mouseEvent.getSource();
+                        executeMove(clickedLine, row, column, lineType);
+                    }));
+
+                    lines[i][j].setOnMouseEntered((mouseEvent -> {
+                        Line hoveredLine = (Line) mouseEvent.getSource();
                         Stop[] stopsHovered = new Stop[]{new Stop(0, Color.web("#FBD72B")), new Stop(1, Color.web("#F9484A"))};
                         hoveredLine.setStroke(new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stopsHovered));
-                    }
-                }));
-                lines[i][j].setOnMouseExited((mouseEvent -> {
-                    Line hoveredLine = (Line) mouseEvent.getSource();
-                    if (hoveredLine.getStroke() != p1Gradient && hoveredLine.getStroke() != p2Gradient) {
+                    }));
+
+                    lines[i][j].setOnMouseExited((mouseEvent -> {
+                        Line hoveredLine = (Line) mouseEvent.getSource();
                         hoveredLine.setStroke(Color.TRANSPARENT);
-                    }
-                }));
+                    }));
+                }
+            }
+        }
+    }
+
+    private void disableMouseSettings(Line[][] lines) {
+        for (int i = 0; i < gridSize; i++) {
+            for (int j = 0; j < gridSize - 1; j++) {
+                if (!playerGradients.contains(lines[i][j].getStroke()))
+                    disableLine(lines[i][j]);
             }
         }
     }
@@ -104,7 +128,7 @@ public class GameScreenController implements PropertyChangeListener {
      * @param column      the lines column in a line array
      * @param lineType    the type of the line
      */
-    public void registerMove(Line clickedLine, int row, int column, LineType lineType) {
+    public void executeMove(Line clickedLine, int row, int column, LineType lineType) {
         disableLine(clickedLine);
         model.performMove(row, column, lineType);
     }
@@ -114,27 +138,27 @@ public class GameScreenController implements PropertyChangeListener {
      *
      * @param labels all view labels
      */
-    public void setLabels(Label[] labels) {
+    private void setLabels(Label[] labels) {
         // shows current player
         labels[0] = new Label();
         labels[0].setText(model.getCurrent().getName() + "'s turn");
         labels[0].setAlignment(Pos.CENTER);
         labels[0].setStyle("-fx-font-size: 75px;");
-        labels[0].setTextFill(p1Gradient);
+        labels[0].setTextFill(playerGradients.get(PlayerNumber.first));
 
         // player 1's score
         labels[1] = new Label();
         labels[1].setText(model.getFirst().getName() + "'s score: " + model.getFirst().getScore());
         labels[1].setAlignment(Pos.CENTER);
         labels[1].setStyle("-fx-font-size: 40px;");
-        labels[1].setTextFill(p1Gradient);
+        labels[1].setTextFill(playerGradients.get(PlayerNumber.first));
 
         // player 2's score
         labels[2] = new Label();
         labels[2].setText(model.getSecond().getName() + "'s score:  " + model.getSecond().getScore());
         labels[2].setAlignment(Pos.CENTER);
         labels[2].setStyle("-fx-font-size: 40px;");
-        labels[2].setTextFill(p2Gradient);
+        labels[2].setTextFill(playerGradients.get(PlayerNumber.second));
     }
 
     /**
@@ -143,19 +167,49 @@ public class GameScreenController implements PropertyChangeListener {
      * @param width  screen width
      * @param height screen height
      */
-    public void buildViewBoard(double width, double height) { // initializes the game board
+    private void drawViewBoard(double width, double height) {
         double constraint = Math.min(width, height);
-        double spaceBetweenDots = (constraint / gridSize) / 2;
+        double spaceBetweenDots = (constraint / gridSize)*0.8;
         double startingHeight = height / 2;
         double startingWidth = width / 4;
-        double dotRadius = 7.5;
+        double dotRadius = 9;
+
+        drawHorizontalLines(view.getHorizontalLines(),startingWidth,startingHeight,spaceBetweenDots,dotRadius);
+        drawVerticalLines(view.getVerticalLines(),startingWidth,startingHeight,spaceBetweenDots,dotRadius);
+        drawDots(view.getDots(),startingWidth,startingHeight,spaceBetweenDots,dotRadius);
+    }
+
+    private void drawHorizontalLines(Line[][] lines, double startingWidth, double startingHeight, double spaceBetweenDots, double dotRadius) {
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize - 1; j++) {
-                view.getHorizontalLines()[i][j] = new Line(startingWidth + (j * spaceBetweenDots) + dotRadius, startingHeight + (i * spaceBetweenDots), startingWidth + ((j + 1) * spaceBetweenDots) - dotRadius, startingHeight + ((i) * spaceBetweenDots));
-                view.getVerticalLines()[i][j] = new Line(startingWidth + (i * spaceBetweenDots), startingHeight + (j * spaceBetweenDots) + dotRadius, startingWidth + (i * spaceBetweenDots), startingHeight + ((j + 1) * spaceBetweenDots) - dotRadius);
-                view.getDots()[i][j] = new Circle(startingWidth + (j * spaceBetweenDots), startingHeight + (i * spaceBetweenDots), dotRadius);
+                double startX = startingWidth + (j * spaceBetweenDots) + dotRadius;
+                double startY = startingHeight + (i * spaceBetweenDots);
+                double endX = startingWidth + ((j + 1) * spaceBetweenDots) - dotRadius;
+                double endY = startingHeight + ((i) * spaceBetweenDots);
+                lines[i][j] = new Line(startX, startY, endX, endY);
             }
-            view.getDots()[i][gridSize - 1] = new Circle(startingWidth + ((gridSize - 1) * spaceBetweenDots), startingHeight + (i * spaceBetweenDots), dotRadius);
+        }
+    }
+
+    private void drawVerticalLines(Line[][] lines, double startingWidth, double startingHeight, double spaceBetweenDots, double dotRadius) {
+        for (int i = 0; i < gridSize; i++) {
+            for (int j = 0; j < gridSize - 1; j++) {
+                double startX = startingWidth + (i * spaceBetweenDots);
+                double startY = startingHeight + (j * spaceBetweenDots) + dotRadius;
+                double endX = startingWidth + (i * spaceBetweenDots);
+                double endY = startingHeight + ((j + 1) * spaceBetweenDots) - dotRadius;
+                lines[i][j] = new Line(startX, startY, endX, endY);
+            }
+        }
+    }
+
+    private void drawDots(Circle[][] dots, double startingWidth, double startingHeight, double spaceBetweenDots, double dotRadius) {
+        for (int i = 0; i < gridSize; i++) {
+            for (int j = 0; j < gridSize; j++) {
+                double x = startingWidth + (j * spaceBetweenDots);
+                double y = startingHeight + (i * spaceBetweenDots);
+                dots[i][j] = new Circle(x, y, dotRadius);
+            }
         }
     }
 
@@ -164,7 +218,7 @@ public class GameScreenController implements PropertyChangeListener {
      *
      * @param line the line to be disabled
      */
-    public void disableLine(Line line) {
+    private void disableLine(Line line) {
         line.setOnMouseClicked(event -> {
         });
         line.setOnMouseEntered(event -> {
@@ -173,10 +227,14 @@ public class GameScreenController implements PropertyChangeListener {
         });
     }
 
+    private boolean isLineNotConnected(Line line) {
+        return !playerGradients.containsValue(line.getStroke());
+    }
+
     /**
      * function that activates when a move was made on the model board.
-     * the function updates the color of the clicked line, the on screen scores and turn.
-     * if the game eneded the function will update the turn text to show the result.
+     * the function updates the color of the clicked line, the on-screen scores and turn.
+     * if the game ended the function will update the turn text to show the result.
      *
      * @param evt A PropertyChangeEvent object describing the event source
      *            and the property that has changed.
@@ -189,28 +247,62 @@ public class GameScreenController implements PropertyChangeListener {
         ModelLine changedLine = changedLineAndOwner.getKey();
         MoveResult result = (MoveResult) evt.getNewValue();
 
-        LinearGradient lineColor = changedLineAndOwner.getValue().equals(PlayerNumber.first) ? p1Gradient : p2Gradient;
-        LinearGradient turnColor = model.getTurn().equals(PlayerNumber.first) ? p1Gradient : p2Gradient;
-        Line[][] lineMatrix = changedLine.getIsHorizontal() ? view.getHorizontalLines() : view.getVerticalLines();
-        lineMatrix[changedLine.getRow()][changedLine.getColumn()].setStroke(lineColor);
-        disableLine(lineMatrix[changedLine.getRow()][changedLine.getColumn()]);
+        updateLine(changedLine, changedLineAndOwner.getValue());
+        updateLabels(result);
+        if (!result.equals(MoveResult.gameOver))
+            checkAndRunAi();
+    }
+
+    private void checkAndRunAi() {
+        GameType gameType = model.getGameType();
+        PlayerNumber currentTurn = model.getTurn();
+
+        if (gameType.equals(GameType.HumanVsAI) && currentTurn.equals(PlayerNumber.second)) {
+            Player ai = model.getCurrent();
+
+            disableMouseSettings(view.getHorizontalLines());
+            disableMouseSettings(view.getVerticalLines());
+
+            Thread aiThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Pair<Point, LineType> result = ai.play();
+                    Point lineRC = result.getKey();
+                    Platform.runLater(() -> {
+
+                        model.performMove(lineRC.x, lineRC.y, result.getValue());
+
+                        setMouseSettings(view.getVerticalLines(),LineType.vertical);
+                        setMouseSettings(view.getHorizontalLines(),LineType.horizontal);
+                    });
+                }
+            });
+
+            aiThread.start();
+        }
+    }
+
+    private void updateLine(ModelLine line,PlayerNumber owner){
+        LinearGradient lineColor = playerGradients.get(owner);
+        Line[][] lineMatrix = line.getIsHorizontal() ? view.getHorizontalLines() : view.getVerticalLines();
+        lineMatrix[line.getRow()][line.getColumn()].setStroke(lineColor);
+        disableLine(lineMatrix[line.getRow()][line.getColumn()]);
+    }
+
+    private void updateLabels(MoveResult result) {
+        LinearGradient turnColor = playerGradients.get(model.getTurn());
 
         view.getLabels()[1].setText(model.getFirst().getName() + "'s score: " + model.getFirst().getScore());
         view.getLabels()[2].setText(model.getSecond().getName() + "'s score:  " + model.getSecond().getScore());
+        view.getLabels()[0].setTextFill(turnColor);
+
         if (result.equals(MoveResult.gameOver)) {
             Pair<Integer, String> results = model.getWinner();
-            if (results.getKey().intValue() == 0) {
-                LinearGradient color =
-                        results.getKey().equals(model.getFirst().getName()) ?
-                        p1Gradient : p2Gradient;
-                view.getLabels()[0].setText(results.getValue() + " Won!");
-                view.getLabels()[0].setTextFill(color);
-            } else {
-                view.getLabels()[0].setText("It's A Tie!");
-            }
+            view.getLabels()[0].setText(results.getValue());
         } else {
             view.getLabels()[0].setText(model.getCurrent().getName() + "'s turn");
-            view.getLabels()[0].setTextFill(turnColor);
         }
+
     }
+
 }

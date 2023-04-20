@@ -63,10 +63,6 @@ public class Game {
             PropertyChangeEvent event = new PropertyChangeEvent(this,"performMove",new Pair<ModelLine,PlayerNumber>(line,turn),result);
             if (scoreObtained == 0) {swapTurn();}
             pcs.firePropertyChange(event);
-            if (gameType.equals(GameType.HumanVsAI) && turn.equals(PlayerNumber.second) && !result.equals(MoveResult.gameOver)) {
-                Pair<Point,LineType> move = getCurrent().play();
-                performMove(move.getKey().x,move.getKey().y,move.getValue());
-            }
         }
     }
 
@@ -76,13 +72,14 @@ public class Game {
      * as well as a String with the Winners name(if there is a tie a blank name is returned)
      */
     public Pair<Integer,String> getWinner() {
+        String winText = " won!";
         if (first.getScore() == second.getScore()) {
-            return new Pair<>(1,"");
+            return new Pair<>(1,"It's a tie!");
         }
         else if (first.getScore() > second.getScore()) {
-            return new Pair<>(0,first.getName());
+            return new Pair<>(0,first.getName() + winText);
         }
-        return new Pair<>(0,second.getName());
+        return new Pair<>(0,second.getName()+ winText);
     }
 
     /**

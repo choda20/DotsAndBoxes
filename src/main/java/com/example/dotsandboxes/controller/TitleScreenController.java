@@ -30,7 +30,7 @@ public class TitleScreenController {
      * @param stage the app windows in which the ui is displayed
      * @throws Exception
      */
-    public TitleScreenController(TitleScreen view, Game model, Stage stage) throws Exception { // constructor
+    public TitleScreenController(TitleScreen view, Game model, Stage stage) { // constructor
         this.model = model;
         this.view = view;
         this.stage = stage;
@@ -38,7 +38,12 @@ public class TitleScreenController {
         setButtonActions(view.getHVH(),view.getHVA());
         setButtonStyles(new Button[]{view.getHVH(),view.getHVA()});
         setLabelStyle(view.getTitle());
-        view.start(stage); // starts the application
+        try {
+            view.start(stage); // starts the application
+        } catch (Exception e) {
+            System.out.println("Title screen could not start.");
+            System.exit(1);
+        }
     }
 
 
@@ -46,7 +51,7 @@ public class TitleScreenController {
      * function that moves the stage to the settings screen(moves to the settings screen)
      * @throws Exception
      */
-    private void moveToSettings() throws Exception { // moves the app to the settings screen after a button was pressed
+    private void moveToSettings()  { // moves the app to the settings screen after a button was pressed
         SettingsScreen settingsView = new SettingsScreen(view.getBackground());
         SettingsScreenController settingsController = new SettingsScreenController(settingsView,model,stage);
     }

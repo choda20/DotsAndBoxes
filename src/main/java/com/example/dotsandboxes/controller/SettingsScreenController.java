@@ -30,7 +30,7 @@ public class SettingsScreenController implements PropertyChangeListener {
      * @param stage the app windows in which the ui is displayed
      * @throws Exception
      */
-    public SettingsScreenController(SettingsScreen view, Game model, Stage stage) throws Exception { // constructor
+    public SettingsScreenController(SettingsScreen view, Game model, Stage stage) { // constructor
         this.model = model;
         this.stage = stage;
         this.view = view;
@@ -41,7 +41,12 @@ public class SettingsScreenController implements PropertyChangeListener {
         configureMoveToGame(view.getMoveToGame());
         configureFontForFields(new TextField[]{view.getP1Field(),view.getP2Field(),view.getGridField()});
 
-        view.start(stage);
+        try {
+            view.start(stage);
+        } catch (Exception e) {
+            System.out.println("Settings screen could not start.");
+            System.exit(1);
+        }
     }
 
     /**
@@ -97,13 +102,9 @@ public class SettingsScreenController implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getNewValue().equals(true)) {
-            try {
-                model.removePropertyChangeListener(this);
-                GameScreen gameView = new GameScreen(model.getGameBoard().getGridSize(),view.getBackground());
-                GameScreenController gameController = new GameScreenController(model, gameView, stage);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            model.removePropertyChangeListener(this);
+            GameScreen gameView = new GameScreen(model.getGameBoard().getGridSize(),view.getBackground());
+            GameScreenController gameController = new GameScreenController(model, gameView, stage);
         } else {
             view.getErrorText().setVisible(true);
         }
