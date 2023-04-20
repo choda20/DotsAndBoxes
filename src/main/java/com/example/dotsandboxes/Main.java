@@ -52,9 +52,9 @@ public class Main extends Application {
             File imageFile = new File(path);
             return new Image(imageFile.getCanonicalPath());
         }catch (Exception e) {
-            System.out.println("App cannot be launched because image links are not valid.");
+            System.err.println("App cannot be launched because image links are not valid.");
             System.exit(1);
-            return new Image("will not be checked");
+            return null; // quiet the compiler
         }
     }
 }

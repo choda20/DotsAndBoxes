@@ -61,8 +61,7 @@ public class GameScreenController implements PropertyChangeListener {
 
         setLabels(view.getLabels()); // initializes labels
         drawViewBoard(stage.getWidth(), stage.getHeight());
-        setMouseSettings(view.getHorizontalLines(), LineType.horizontal);
-        setMouseSettings(view.getVerticalLines(), LineType.vertical);
+        enableUnconnectedLines();
 
         try {
             view.start(stage);
@@ -104,15 +103,6 @@ public class GameScreenController implements PropertyChangeListener {
                         hoveredLine.setStroke(Color.TRANSPARENT);
                     }));
                 }
-            }
-        }
-    }
-
-    private void disableMouseSettings(Line[][] lines) {
-        for (int i = 0; i < gridSize; i++) {
-            for (int j = 0; j < gridSize - 1; j++) {
-                if (!playerGradients.contains(lines[i][j].getStroke()))
-                    disableLine(lines[i][j]);
             }
         }
     }
@@ -226,6 +216,41 @@ public class GameScreenController implements PropertyChangeListener {
         });
     }
 
+    /**
+     * enables all mouse events for all unconnected lines
+     */
+    private void enableUnconnectedLines() {
+        setMouseSettings(view.getHorizontalLines(), LineType.horizontal);
+        setMouseSettings(view.getVerticalLines(), LineType.vertical);
+    }
+
+    /**
+     * disables all mouse events for all unconnected lines
+     */
+    private void disableAllLines() {
+        disableMouseSettings(view.getHorizontalLines());
+        disableMouseSettings(view.getVerticalLines());
+    }
+
+    /**
+     * disables all unconnected lines inside the given line array
+     * @param lines a line array
+     */
+    private void disableMouseSettings(Line[][] lines) {
+        for (int i = 0; i < gridSize; i++) {
+            for (int j = 0; j < gridSize - 1; j++) {
+                if (!playerGradients.contains(lines[i][j].getStroke()))
+                    disableLine(lines[i][j]);
+            }
+        }
+    }
+
+    /**
+     * function that checks if a line is unconnected
+     * @param line the line to be checked
+     * @return true if the line is unconnected, false otherwise(line is
+     * connected)
+     */
     private boolean isLineNotConnected(Line line) {
         return !playerGradients.containsValue(line.getStroke());
     }
@@ -236,7 +261,7 @@ public class GameScreenController implements PropertyChangeListener {
      * the on-screen scores and turn and if the game ended the function will
      * update the turn text to show the result(updateLabels function).
      * additionally, if the game has an AI(checkAiTurn function) this
-     * function asks the AI to perform a move and sends it to the model    
+     * function asks the AI to perform a move and sends it to the model
      * (RunAi() function)
      * @param evt A PropertyChangeEvent object describing the event source
      *            and the property that has changed.
@@ -256,30 +281,47 @@ public class GameScreenController implements PropertyChangeListener {
             RunAi();
     }
 
+    /**
+     * function that checks if the current turn is the AI players turn to act
+     * @param gameType the type of game
+     * @param currentTurn the current player number
+     * @param result the result of the last move
+     * @return true is the game is ongoing, has AI, and it's the AI's turn.
+     * otherwise false.
+     */
     private boolean checkAiTurn(GameType gameType, PlayerNumber currentTurn, MoveResult result) {
         boolean gameHasAi = gameType.equals(GameType.HumanVsAI);
         boolean aiTurn = currentTurn.equals(PlayerNumber.second);
         boolean ongoingGame = result.equals(MoveResult.valid);
         return (gameHasAi && aiTurn && ongoingGame);
     }
-    private void RunAi() {
-        Player ai = model.getCurrent();
 
-        disableMouseSettings(view.getHorizontalLines());
-        disableMouseSettings(view.getVerticalLines());
+    /**
+     * function that runs the disables all GUI elements, runs the AI players
+     * move algorithm and passes the move returned to the model, and then
+     * re-enables all GUI elements.
+     * GUI elements are disabled so the human player cannot interfere with
+     * the board while the AI is thinking.
+     */
+    private void RunAi() {
+        Player ai = model.getCurrent(); // the AI player
+
+        disableAllLines(); // disables all GUI elements
 
         Thread aiThread = new Thread(() -> {
-            Pair<Point, LineType> result = ai.play();
-            Point lineRC = result.getKey();
-            Platform.runLater(() -> {
+            Pair<Point, LineType> AIMove = ai.play(); // runs the AI move algorithm and returns the chosen move
+            Point lineRC = AIMove.getKey();
+            Platform.runLater(() -> { // runLater makes sure the functions
+                // inside execute on the main thread. this is because
+                // JavaFx elements cannot be modified from different threads,
+                // and any attempt to do so will cause a runtime exception.
 
-                model.performMove(lineRC.x, lineRC.y, result.getValue());
+                model.performMove(lineRC.x, lineRC.y, AIMove.getValue()); // sends the move to the model
 
-                setMouseSettings(view.getVerticalLines(),LineType.vertical);
-                setMouseSettings(view.getHorizontalLines(),LineType.horizontal);
+                enableUnconnectedLines(); // re-enables all GUI elements
             });
         });
-        aiThread.start();
+        aiThread.start(); // starts the AI thread
     }
 
     private void updateLine(ModelLine line,PlayerNumber owner){
