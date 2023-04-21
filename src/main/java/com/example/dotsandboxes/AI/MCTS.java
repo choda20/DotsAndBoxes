@@ -38,12 +38,12 @@ public class MCTS {
         System.out.println("Starting MCTS!");
         Instant start = Instant.now();
 
-        long counter = 0L;
+        long simulationCounter = 0L,endTime = System.currentTimeMillis() + 1500;
 
         MCTSNode tree = new MCTSNode(gameBoard);
 
-        while (counter < computations) {
-            counter++;
+        while (System.currentTimeMillis() < endTime) {
+            simulationCounter++;
             //SELECT
             MCTSNode promisingNode = selectPromisingNode(tree);
 
@@ -64,7 +64,7 @@ public class MCTS {
         long mills = end.toEpochMilli() - start.toEpochMilli();
         ModelLine move = best.getBoard().getLastMove();
 
-        System.out.println("Did " + counter + " expansions/simulations within " + mills + " mills");
+        System.out.println("Did " + simulationCounter + " expansions/simulations within " + mills + " mills");
         System.out.println("Best move scored " + best.getChildWithMaxScore() + " and was visited " + best.getVisits() + " times");
         System.out.println("Move was made at: " + move.getRow() + "," + move.getColumn() + " on horizontal line: " + move.getIsHorizontal() + "\n");
         return move;
