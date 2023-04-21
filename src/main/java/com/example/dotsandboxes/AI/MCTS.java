@@ -5,9 +5,7 @@ import com.example.dotsandboxes.model.enums.LineType;
 
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class MCTS {
     private final AIBoard gameBoard; // the game board the algorithm should pick a move for
@@ -54,10 +52,10 @@ public class MCTS {
             }
 
             //SIMULATE
-            simulateLightPlayout(selected);
+            int winningPlayer = simulateLightPlayout(selected);
 
             //PROPAGATE
-            backPropagation(selected);
+            backPropagation(selected,winningPlayer);
         }
         MCTSNode best = tree.getChildWithMaxScore();
         Instant end = Instant.now();
@@ -85,7 +83,6 @@ public class MCTS {
         for (AIBoard move : board.getAvlNextMoves()) {
             child = new MCTSNode(move);
             child.setParent(node);
-            child.setScore(child.getBoard().getScoreDifference());
             node.addChild(child);
         }
 
@@ -101,22 +98,16 @@ public class MCTS {
      * of its children's score.
      * @param selected the node to get to the root from
      */
-    private void backPropagation(MCTSNode selected) {
-        MCTSNode node = selected,  previous = null;
-        int currentPlayer = node.getBoard().getLastPlayer();
-        while (node != null) { // look for the root
-            node.incVisits();
+    private void backPropagation(MCTSNode selected, int winningPlayer) {
+        MCTSNode tempNode = selected;
 
-            if (previous != null && previous.getScore() > node.getScore())
-                node.setScore(previous.getScore());
-            if (currentPlayer == playerId) {
-                node.incScore();
-            }
+        while (tempNode != null) { // look for the root
+            tempNode.incVisits();
 
-            previous = node;
-            node = node.getParent();
-            if (node != null)
-                currentPlayer = node.getBoard().getLastPlayer();
+            if (tempNode.getBoard().getLastPlayer() == winningPlayer)
+                tempNode.setScore(tempNode.getScore() + 10);
+
+            tempNode = tempNode.getParent();
         }
     }
 
@@ -128,48 +119,41 @@ public class MCTS {
      * meaning the highest rated leafs will be when the AI wins.
      * @param promisingNode a node that seems promising for exploration
      */
-    private void simulateLightPlayout(MCTSNode promisingNode) {
-        MCTSNode node = promisingNode;
+    private int simulateLightPlayout(MCTSNode promisingNode) {
+        MCTSNode tempNode = promisingNode;
         AIBoard board;
         ModelLine bestMove;
 
-        boolean best = true;
-        while (node.getBoard().isGameOngoing() && node.getBoard().getBestMoves().size()>0) {
+        if (!tempNode.getBoard().isGameOngoing() && tempNode.getBoard().getScoreDifference() <= 0) {
+            tempNode.getParent().setScore(Integer.MIN_VALUE);
+            return tempNode.getBoard().getLastPlayer();
+        }
 
-            bestMove = node.getBoard().getBestMove();
-            board = new AIBoard(new AIBoard(node.getBoard()));
+        while (tempNode.getBoard().isGameOngoing() && tempNode.getBoard().getBestMoves().size()>0) {
+
+            bestMove = tempNode.getBoard().getBestMove();
+            board = new AIBoard(new AIBoard(tempNode.getBoard()));
             board.performMove(bestMove.getRow(),bestMove.getColumn(),bestMove.getIsHorizontal() ? LineType.horizontal : LineType.vertical);
             MCTSNode child = new MCTSNode(board);
 
-            child.setScore(board.getScoreDifference());
-            if (best) {
-                child.setScore(child.getScore() + 100);
-                best = false;
-            }
+            child.setParent(tempNode);
+            tempNode.addChild(child);
 
-            child.setParent(node);
-            node.addChild(child);
-
-            node = child;
+            tempNode = child;
         }
+        return tempNode.getBoard().getLastPlayer();
     }
 
 
     /**
      * function that selects a promising node for exploration using the
-     * UCT formula. the function prioritizes unexplored children, so it will
-     * force pick an unexplored child without using UCT if one exists.
+     * UCT formula.
      * @param tree the root of the Monte carlo tree
      * @return the promising node to be explored
      */
     private MCTSNode selectPromisingNode(MCTSNode tree) {
         MCTSNode node = tree;
-        List<MCTSNode> unexploredChildren;
         while (node.getChildren().size() != 0) {
-            unexploredChildren = node.getChildren().stream().filter(c -> c.getVisits() == 0).collect(Collectors.toList());
-            if (unexploredChildren.size() > 0) {
-                return unexploredChildren.get(generator.nextInt(unexploredChildren.size()));
-            }
             node = UCT.findBestNodeWithUCT(node);
         }
 
