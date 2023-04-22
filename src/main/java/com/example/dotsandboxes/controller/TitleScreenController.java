@@ -23,13 +23,14 @@ public class TitleScreenController {
     private final Stage stage; // the app window
 
     /**
-     * full constructor. sets up button actions for all view buttons, styles all view buttons and labels,
-     * and shows the app window
+     * full constructor. sets up button actions for all view buttons, styles
+     * all view buttons and labels, and shows the app window
      * @param view the screen view containing all ui elements
      * @param model the game model containing the game data
      * @param stage the app windows in which the ui is displayed
      */
-    public TitleScreenController(TitleScreen view, Game model, Stage stage) { // constructor
+    public TitleScreenController(TitleScreen view, Game model, Stage stage)
+    { // constructor
         this.model = model;
         this.view = view;
         this.stage = stage;
@@ -47,11 +48,14 @@ public class TitleScreenController {
 
 
     /**
-     * function that moves the stage to the settings screen(moves to the settings screen)
+     * function that moves the stage to the settings
+     * screen(moves to the settings screen)
      */
-    private void moveToSettings()  { // moves the app to the settings screen after a button was pressed
+    private void moveToSettings()  { // moves the app to the settings
+        // screen after a button was pressed
         SettingsScreen settingsView = new SettingsScreen(view.getBackground());
-        SettingsScreenController settingsController = new SettingsScreenController(settingsView,model,stage);
+        SettingsScreenController settingsController = new
+                SettingsScreenController(settingsView,model,stage);
     }
 
     /**
@@ -61,8 +65,11 @@ public class TitleScreenController {
     private void setLabelStyle(Label title) { // styles the screen title
         title.setAlignment(Pos.CENTER);
         title.setStyle("-fx-font-size: 100px;");
-        Stop[] stops = new Stop[] { new Stop(0.4, Color.web("#CC0033")),new Stop(0.5, Color.rgb(0, 0, 255, 0.5)), new Stop(1, Color.BLUE) };
-        LinearGradient gradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
+        Stop[] stops = new Stop[] { new Stop(0.4, Color.web("#CC0033")),
+                new Stop(0.5, Color.rgb(0, 0, 255, 0.5)),
+                new Stop(1, Color.BLUE) };
+        LinearGradient gradient = new LinearGradient(0, 0, 1, 0,
+                true, CycleMethod.NO_CYCLE, stops);
         title.setTextFill(gradient);
     }
 
@@ -70,12 +77,15 @@ public class TitleScreenController {
      * function that styles all view buttons
      * @param buttons array of all view buttons
      */
-    private void setButtonStyles(Button[] buttons) { // styles the Buttons on screen
+    private void setButtonStyles(Button[] buttons) { // styles the
+        // Buttons on screen
         for (Button button : buttons) {
             button.setPadding(new Insets(10, 20, 10, 20));
             button.setPrefHeight(50);
             button.setPrefWidth(200);
-            button.setStyle("-fx-background-color: radial-gradient(radius 50%, #FF3B61, #FE8373); -fx-background-radius: 50px; -fx-text-fill: white; -fx-font-size: 17;");
+            button.setStyle("-fx-background-color: radial-gradient(radius 50%, " +
+                    "#FF3B61, #FE8373); -fx-background-radius: 50px; " +
+                    "-fx-text-fill: white; -fx-font-size: 17;");
         }
     }
 
@@ -84,7 +94,8 @@ public class TitleScreenController {
      * @param HVH human vs human game button
      * @param HVA human vs AI game button
      */
-    private void setButtonActions(Button HVH, Button HVA) { // sets up button reactions to being pressed
+    private void setButtonActions(Button HVH, Button HVA) { // sets up button
+        // reactions to being pressed
         HVH.setOnAction(buttonEvent -> {
             try {
                 handleHVH();

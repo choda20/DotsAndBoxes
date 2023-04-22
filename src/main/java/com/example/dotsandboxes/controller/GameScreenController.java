@@ -31,32 +31,40 @@ public class GameScreenController implements PropertyChangeListener {
     private final GameScreen view; // the screens view
     private final int gridSize; // the grid size
     private final Hashtable<PlayerNumber,LinearGradient> playerGradients;
+    // dictionary holding player colors by player number
 
 
     /**
-     * partial constructor that initializes all class fields, adds the object as a listener to the
-     * model(also adds the AI if it is HVA), styles and configures all view elements and shows the app window
-     *
+     * partial constructor that initializes all class fields, adds the object
+     * as a listener to the model(also adds the AI if it is HVA), styles and
+     * configures all view elements and shows the app window
      * @param view  the screen view containing all ui elements
      * @param model the game model containing the game data
      * @param stage the app windows in which the ui is displayed
      */
-    public GameScreenController(Game model, GameScreen view, Stage stage) { // constructor
+    public GameScreenController(Game model, GameScreen view, Stage stage) {
+        // constructor
         this.model = model;
         this.view = view;
         this.gridSize = model.getGameBoard().getGridSize();
         this.playerGradients = new Hashtable<>();
 
-        Stop[] stopsP1 = new Stop[]{new Stop(0, Color.web("#FE0944")), new Stop(1, Color.web("#FEAE96"))};
-        LinearGradient p1Gradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stopsP1);
-        Stop[] stopsP2 = new Stop[]{new Stop(0, Color.web("#008FFD")), new Stop(1, Color.web("#2A2A72"))};
-        LinearGradient p2Gradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stopsP2);
+        Stop[] stopsP1 = new Stop[]{new Stop(0, Color.web("#FE0944")),
+                new Stop(1, Color.web("#FEAE96"))};
+        LinearGradient p1Gradient = new LinearGradient(0, 0, 1, 0,
+                true, CycleMethod.NO_CYCLE, stopsP1);
+        Stop[] stopsP2 = new Stop[]{new Stop(0, Color.web("#008FFD")),
+                new Stop(1, Color.web("#2A2A72"))};
+        LinearGradient p2Gradient = new LinearGradient(0, 0, 1, 0,
+                true, CycleMethod.NO_CYCLE, stopsP2);
         playerGradients.put(PlayerNumber.first,p1Gradient);
         playerGradients.put(PlayerNumber.second,p2Gradient);
 
-        model.addPropertyChangeListener(this); // registers the controller as a listener to the model
+        model.addPropertyChangeListener(this); // registers the controller
+        // as a listener to the model
         if (model.getGameType().equals(GameType.HumanVsAI)) {
-            model.addPropertyChangeListener((PropertyChangeListener) model.getSecond());
+            model.addPropertyChangeListener((PropertyChangeListener)
+                    model.getSecond());
         }
 
         setLabels(view.getLabels()); // initializes labels
@@ -72,12 +80,13 @@ public class GameScreenController implements PropertyChangeListener {
     }
 
     /**
-     * function that configures line reactions to being pressed, hovered on, and hover on exited.
-     *
+     * function that configures line reactions to being pressed, hovered on,
+     * and hover on exited.
      * @param lines    2D array of lines
      * @param lineType the type of lines in the array
      */
-    private void setMouseSettings(Line[][] lines, LineType lineType) { //sets up line reactions to mouse events
+    private void setMouseSettings(Line[][] lines, LineType lineType) {
+        //sets up line reactions to mouse events
 
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize - 1; j++) {
@@ -94,8 +103,12 @@ public class GameScreenController implements PropertyChangeListener {
 
                     lines[i][j].setOnMouseEntered((mouseEvent -> {
                         Line hoveredLine = (Line) mouseEvent.getSource();
-                        Stop[] stopsHovered = new Stop[]{new Stop(0, Color.web("#FBD72B")), new Stop(1, Color.web("#F9484A"))};
-                        hoveredLine.setStroke(new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stopsHovered));
+                        Stop[] stopsHovered = new Stop[]{new Stop(0,
+                                Color.web("#FBD72B")),
+                                new Stop(1, Color.web("#F9484A"))};
+                        hoveredLine.setStroke(new LinearGradient(0, 0,
+                                1, 0,
+                                true, CycleMethod.NO_CYCLE, stopsHovered));
                     }));
 
                     lines[i][j].setOnMouseExited((mouseEvent -> {
@@ -117,7 +130,8 @@ public class GameScreenController implements PropertyChangeListener {
      * @param column      the lines column in a line array
      * @param lineType    the type of the line
      */
-    public void executeMove(Line clickedLine, int row, int column, LineType lineType) {
+    public void executeMove(Line clickedLine, int row, int column,
+                            LineType lineType) {
         disableLine(clickedLine);
         model.performMove(row, column, lineType);
     }
@@ -137,22 +151,24 @@ public class GameScreenController implements PropertyChangeListener {
 
         // player 1's score
         labels[1] = new Label();
-        labels[1].setText(model.getFirst().getName() + "'s score: " + model.getFirst().getScore());
+        labels[1].setText(model.getFirst().getName() + "'s score: " +
+                model.getFirst().getScore());
         labels[1].setAlignment(Pos.CENTER);
         labels[1].setStyle("-fx-font-size: 40px;");
         labels[1].setTextFill(playerGradients.get(PlayerNumber.first));
 
         // player 2's score
         labels[2] = new Label();
-        labels[2].setText(model.getSecond().getName() + "'s score:  " + model.getSecond().getScore());
+        labels[2].setText(model.getSecond().getName() + "'s score:  " +
+                model.getSecond().getScore());
         labels[2].setAlignment(Pos.CENTER);
         labels[2].setStyle("-fx-font-size: 40px;");
         labels[2].setTextFill(playerGradients.get(PlayerNumber.second));
     }
 
     /**
-     * function that configures all view matrix(sets their location on the screen)
-     *
+     * function that configures all view matrix(sets their location on the
+     * screen)
      * @param width  screen width
      * @param height screen height
      */
@@ -163,36 +179,75 @@ public class GameScreenController implements PropertyChangeListener {
         double startingWidth = width / 4;
         double dotRadius = 9;
 
-        drawHorizontalLines(view.getHorizontalLines(),startingWidth,startingHeight,spaceBetweenDots,dotRadius);
-        drawVerticalLines(view.getVerticalLines(),startingWidth,startingHeight,spaceBetweenDots,dotRadius);
-        drawDots(view.getDots(),startingWidth,startingHeight,spaceBetweenDots,dotRadius);
+        drawHorizontalLines(view.getHorizontalLines(),startingWidth,
+                startingHeight,spaceBetweenDots,dotRadius);
+        drawVerticalLines(view.getVerticalLines(),startingWidth,
+                startingHeight,spaceBetweenDots,dotRadius);
+        drawDots(view.getDots(),startingWidth,startingHeight,
+                spaceBetweenDots ,dotRadius);
     }
 
-    private void drawHorizontalLines(Line[][] lines, double startingWidth, double startingHeight, double spaceBetweenDots, double dotRadius) {
+    /**
+     * function that draws horizontal lines on the board based on the
+     * parameters provided
+     * @param lines the lines to be drawn
+     * @param startingWidth
+     * @param startingHeight
+     * @param spaceBetweenDots
+     * @param dotRadius
+     */
+    private void drawHorizontalLines(Line[][] lines, double startingWidth,
+                                     double startingHeight,
+                                     double spaceBetweenDots, double dotRadius){
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize - 1; j++) {
-                double startX = startingWidth + (j * spaceBetweenDots) + dotRadius;
+                double startX =
+                        startingWidth + (j * spaceBetweenDots) + dotRadius;
                 double startY = startingHeight + (i * spaceBetweenDots);
-                double endX = startingWidth + ((j + 1) * spaceBetweenDots) - dotRadius;
+                double endX =
+                        startingWidth + ((j + 1) * spaceBetweenDots) -dotRadius;
                 double endY = startingHeight + ((i) * spaceBetweenDots);
                 lines[i][j] = new Line(startX, startY, endX, endY);
             }
         }
     }
 
-    private void drawVerticalLines(Line[][] lines, double startingWidth, double startingHeight, double spaceBetweenDots, double dotRadius) {
+    /**
+     * function that draws vertical lines on the board based on the
+     * parameters provided
+     * @param lines
+     * @param startingWidth
+     * @param startingHeight
+     * @param spaceBetweenDots
+     * @param dotRadius
+     */
+    private void drawVerticalLines(Line[][] lines, double startingWidth,
+                                   double startingHeight,
+                                   double spaceBetweenDots, double dotRadius) {
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize - 1; j++) {
                 double startX = startingWidth + (i * spaceBetweenDots);
-                double startY = startingHeight + (j * spaceBetweenDots) + dotRadius;
+                double startY =
+                        startingHeight + (j * spaceBetweenDots) + dotRadius;
                 double endX = startingWidth + (i * spaceBetweenDots);
-                double endY = startingHeight + ((j + 1) * spaceBetweenDots) - dotRadius;
+                double endY =
+                        startingHeight + ((j + 1) * spaceBetweenDots)-dotRadius;
                 lines[i][j] = new Line(startX, startY, endX, endY);
             }
         }
     }
 
-    private void drawDots(Circle[][] dots, double startingWidth, double startingHeight, double spaceBetweenDots, double dotRadius) {
+    /**
+     * function that draws dots on the board based on the parameters provided
+     * @param dots
+     * @param startingWidth
+     * @param startingHeight
+     * @param spaceBetweenDots
+     * @param dotRadius
+     */
+    private void drawDots(Circle[][] dots, double startingWidth,
+                          double startingHeight, double spaceBetweenDots,
+                          double dotRadius) {
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
                 double x = startingWidth + (j * spaceBetweenDots);
@@ -265,12 +320,14 @@ public class GameScreenController implements PropertyChangeListener {
      * (RunAi() function)
      * @param evt A PropertyChangeEvent object describing the event source
      *            and the property that has changed.
-     *            old value = Pair<ModelLine,PlayerNumber> the clicked line and who clicked it,
-     *            new value = the result of the line connection(if the game ended)
+     *            old value = Pair<ModelLine,PlayerNumber> the clicked line
+     *            and who clicked it,new value = the result of the line
+     *            connection(if the game ended)
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        Pair<ModelLine, PlayerNumber> changedLineAndOwner = (Pair<ModelLine, PlayerNumber>) evt.getOldValue();
+        Pair<ModelLine, PlayerNumber> changedLineAndOwner =  (Pair<ModelLine,
+                PlayerNumber>) evt.getOldValue();
         ModelLine changedLine = changedLineAndOwner.getKey();
         MoveResult result = (MoveResult) evt.getNewValue();
 
@@ -289,7 +346,8 @@ public class GameScreenController implements PropertyChangeListener {
      * @return true is the game is ongoing, has AI, and it's the AI's turn.
      * otherwise false.
      */
-    private boolean checkAiTurn(GameType gameType, PlayerNumber currentTurn, MoveResult result) {
+    private boolean checkAiTurn(GameType gameType, PlayerNumber currentTurn,
+                                MoveResult result) {
         boolean gameHasAi = gameType.equals(GameType.HumanVsAI);
         boolean aiTurn = currentTurn.equals(PlayerNumber.second);
         boolean ongoingGame = result.equals(MoveResult.valid);
@@ -323,26 +381,40 @@ public class GameScreenController implements PropertyChangeListener {
                 // sends the move to the model
                 model.performMove(lineRC.x, lineRC.y, AIMove.getValue());
 
-                enableUnconnectedLines(); // enables the human player to make move
+                enableUnconnectedLines(); // enables the human player to
+                // make move
             });
         });
         aiThread.start(); // starts the AI thread
     }
 
+    /**
+     * function that updates a connected lines appearance on the Gui
+     * @param line the connected line
+     * @param owner the player who connected it
+     */
     private void updateLine(ModelLine line,PlayerNumber owner){
         LinearGradient lineColor = playerGradients.get(owner);
         Line[][] lineMatrix = line.getIsHorizontal().equals(LineType.horizontal)
                 ? view.getHorizontalLines() : view.getVerticalLines();
+
         lineMatrix[line.getRow()][line.getColumn()].setStroke(lineColor);
         disableLine(lineMatrix[line.getRow()][line.getColumn()]);
     }
 
+    /**
+     * function that updates the on-screen labels after a move was made
+     * @param result the results of the move
+     * @param labels the labels to be updated
+     */
     private void updateLabels(MoveResult result,Label[] labels) {
         LinearGradient turnColor = playerGradients.get(model.getTurn());
         String turnText = model.getCurrent().getName() + "'s turn";
 
-        labels[1].setText(model.getFirst().getName() + "'s score: " + model.getFirst().getScore());
-        labels[2].setText(model.getSecond().getName() + "'s score:  " + model.getSecond().getScore());
+        labels[1].setText(model.getFirst().getName() + "'s score: " +
+                model.getFirst().getScore());
+        labels[2].setText(model.getSecond().getName() + "'s score:  " +
+                model.getSecond().getScore());
 
         if (result.equals(MoveResult.gameOver)) {
             Pair<Integer, String> results = model.getWinner();
