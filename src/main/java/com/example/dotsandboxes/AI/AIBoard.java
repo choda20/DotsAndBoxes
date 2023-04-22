@@ -257,7 +257,7 @@ public class AIBoard {
      does not gain move it will be negative(represents evaluation for the
      opposing player's moves).
      * @param move
-     * @return
+     * @return the score of the move
      */
     private int evaluateMove(ModelLine move) {
         move.connectLine();
