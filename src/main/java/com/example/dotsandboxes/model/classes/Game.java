@@ -59,17 +59,19 @@ public class Game {
     public void performMove(int row, int column, LineType lineType) {
         ModelLine[][] lines = lineType.equals(LineType.horizontal) ?
                 gameBoard.getHorizontalLines() : gameBoard.getVerticalLines();
-        ModelLine line = lines[row][column];
-        if (!line.getIsConnected()) {
-            line.connectLine();
-            int scoreObtained = gameBoard.checkBoxFormed(line);
-            getCurrent().setScore(getCurrent().getScore() + scoreObtained);
-            MoveResult result = !isGameInProgress() ?
-                    MoveResult.gameOver : MoveResult.valid;
-            PropertyChangeEvent event = new PropertyChangeEvent(this,
-                    "performMove", new Pair<>(line, turn),result);
-            if (scoreObtained == 0) {swapTurn();}
-            pcs.firePropertyChange(event);
+        if (row < lines.length && column < lines[0].length) {
+            ModelLine line = lines[row][column];
+            if (!line.getIsConnected()) {
+                line.connectLine();
+                int scoreObtained = gameBoard.checkBoxFormed(line);
+                getCurrent().setScore(getCurrent().getScore() + scoreObtained);
+                MoveResult result = !isGameInProgress() ? MoveResult.gameOver : MoveResult.valid;
+                PropertyChangeEvent event = new PropertyChangeEvent(this, "performMove", new Pair<>(line, turn), result);
+                if (scoreObtained == 0) {
+                    swapTurn();
+                }
+                pcs.firePropertyChange(event);
+            }
         }
     }
 

@@ -1,10 +1,5 @@
 package com.example.dotsandboxes.model.classes;
 
-import com.example.dotsandboxes.model.enums.LineType;
-import javafx.util.Pair;
-
-import java.awt.*;
-
 public abstract class Player {
     protected String name; // the player's name
     protected int score; // the player's score
@@ -33,6 +28,6 @@ public abstract class Player {
      * which array the line is
      * in(LineType.Horizontal = horizontalLines and so on) stored in a Pair.
      */
-    public abstract Pair<Point, LineType> makeMove();
+    public abstract ModelLine makeMove();
     // abstract function that configures how the player makes a move
 }

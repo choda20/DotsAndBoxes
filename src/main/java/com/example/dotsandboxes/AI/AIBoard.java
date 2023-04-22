@@ -146,6 +146,9 @@ public class AIBoard {
     /**
      * function that checks if a box was formed after a line was connected,
      * and returns the score obtained from the connection
+     * the function run-time is technically O(n), when n=the number of boxes
+     * the line is a part of. But, a line is in 2 boxes at maximum, so the
+     * function run-time is O(1) in practice
      * @param line a newly connected line
      * @return the score obtained from connecting the line, ranges from 0-2.
      */
@@ -365,7 +368,6 @@ public class AIBoard {
                 worstLines.add(modelLine);
             else okLines.add(modelLine);
         }
-
     }
 
     /**

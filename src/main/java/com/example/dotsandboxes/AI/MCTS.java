@@ -8,7 +8,6 @@ import java.time.Instant;
 import java.util.Random;
 
 public class MCTS {
-    private final int playerId; // the id of the player
     private final AIBoard gameBoard; // the game board the algorithm should
     // pick a move for
     private final Random generator; // used to roll random numbers
@@ -18,10 +17,9 @@ public class MCTS {
      * full constructor that initializes all class fields
      * @param gameBoard the current game board
      */
-    public MCTS(AIBoard gameBoard, int playerId) {
+    public MCTS(AIBoard gameBoard) {
         this.gameBoard = gameBoard;
         this.generator = new Random();
-        this.playerId = playerId;
     }
 
     /**
@@ -29,40 +27,28 @@ public class MCTS {
      * @return the line selected by the algorithm
      */
     public ModelLine MCTSCalc() {
-        System.out.println("Starting MCTS!");
-        Instant start = Instant.now();
-
-        long simulationCounter = 0L,endTime = System.currentTimeMillis() + 1500;
-
+        long endTime = System.currentTimeMillis() + 2000;
         MCTSNode tree = new MCTSNode(gameBoard);
 
         while (System.currentTimeMillis() < endTime) {
-            simulationCounter++;
-            //SELECT
+            // select a node to explore
             MCTSNode promisingNode = selectPromisingNode(tree);
 
-            //EXPAND
+            //expands the selected node if possible
             MCTSNode selected = promisingNode;
             if (selected.getBoard().isGameOngoing()) {
                 selected = expandNodeAndReturnRandom(promisingNode);
             }
 
-            //SIMULATE
+            //simulates a game on the node
             int winningPlayer = simulateLightPlayout(selected);
 
-            //PROPAGATE
+            //back propagates the results of the playout
             backPropagation(selected,winningPlayer);
         }
-        MCTSNode best = tree.getChildWithMaxScore();
-        Instant end = Instant.now();
-        long mills = end.toEpochMilli() - start.toEpochMilli();
-        ModelLine move = best.getBoard().getLastMove();
 
-        System.out.println("Did " + simulationCounter + " " +
-                "expansions/simulations within " + mills + " mills");
-        System.out.println("Move was made at: " + move.getRow() + "," +
-                move.getColumn() + " on line type: " +
-                move.getIsHorizontal() + "\n");
+        MCTSNode best = tree.getChildWithMaxScore();
+        ModelLine move = best.getBoard().getLastMove();
         return move;
     }
 
@@ -131,8 +117,7 @@ public class MCTS {
             return tempBoard.getLastPlayer();
         }
 
-        while (tempBoard.isGameOngoing() &&
-                tempBoard.getBestMovesList().size()>0) {
+        while (tempBoard.isGameOngoing()) {
 
             Pair<ModelLine,Integer> bestMoveAndScore= tempBoard.getBestMove();
             bestMove = bestMoveAndScore.getKey();

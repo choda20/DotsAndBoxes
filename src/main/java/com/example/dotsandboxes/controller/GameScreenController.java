@@ -169,8 +169,8 @@ public class GameScreenController implements PropertyChangeListener {
     /**
      * function that configures all view matrix(sets their location on the
      * screen)
-     * @param width  screen width
-     * @param height screen height
+     * @param width  app window width
+     * @param height app window height
      */
     private void drawViewBoard(double width, double height) {
         double constraint = Math.min(width, height);
@@ -368,9 +368,7 @@ public class GameScreenController implements PropertyChangeListener {
 
         Thread aiThread = new Thread(() -> {
             // runs the AI move algorithm and returns the chosen move
-            Pair<Point, LineType> AIMove = ai.makeMove();
-
-            Point lineRC = AIMove.getKey();
+            ModelLine move = ai.makeMove();
 
             // runLater makes sure the functions inside execute on the JavaFx
             // thread. this is because JavaFx elements should not be modified
@@ -379,7 +377,8 @@ public class GameScreenController implements PropertyChangeListener {
             Platform.runLater(() -> {
 
                 // sends the move to the model
-                model.performMove(lineRC.x, lineRC.y, AIMove.getValue());
+                model.performMove(move.getRow(), move.getColumn(),
+                        move.getIsHorizontal());
 
                 enableUnconnectedLines(); // enables the human player to
                 // make move

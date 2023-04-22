@@ -1,10 +1,5 @@
 package com.example.dotsandboxes.model.classes;
 
-import com.example.dotsandboxes.model.enums.LineType;
-import javafx.util.Pair;
-
-import java.awt.*;
-
 public class HumanPlayer extends Player{
     /**
      * empty constructor that resets the players score to 0.
@@ -19,6 +14,6 @@ public class HumanPlayer extends Player{
      * this class has no access to it.
      * @return a throwaway move since it is not used
      */
-    public Pair<Point, LineType> makeMove() {
-        return new Pair<>(new Point(-1, -1), LineType.horizontal);}
+    public ModelLine makeMove() {
+        return null;} // quiet the compiler
 }

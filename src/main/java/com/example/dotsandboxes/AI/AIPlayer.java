@@ -2,11 +2,9 @@ package com.example.dotsandboxes.AI;
 
 import com.example.dotsandboxes.model.classes.ModelLine;
 import com.example.dotsandboxes.model.classes.Player;
-import com.example.dotsandboxes.model.enums.LineType;
 import com.example.dotsandboxes.model.enums.PlayerNumber;
 import javafx.util.Pair;
 
-import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -29,12 +27,11 @@ public class AIPlayer extends Player implements PropertyChangeListener {
      * @return a Pair that holds information on the line the move
      * should be made on
      */
-    public Pair<Point, LineType> makeMove()  {
+    public ModelLine makeMove()  {
         // the algorithm the AI uses to choose a move
-        MCTS moveAlgorithm = new MCTS(new AIBoard(model),1);
+        MCTS moveAlgorithm = new MCTS(new AIBoard(model));
         ModelLine move = moveAlgorithm.MCTSCalc();
-        return new Pair<>(new Point(move.getRow(),
-                move.getColumn()), move.getIsHorizontal());
+        return move;
     }
 
     /**
