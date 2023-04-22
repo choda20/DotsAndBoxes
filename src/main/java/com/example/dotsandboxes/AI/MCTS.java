@@ -63,7 +63,6 @@ public class MCTS {
         ModelLine move = best.getBoard().getLastMove();
 
         System.out.println("Did " + simulationCounter + " expansions/simulations within " + mills + " mills");
-        System.out.println("Best move scored " + best.getChildWithMaxScore() + " and was visited " + best.getVisits() + " times");
         System.out.println("Move was made at: " + move.getRow() + "," + move.getColumn() + " on horizontal line: " + move.getIsHorizontal() + "\n");
         return move;
     }
@@ -124,16 +123,21 @@ public class MCTS {
         AIBoard board;
         ModelLine bestMove;
 
-        if (!tempNode.getBoard().isGameOngoing() && tempNode.getBoard().getScoreDifference() <= 0) {
-            tempNode.getParent().setScore(Integer.MIN_VALUE);
+        if (!tempNode.getBoard().isGameOngoing() &&
+                tempNode.getBoard().getScoreDifference() <= 0) {
+            int score = tempNode.getBoard().getScoreDifference() == 0 ?
+                    Integer.MIN_VALUE/2 : Integer.MIN_VALUE;
+            tempNode.getParent().setScore(score);
             return tempNode.getBoard().getLastPlayer();
         }
 
-        while (tempNode.getBoard().isGameOngoing() && tempNode.getBoard().getBestMoves().size()>0) {
+        while (tempNode.getBoard().isGameOngoing() &&
+                tempNode.getBoard().getBestMoves().size()>0) {
 
             bestMove = tempNode.getBoard().getBestMove();
             board = new AIBoard(new AIBoard(tempNode.getBoard()));
-            board.performMove(bestMove.getRow(),bestMove.getColumn(),bestMove.getIsHorizontal() ? LineType.horizontal : LineType.vertical);
+            board.performMove(bestMove.getRow(), bestMove.getColumn(),
+                    bestMove.getIsHorizontal());
             MCTSNode child = new MCTSNode(board);
 
             child.setParent(tempNode);
@@ -156,7 +160,6 @@ public class MCTS {
         while (node.getChildren().size() != 0) {
             node = UCT.findBestNodeWithUCT(node);
         }
-
         return node;
     }
 

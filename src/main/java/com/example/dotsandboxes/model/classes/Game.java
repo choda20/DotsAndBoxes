@@ -7,7 +7,6 @@ import com.example.dotsandboxes.model.enums.MoveResult;
 import com.example.dotsandboxes.model.enums.PlayerNumber;
 import javafx.util.Pair;
 
-import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -125,6 +124,10 @@ public class Game {
      */
     public void removePropertyChangeListener(PropertyChangeListener listener) {pcs.removePropertyChangeListener(listener);}
 
+    public PlayerNumber getLeadingPlayer() {
+        return first.getScore() > second.getScore() ? PlayerNumber.first :
+                PlayerNumber.second;
+    }
 
     //general getters
     public PlayerNumber getTurn() {return turn;}

@@ -275,7 +275,7 @@ public class GameScreenController implements PropertyChangeListener {
         MoveResult result = (MoveResult) evt.getNewValue();
 
         updateLine(changedLine, changedLineAndOwner.getValue());
-        updateLabels(result);
+        updateLabels(result, view.getLabels());
 
         if (checkAiTurn(model.getGameType(),model.getTurn(),result))
             runAiInBG();
@@ -331,25 +331,28 @@ public class GameScreenController implements PropertyChangeListener {
 
     private void updateLine(ModelLine line,PlayerNumber owner){
         LinearGradient lineColor = playerGradients.get(owner);
-        Line[][] lineMatrix = line.getIsHorizontal() ? view.getHorizontalLines() : view.getVerticalLines();
+        Line[][] lineMatrix = line.getIsHorizontal().equals(LineType.horizontal)
+                ? view.getHorizontalLines() : view.getVerticalLines();
         lineMatrix[line.getRow()][line.getColumn()].setStroke(lineColor);
         disableLine(lineMatrix[line.getRow()][line.getColumn()]);
     }
 
-    private void updateLabels(MoveResult result) {
+    private void updateLabels(MoveResult result,Label[] labels) {
         LinearGradient turnColor = playerGradients.get(model.getTurn());
+        String turnText = model.getCurrent().getName() + "'s turn";
 
-        view.getLabels()[1].setText(model.getFirst().getName() + "'s score: " + model.getFirst().getScore());
-        view.getLabels()[2].setText(model.getSecond().getName() + "'s score:  " + model.getSecond().getScore());
-        view.getLabels()[0].setTextFill(turnColor);
+        labels[1].setText(model.getFirst().getName() + "'s score: " + model.getFirst().getScore());
+        labels[2].setText(model.getSecond().getName() + "'s score:  " + model.getSecond().getScore());
 
         if (result.equals(MoveResult.gameOver)) {
             Pair<Integer, String> results = model.getWinner();
-            view.getLabels()[0].setText(results.getValue());
-        } else {
-            view.getLabels()[0].setText(model.getCurrent().getName() + "'s turn");
+            PlayerNumber winner = model.getLeadingPlayer();
+            turnText = results.getValue();
+            turnColor = playerGradients.get(winner);
         }
 
+        labels[0].setText(turnText);
+        labels[0].setTextFill(turnColor);
     }
 
 }

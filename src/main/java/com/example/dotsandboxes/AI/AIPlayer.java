@@ -16,7 +16,8 @@ public class AIPlayer extends Player implements PropertyChangeListener {
     private MCTS moveAlgorithm; // the algorithm the AI uses to choose a move
 
     /**
-     * empty constructor that sets Player score to 0, and initializes the game board
+     * empty constructor that sets Player score to 0, and initializes
+     * the game board
      */
     public AIPlayer() {
         this.score = 0;
@@ -24,26 +25,31 @@ public class AIPlayer extends Player implements PropertyChangeListener {
     }
 
     /**
-     * Function that activates the algorithm the AI uses to choose a move and returns the chosen move
-     * @return a Pair that holds information on the line the move should be made on
+     * Function that activates the algorithm the AI uses to choose a move and
+     * returns the chosen move
+     * @return a Pair that holds information on the line the move
+     * should be made on
      */
     public Pair<Point, LineType> makeMove()  {
         moveAlgorithm = new MCTS(new AIBoard(model),750);
         ModelLine move = moveAlgorithm.MCTSCalc();
-        return new Pair<Point,LineType>(new Point(move.getRow(),move.getColumn()),move.getIsHorizontal() ? LineType.horizontal : LineType.vertical);
+        return new Pair<Point,LineType>(new Point(move.getRow(),
+                move.getColumn()),move.getIsHorizontal());
     }
 
     /**
-     * An observer function that activates whenever the main model of the game sends a message
-     * that an update has occurred in its board
+     * An observer function that activates whenever the main model of the game
+     * sends a message that an update has occurred in its board
      * @param evt A PropertyChangeEvent object describing the event source
      * and the property that has changed.
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        Pair<ModelLine,PlayerNumber> changedLineAndOwner = (Pair<ModelLine,PlayerNumber>) evt.getOldValue();
+        Pair<ModelLine,PlayerNumber> changedLineAndOwner =
+                (Pair<ModelLine,PlayerNumber>) evt.getOldValue();
         ModelLine changedLine = changedLineAndOwner.getKey();
-        model.performMove(changedLine.getRow(),changedLine.getColumn(),changedLine.getIsHorizontal() ? LineType.horizontal : LineType.vertical);
+        model.performMove(changedLine.getRow(),changedLine.getColumn(),
+                changedLine.getIsHorizontal());
     }
 
     // general getters

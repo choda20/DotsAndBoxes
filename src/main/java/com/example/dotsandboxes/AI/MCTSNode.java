@@ -11,7 +11,7 @@ import java.util.List;
 public class MCTSNode {
     private AIBoard board;  // the state of the game in the board
     private int visits; // the number of times the node was explored
-    private int score; // the score of the node
+    private double score; // the score of the node
     private List<MCTSNode> children; // a list of all possible actions on the board
     private MCTSNode parent; // the node that led to this board
 
@@ -41,7 +41,7 @@ public class MCTSNode {
      * run time: O(n) when n=number of children
      */
     public MCTSNode getChildWithMaxScore() {
-        return children.stream().max(Comparator.comparingInt(MCTSNode::getScore)).orElse(null);
+        return children.stream().max(Comparator.comparingDouble(MCTSNode::getScore)).orElse(null);
     }
 
     /**
@@ -57,11 +57,11 @@ public class MCTSNode {
     //general getters
     public List<MCTSNode> getChildren() {return children;}
     public AIBoard getBoard() {return board;}
-    public int getScore() {return score;}
+    public double getScore() {return score;}
     public int getVisits() {return visits;}
     public MCTSNode getParent() {return parent;}
 
     //general setters
-    public void setScore(int score) {this.score = score;}
+    public void setScore(double score) {this.score = score;}
     public void setParent(MCTSNode parent) {this.parent = parent;}
 }
