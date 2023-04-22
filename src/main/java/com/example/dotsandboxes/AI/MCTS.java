@@ -1,12 +1,14 @@
 package com.example.dotsandboxes.AI;
 
 import com.example.dotsandboxes.model.classes.ModelLine;
+import javafx.util.Pair;
 
 
 import java.time.Instant;
 import java.util.Random;
 
 public class MCTS {
+    private final int playerId; // the id of the player
     private final AIBoard gameBoard; // the game board the algorithm should
     // pick a move for
     private final Random generator; // used to roll random numbers
@@ -16,9 +18,10 @@ public class MCTS {
      * full constructor that initializes all class fields
      * @param gameBoard the current game board
      */
-    public MCTS(AIBoard gameBoard) {
+    public MCTS(AIBoard gameBoard, int playerId) {
         this.gameBoard = gameBoard;
         this.generator = new Random();
+        this.playerId = playerId;
     }
 
     /**
@@ -58,7 +61,7 @@ public class MCTS {
         System.out.println("Did " + simulationCounter + " " +
                 "expansions/simulations within " + mills + " mills");
         System.out.println("Move was made at: " + move.getRow() + "," +
-                move.getColumn() + " on horizontal line: " +
+                move.getColumn() + " on line type: " +
                 move.getIsHorizontal() + "\n");
         return move;
     }
@@ -116,7 +119,7 @@ public class MCTS {
      * @return the id of the player who made the last move
      */
     private int simulateLightPlayout(MCTSNode promisingNode) {
-        MCTSNode tempNode = promisingNode;
+        MCTSNode tempNode = promisingNode,child;
         AIBoard childBoard,tempBoard = tempNode.getBoard() ;
         ModelLine bestMove;
 
@@ -129,21 +132,23 @@ public class MCTS {
         }
 
         while (tempBoard.isGameOngoing() &&
-                tempBoard.getBestMoves().size()>0) {
+                tempBoard.getBestMovesList().size()>0) {
 
-            bestMove =tempBoard.getBestMove();
-            childBoard = new AIBoard(tempNode.getBoard());
+            Pair<ModelLine,Integer> bestMoveAndScore= tempBoard.getBestMove();
+            bestMove = bestMoveAndScore.getKey();
+            childBoard = new AIBoard(tempBoard);
             childBoard.performMove(bestMove.getRow(), bestMove.getColumn(),
                     bestMove.getIsHorizontal());
-            MCTSNode child = new MCTSNode(childBoard);
+            child = new MCTSNode(childBoard);
 
+            child.setScore(bestMoveAndScore.getValue());
             child.setParent(tempNode);
             tempNode.addChild(child);
 
             tempNode = child;
             tempBoard = tempNode.getBoard();
         }
-        
+
         return tempNode.getBoard().getLastPlayer();
     }
 

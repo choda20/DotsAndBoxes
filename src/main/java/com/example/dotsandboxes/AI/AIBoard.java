@@ -2,12 +2,12 @@ package com.example.dotsandboxes.AI;
 
 import com.example.dotsandboxes.model.classes.ModelLine;
 import com.example.dotsandboxes.model.enums.LineType;
+import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 /**
  * class the represents a game board that the AI uses.
@@ -132,7 +132,7 @@ public class AIBoard {
         ModelLine line = lines[row][column];
         if (!line.getIsConnected()) {
             line.connectLine();
-            int scoreObtained = checkBoxFormed(line);
+            int scoreObtained = checkBoxFormed(line)[0];
             increaseCurrentScore(scoreObtained);
             adjustLinesBasedOnMove(line);
             lastPlayer = currentPlayer;
@@ -149,14 +149,14 @@ public class AIBoard {
      * @param line a newly connected line
      * @return the score obtained from connecting the line, ranges from 0-2.
      */
-    public int checkBoxFormed(ModelLine line) {
+    public int[] checkBoxFormed(ModelLine line) {
         int score = 0;
         int[] boxesAfterMove = checkLeftBoxes(line);
         for(int box: boxesAfterMove) {
             if (box == 3)
                 score++;
         }
-        return score;
+        return new int[]{score,boxesAfterMove[0],boxesAfterMove[1]};
     }
 
     /**
@@ -187,7 +187,7 @@ public class AIBoard {
      * the following hierarchy: bestLines > okLines > worstLines.
      * @return the best line list
      */
-    public List<ModelLine> getBestMoves() {
+    public List<ModelLine> getBestMovesList() {
         if (bestLines.isEmpty()) {
             if (okLines.isEmpty())
                 return worstLines;
@@ -205,7 +205,7 @@ public class AIBoard {
      */
     public List<AIBoard> getAvlNextMoves() {
         List<AIBoard> avlMoves = new ArrayList<>();
-        List<ModelLine> avlLines = getBestMoves();
+        List<ModelLine> avlLines = getBestMovesList();
         for(int i=0;i<avlLines.size();i++) {
             avlMoves.add(new AIBoard(this));
             avlMoves.get(i).performMove(avlLines.get(i).getRow(),
@@ -224,8 +224,8 @@ public class AIBoard {
      * if there are multiple "best moves" a random move will be returned
      * @return the best move that was found
      */
-    public ModelLine getBestMove() {
-        List<ModelLine> avlLines = getBestMoves(),
+    public Pair<ModelLine,Integer> getBestMove() {
+        List<ModelLine> avlLines = getBestMovesList(),
                 bestMoves = new ArrayList<>();
         int bestScore = Integer.MIN_VALUE, score;
 
@@ -245,23 +245,43 @@ public class AIBoard {
         ModelLine bestMove = bestMoves.get(
                 generator.nextInt(bestMoves.size()));
         removeLine(bestMove);
-        return bestMove;
+        return new Pair<>(bestMove,bestScore);
     }
 
     /**
-     * function that evaluates a move by the amount of boxes it closes,
-     * and the amount of boxes it lets the opposing player close. the formula
-     * is: moveScore = BoxesClosed(score obtained) - BoxesleftOpen
-     * @param move the move to be scored
-     * @return the score of the given move
+     function that evaluates a move and assigns it a score. The
+     score is based on the number of boxes that the move closes and the chain
+     of moves it enables to close(the function is summoned for each
+     unconnected line in the boxes the line is a part of). If the player
+     gains points from the move the score will be positive, and if the player
+     does not gain move it will be negative(represents evaluation for the
+     opposing player's moves).
+     * @param move
+     * @return
      */
     private int evaluateMove(ModelLine move) {
         move.connectLine();
-        int score = checkBoxFormed(move);
-        int[] leftBoxes = checkLeftBoxes(move);
-        score -= ((leftBoxes[0] == 2 ? 1 : 0) + (leftBoxes[1] == 2 ? 1 : 0));
+
+        List<ModelLine> leftLines = getUnconnectedLines(move);
+        int[] boxState = checkBoxFormed(move);
+        int score = boxState[0], reducedScore;
+
+        if (score > 0){
+            for (ModelLine line: leftLines) {
+                score += evaluateMove(line);
+            }
+        } else {
+            reducedScore = (boxState[1] == 2 ? 1 : 0) + (boxState[2] == 2 ? 1 :0);
+            if (reducedScore != 0) {
+                for (ModelLine line: leftLines) {
+                    score -= evaluateMove(line);
+                }
+           }
+            score -= reducedScore;
+        }
+
         move.disconnectLine();
-        return score;
+        return score*10;
     }
 
     /**
