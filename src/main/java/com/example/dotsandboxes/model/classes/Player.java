@@ -26,10 +26,13 @@ public abstract class Player {
 
 
     /**
-     * abstract function that tells the player to pick a move to perform and returns it
-     * @return Pair<Point,LineType>, a Point that holds the x(Row),y(Column) of the line
-     * that was picked as a move, and a LineType that signifies which array the line is
+     * abstract function that tells the player to pick a move to perform and
+     * returns it
+     * @return Pair<Point,LineType>, a Point that holds the x(Row),y(Column)
+     * of the line that was picked as a move, and a LineType that signifies
+     * which array the line is
      * in(LineType.Horizontal = horizontalLines and so on) stored in a Pair.
      */
-    public abstract Pair<Point, LineType> makeMove(); // abstract function that configures how the player makes a move
+    public abstract Pair<Point, LineType> makeMove();
+    // abstract function that configures how the player makes a move
 }

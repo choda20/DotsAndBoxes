@@ -28,17 +28,23 @@ public class Main extends Application {
         primaryStage.setWidth(screenBounds.getWidth()/3);
         primaryStage.setHeight((screenBounds.getHeight()*0.8));
         primaryStage.setTitle("Dots&Boxes by Itay Aziz Kadchoda");
-        primaryStage.getIcons().add(getImageFromUrl("src/main/resources/images/appicon.jpg"));
+        primaryStage.getIcons().add(getImageFromUrl(
+                "src/main/resources/images/appicon.jpg"));
 
 
-        Image backgroundImageImage = getImageFromUrl("src/main/resources/images/background.png");
-        BackgroundImage backgroundImage = new BackgroundImage(backgroundImageImage, BackgroundRepeat.NO_REPEAT,
-                BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(1.0,1.0,true,true,false,false));
+        Image backgroundImageImage = getImageFromUrl(
+                "src/main/resources/images/background.png");
+        BackgroundImage backgroundImage = new BackgroundImage(
+                backgroundImageImage, BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
+                new BackgroundSize(1.0,1.0,true,true,
+                        false,false));
         Background background = new Background(backgroundImage);
 
         Game model = new Game();
         TitleScreen title = new TitleScreen(background);
-        TitleScreenController titleController = new TitleScreenController(title,model,primaryStage);
+        TitleScreenController titleController = new
+                TitleScreenController(title,model,primaryStage);
     }
 
     /**
@@ -52,7 +58,8 @@ public class Main extends Application {
             File imageFile = new File(path);
             return new Image(imageFile.getCanonicalPath());
         }catch (Exception e) {
-            System.err.println("App cannot be launched because image links are not valid.");
+            System.err.println("App cannot be launched because " +
+                    "image links are not valid.");
             System.exit(1);
             return null; // quiet the compiler
         }

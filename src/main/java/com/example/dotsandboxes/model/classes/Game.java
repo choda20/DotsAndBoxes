@@ -13,10 +13,12 @@ import java.beans.PropertyChangeSupport;
 
 
 public class Game {
-    private PropertyChangeSupport pcs; // holds the observer that is used to notify listeners when changes in the board occur
+    private PropertyChangeSupport pcs; // holds the observer that is used
+    // to notify listeners when changes in the board occur
     private Player first; // represents player 1
     private Player second; //represents player 2
-    private PlayerNumber turn; // represents the current player, first for first and second for second
+    private PlayerNumber turn; // represents the current player,
+    // first for first and second for second
     private GameType gameType; // represents the type of the game(HVH,HVA,AVA)
     private Board gameBoard; //represents the board
 
@@ -32,14 +34,17 @@ public class Game {
      * function that determines if the game has yet to end
      * @return true if the game is in progress, otherwise false
      */
-    private boolean isGameInProgress() { // returns true if the game is in progress, otherwise false
-        return !((first.getScore() + second.getScore()) == (gameBoard.getGridSize()-1)*(gameBoard.getGridSize()-1));}
+    private boolean isGameInProgress() { // returns true if the game
+        // is in progress, otherwise false
+        return !((first.getScore() + second.getScore()) ==
+                (gameBoard.getGridSize()-1)*(gameBoard.getGridSize()-1));}
 
     /**
      * function that swaps the current turn, practically moves to the next turn
      */
     private void swapTurn() {
-        turn = turn == PlayerNumber.first ? PlayerNumber.second : PlayerNumber.first;
+        turn = turn == PlayerNumber.first ?
+                PlayerNumber.second : PlayerNumber.first;
     }
 
     /**
@@ -52,23 +57,29 @@ public class Game {
      *                 (used to determine which line array to use)
      */
     public void performMove(int row, int column, LineType lineType) {
-        ModelLine[][] lines = lineType.equals(LineType.horizontal) ? gameBoard.getHorizontalLines() : gameBoard.getVerticalLines();
+        ModelLine[][] lines = lineType.equals(LineType.horizontal) ?
+                gameBoard.getHorizontalLines() : gameBoard.getVerticalLines();
         ModelLine line = lines[row][column];
         if (!line.getIsConnected()) {
             line.connectLine();
             int scoreObtained = gameBoard.checkBoxFormed(line);
             getCurrent().setScore(getCurrent().getScore() + scoreObtained);
-            MoveResult result = !isGameInProgress() ? MoveResult.gameOver : MoveResult.valid;
-            PropertyChangeEvent event = new PropertyChangeEvent(this,"performMove",new Pair<ModelLine,PlayerNumber>(line,turn),result);
+            MoveResult result = !isGameInProgress() ?
+                    MoveResult.gameOver : MoveResult.valid;
+            PropertyChangeEvent event = new PropertyChangeEvent(this,
+                    "performMove",
+                    new Pair<ModelLine,PlayerNumber>(line,turn),result);
             if (scoreObtained == 0) {swapTurn();}
             pcs.firePropertyChange(event);
         }
     }
 
     /**
-     * function that is used to get the current winner of the game (can be called to see which player is leading)
-     * @return a Pair that hold an integer that represents the outcome of the game(0 if somebody won, 1 if a tie occurred)
-     * as well as a String with the Winners name(if there is a tie a blank name is returned)
+     * function that is used to get the current winner of the game
+     * (can be called to see which player is leading)
+     * @return a Pair that hold an integer that represents the outcome of the
+     * game(0 if somebody won, 1 if a tie occurred) as well as a String with
+     * the Winners name(if there is a tie a blank name is returned)
      */
     public Pair<Integer,String> getWinner() {
         String winText = " won!";
@@ -84,19 +95,20 @@ public class Game {
     /**
      * function that gets all setting form field inputs and validates them.
      * if the inputs are valid it enters them to their respective variable.
-     * @param p1Name the entered name of the first player, can be anything as long as it is not
-     *               an empty string
-     * @param p2Name the entered name of the second player, can be anything as long as it is not
-     *      *               an empty string
-     * @param gridSize the entered gridSize, can be a number ranging from 2-10 (included)
+     * @param p1Name the entered name of the first player, can be anything as
+     *              long as it is not an empty string
+     * @param p2Name the entered name of the second player, can be anything
+     *               as long as it is not an empty string
+     * @param gridSize the entered gridSize,
+     *                 can be a number ranging from 2-10 (included)
      */
-    public void insertNamesAndGrid(String p1Name,String p2Name,String gridSize) {
+    public void insertNamesAndGrid(String p1Name,String p2Name,String gridSize){
         boolean valid = true;
         int number;
 
         try {number = Integer.parseInt(gridSize);}
         catch (NumberFormatException e) {number = 0;}
-        if (p1Name.isBlank() || p2Name.isBlank() || number <= 1 || number > 10) {
+        if (p1Name.isBlank() || p2Name.isBlank() || number <= 1 || number > 10){
             valid = false;
         } else {
             first.setName(p1Name);
@@ -108,7 +120,8 @@ public class Game {
             }
         }
 
-        PropertyChangeEvent event = new PropertyChangeEvent(this,"insertNamesAndGrid","",valid);
+        PropertyChangeEvent event = new PropertyChangeEvent(this,
+                "insertNamesAndGrid","",valid);
         pcs.firePropertyChange(event);
     }
 
@@ -116,14 +129,20 @@ public class Game {
      * registers a new listener to the observer notify list
      * @param listener
      */
-    public void addPropertyChangeListener(PropertyChangeListener listener) {pcs.addPropertyChangeListener(listener);}
+    public void addPropertyChangeListener(PropertyChangeListener listener)
+    {pcs.addPropertyChangeListener(listener);}
 
     /**
      * removes a listener from the observer notify list
      * @param listener
      */
-    public void removePropertyChangeListener(PropertyChangeListener listener) {pcs.removePropertyChangeListener(listener);}
+    public void removePropertyChangeListener(PropertyChangeListener listener)
+    {pcs.removePropertyChangeListener(listener);}
 
+    /**
+     * function that returns the playerNumber of the leading player
+     * @return first if first is leading, second otherwise
+     */
     public PlayerNumber getLeadingPlayer() {
         return first.getScore() > second.getScore() ? PlayerNumber.first :
                 PlayerNumber.second;
@@ -135,7 +154,8 @@ public class Game {
     public Board getGameBoard() {return gameBoard;}
     public Player getSecond() {return second;}
     public Player getFirst() {return first;}
-    public Player getCurrent() {return turn == PlayerNumber.first ? first: second;}
+    public Player getCurrent() {return turn == PlayerNumber.first ?
+            first: second;}
 
     //general setters
     public void setGameType(GameType type) {this.gameType = type;}

@@ -16,14 +16,19 @@ import javafx.stage.Stage;
 
 public class SettingsScreen extends Application {
     private Label title; // the screen title
-    private Label errorText; // error text that shows up when the user enters invalid values
+    private Label errorText; // error text that shows up when
+    // the user enters invalid values
     private Label p1Name; // p1Field title
     private Label p2Name; // p2Field title
     private Label gridSizeTitle; // gridSize text
-    private TextField p1Field; // field that gets the name of the first player as an input
-    private TextField p2Field; // field that gets the name of the second player as an input
-    private ComboBox gridSizeBox; // drop-down that gets the grid size as an input
-    private Button moveToGame; // button that moves the stage to the game screen if all inputs are valid
+    private TextField p1Field; // field that gets the name of
+    // the first player as an input
+    private TextField p2Field; // field that gets the name of
+    // the second player as an input
+    private ComboBox gridSizeBox; // drop-down that gets
+    // the grid size as an input
+    private Button moveToGame; // button that moves the stage
+    // to the game screen if all inputs are valid
     private Background background; // background Image used by the screen
 
     /**
@@ -40,7 +45,8 @@ public class SettingsScreen extends Application {
         this.gridSizeTitle = new Label("Grid-Size(NxN): ");
         this.p1Field = new TextField();
         this.p2Field = new TextField();
-        this.gridSizeBox = new ComboBox(FXCollections.observableArrayList(gridSizes));
+        this.gridSizeBox = new ComboBox(
+                FXCollections.observableArrayList(gridSizes));
         this.moveToGame = new Button("Begin Game!");
         this.background = background;
     }
@@ -50,7 +56,8 @@ public class SettingsScreen extends Application {
      * @param stage the app window
      * @throws Exception
      */
-    public void start(Stage stage) throws Exception { // sets up the stage and shows the screen
+    public void start(Stage stage) throws Exception { // sets up the stage
+        // and shows the screen
         VBox root = new VBox();
         root.setAlignment(Pos.CENTER);
         root.setBackground(background);
