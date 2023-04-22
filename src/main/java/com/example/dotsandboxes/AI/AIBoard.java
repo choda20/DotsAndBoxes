@@ -6,6 +6,7 @@ import com.example.dotsandboxes.model.enums.LineType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -220,20 +221,29 @@ public class AIBoard {
      * the moves scored are not all available moves but rather all "best"
      * moves based on a line list returned by the function "getBestMoves()".
      * additionally,the moves are scored by the function evaluateMove.
+     * if there are multiple "best moves" a random move will be returned
      * @return the best move that was found
      */
     public ModelLine getBestMove() {
-        List<ModelLine> avlLines = getBestMoves();
-        ModelLine bestMove = avlLines.get(0);
-        int bestScore = - 1, score;
+        List<ModelLine> avlLines = getBestMoves(),
+                bestMoves = new ArrayList<>();
+        int bestScore = Integer.MIN_VALUE, score;
 
         for (ModelLine move: avlLines) {
             score = evaluateMove(move);
-            if (score > bestScore) {
-                bestMove = move;
+            if (score == bestScore) {
+                bestMoves.add(move);
+            }
+            else if (score > bestScore) {
+                bestMoves.clear();
+                bestMoves.add(move);
                 bestScore = score;
             }
         }
+
+        Random generator = new Random();
+        ModelLine bestMove = bestMoves.get(
+                generator.nextInt(bestMoves.size()));
         removeLine(bestMove);
         return bestMove;
     }

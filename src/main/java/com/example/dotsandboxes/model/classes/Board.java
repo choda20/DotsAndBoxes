@@ -4,8 +4,8 @@ package com.example.dotsandboxes.model.classes;
 import com.example.dotsandboxes.model.enums.LineType;
 
 public class Board {
-    private final ModelLine[][] horizontalLines; // (gridSize)*(gridSize-1) matrix
-    // containing all the horizontal lines in the game
+    private final ModelLine[][] horizontalLines; // (gridSize)*(gridSize-1)
+    // matrix containing all the horizontal lines in the game
     private final ModelLine[][] verticalLines; // (gridSize)*(gridSize-1) matrix
     // containing all the vertical  lines in the game
 

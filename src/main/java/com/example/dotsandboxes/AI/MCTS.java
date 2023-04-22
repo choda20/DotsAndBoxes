@@ -88,10 +88,10 @@ public class MCTS {
     }
 
     /**
-     * function that goes up from the give node to the root, while updating
-     * the number of visits for each node, and setting each node's score to
-     * the highest sum of its children's score.
-     * @param selected the node to get to the root from
+     * function that climbs the tree up to the root, while increasing the
+     * score of nodes that the winning player played at by 10 points.
+     * @param selected the node to climb from
+     * @param winningPlayer the id of the winning plater
      */
     private void backPropagation(MCTSNode selected, int winningPlayer) {
         MCTSNode tempNode = selected;
@@ -109,39 +109,41 @@ public class MCTS {
     /**
      * functions that simulates a full game from a given node, using the best
      * possible move available. (the move is removed from the available moves
-     * lists each time so if the node will be simulated again a new move
-     * will be explored) the score of each node that is simulated is set to
-     * the difference between the player scores, meaning the highest rated
-     * leafs will be when the AI wins.
-     * @param promisingNode a node that seems promising for exploration
+     * lists each time so if the node will be simulated again a new move will
+     * be explored). the function sets simulations that end in loss to the
+     * minimum value of an integer, and tie to minimum-value/2.
+     * @param promisingNode
+     * @return the id of the player who made the last move
      */
     private int simulateLightPlayout(MCTSNode promisingNode) {
         MCTSNode tempNode = promisingNode;
-        AIBoard board;
+        AIBoard childBoard,tempBoard = tempNode.getBoard() ;
         ModelLine bestMove;
 
-        if (!tempNode.getBoard().isGameOngoing() &&
-                tempNode.getBoard().getScoreDifference() <= 0) {
-            int score = tempNode.getBoard().getScoreDifference() == 0 ?
+        if (!tempBoard.isGameOngoing() &&
+                tempBoard.getScoreDifference() <= 0) {
+            int score = tempBoard.getScoreDifference() == 0 ?
                     Integer.MIN_VALUE/2 : Integer.MIN_VALUE;
             tempNode.getParent().setScore(score);
-            return tempNode.getBoard().getLastPlayer();
+            return tempBoard.getLastPlayer();
         }
 
-        while (tempNode.getBoard().isGameOngoing() &&
-                tempNode.getBoard().getBestMoves().size()>0) {
+        while (tempBoard.isGameOngoing() &&
+                tempBoard.getBestMoves().size()>0) {
 
-            bestMove = tempNode.getBoard().getBestMove();
-            board = new AIBoard(new AIBoard(tempNode.getBoard()));
-            board.performMove(bestMove.getRow(), bestMove.getColumn(),
+            bestMove =tempBoard.getBestMove();
+            childBoard = new AIBoard(tempNode.getBoard());
+            childBoard.performMove(bestMove.getRow(), bestMove.getColumn(),
                     bestMove.getIsHorizontal());
-            MCTSNode child = new MCTSNode(board);
+            MCTSNode child = new MCTSNode(childBoard);
 
             child.setParent(tempNode);
             tempNode.addChild(child);
 
             tempNode = child;
+            tempBoard = tempNode.getBoard();
         }
+        
         return tempNode.getBoard().getLastPlayer();
     }
 
