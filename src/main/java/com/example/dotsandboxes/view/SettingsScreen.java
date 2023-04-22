@@ -15,21 +15,21 @@ import javafx.stage.Stage;
 
 
 public class SettingsScreen extends Application {
-    private Label title; // the screen title
-    private Label errorText; // error text that shows up when
+    private final Label title; // the screen title
+    private final Label errorText; // error text that shows up when
     // the user enters invalid values
-    private Label p1Name; // p1Field title
-    private Label p2Name; // p2Field title
-    private Label gridSizeTitle; // gridSize text
-    private TextField p1Field; // field that gets the name of
+    private final Label p1Name; // p1Field title
+    private final Label p2Name; // p2Field title
+    private final Label gridSizeTitle; // gridSize text
+    private final TextField p1Field; // field that gets the name of
     // the first player as an input
-    private TextField p2Field; // field that gets the name of
+    private final TextField p2Field; // field that gets the name of
     // the second player as an input
-    private ComboBox gridSizeBox; // drop-down that gets
+    private final ComboBox gridSizeBox; // drop-down that gets
     // the grid size as an input
-    private Button moveToGame; // button that moves the stage
+    private final Button moveToGame; // button that moves the stage
     // to the game screen if all inputs are valid
-    private Background background; // background Image used by the screen
+    private final Background background; // background Image used by the screen
 
     /**
      * constructor that initializes all class variables
@@ -54,9 +54,8 @@ public class SettingsScreen extends Application {
     /**
      * function that sets up the app window and displays it to the user
      * @param stage the app window
-     * @throws Exception
      */
-    public void start(Stage stage) throws Exception { // sets up the stage
+    public void start(Stage stage) { // sets up the stage
         // and shows the screen
         VBox root = new VBox();
         root.setAlignment(Pos.CENTER);

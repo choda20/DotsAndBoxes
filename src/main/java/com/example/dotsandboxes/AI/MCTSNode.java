@@ -9,10 +9,11 @@ import java.util.List;
  * a class that represents a node in a Monte Carlo tree
  */
 public class MCTSNode {
-    private AIBoard board;  // the state of the game in the board
+    private final AIBoard board;  // the state of the game in the board
     private int visits; // the number of times the node was explored
     private double score; // the score of the node
-    private List<MCTSNode> children; // a list of all possible actions on the board
+    private final List<MCTSNode> children; // a list of all possible actions
+    // on the board
     private MCTSNode parent; // the node that led to this board
 
     /**
@@ -41,7 +42,8 @@ public class MCTSNode {
      * run time: O(n) when n=number of children
      */
     public MCTSNode getChildWithMaxScore() {
-        return children.stream().max(Comparator.comparingDouble(MCTSNode::getScore)).orElse(null);
+        return children.stream().max(Comparator.comparingDouble
+                (MCTSNode::getScore)).orElse(null);
     }
 
     /**
@@ -49,10 +51,6 @@ public class MCTSNode {
      */
     public void incVisits() {this.visits++;}
 
-    /**
-     * function that increase the nodes score by 1
-     */
-    public void incScore() {this.score++;}
 
     //general getters
     public List<MCTSNode> getChildren() {return children;}

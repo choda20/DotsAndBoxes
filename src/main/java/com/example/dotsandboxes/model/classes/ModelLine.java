@@ -4,11 +4,12 @@ import com.example.dotsandboxes.model.enums.LineType;
 
 
 public class ModelLine {
-    private int column; // represents the column the line is in inside a line
-    // array
-    private int row; // represents the row the line is in inside a line array
-    private LineType lineType; // represent the type of the line(horizontal if
-    // true, vertical if false)
+    private final int column; // represents the column the line is in inside
+    // a line array
+    private final int row; // represents the row the line is in
+    // inside a line array
+    private final LineType lineType; // represent the type of the line
+    // (horizontal if true, vertical if false)
     private boolean isConnected; // represents if the line is connected(true if
     // yes, false otherwise)
 
@@ -33,8 +34,7 @@ public class ModelLine {
      * @return an identical copy of the current line
      */
     public ModelLine copy() {
-        ModelLine newLine = new ModelLine(row, column, lineType, isConnected);
-        return newLine;
+        return new ModelLine(row, column, lineType, isConnected);
     }
 
     //general getters

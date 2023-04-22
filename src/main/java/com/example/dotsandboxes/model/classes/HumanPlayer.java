@@ -15,11 +15,10 @@ public class HumanPlayer extends Player{
 
     /**
      * this function is an implementation of the abstract play() from player
-     * class, however it is not used sincea move is made through the UI and
+     * class, however it is not used since a move is made through the UI and
      * this class has no access to it.
      * @return a throwaway move since it is not used
      */
     public Pair<Point, LineType> makeMove() {
-        return new Pair<Point,LineType>(new Point(-1,-1),
-                LineType.horizontal);}
+        return new Pair<>(new Point(-1, -1), LineType.horizontal);}
 }

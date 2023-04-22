@@ -13,16 +13,16 @@ import javafx.stage.Stage;
 
 
 public class GameScreen extends Application {
-    private Circle[][] dots; // gridSize*gridSize matrix containing
+    private final Circle[][] dots; // gridSize*gridSize matrix containing
     // all dots in the game
-    private Line[][] horizontalLines; // (gridSize)*(gridSize-1) matrix
+    private final Line[][] horizontalLines; // (gridSize)*(gridSize-1) matrix
     // containing all the horizontal lines in the game
-    private Line[][] verticalLines; // (gridSize)*(gridSize-1) matrix
+    private final Line[][] verticalLines; // (gridSize)*(gridSize-1) matrix
     // containing all the vertical  lines in the game
-    private int gridSize; // square root of the size of the grid
-    private Label[] labels; //array that holds on-screen text, 0 - for
+    private final int gridSize; // square root of the size of the grid
+    private final Label[] labels; //array that holds on-screen text, 0 - for
     // current turn, 1 - for player 1 score, 2 - for player 2 score
-    private Background background; // background Image used by the screen
+    private final Background background; // background Image used by the screen
 
 
     /**
@@ -45,10 +45,9 @@ public class GameScreen extends Application {
     /**
      * function that sets up the app window and displays it to the user
      * @param stage the app window
-     * @throws Exception
      */
     @Override
-    public void start(Stage stage) throws Exception { // sets up the stage
+    public void start(Stage stage) { // sets up the stage
         VBox root = new VBox(); // sets the root of the scene
         root.setBackground(background);
         root.setAlignment(Pos.CENTER);

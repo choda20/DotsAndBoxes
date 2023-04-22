@@ -50,9 +50,9 @@ public class AIBoard {
         // array of horizontal lines
         this.verticalLines = new ModelLine[gridSize][gridSize-1];
         // array of vertical lines
-        this.okLines = new ArrayList<ModelLine>();
-        this.bestLines = new ArrayList<ModelLine>();
-        this.worstLines = new ArrayList<ModelLine>();
+        this.okLines = new ArrayList<>();
+        this.bestLines = new ArrayList<>();
+        this.worstLines = new ArrayList<>();
         for (int i=0;i<gridSize;i++) {
             for (int j = 0; j < gridSize-1; j++) {
                 horizontalLines[i][j] = new ModelLine(i,j,LineType.horizontal,
@@ -83,7 +83,7 @@ public class AIBoard {
         this.bestLines = new ArrayList<>();
         this.horizontalLines = new ModelLine[gridSize][gridSize-1];
         this.verticalLines = new ModelLine[gridSize][gridSize-1];
-        List<ModelLine>[] lists = new List[]{board.okLines,board.worstLines,
+        List[] lists = new List[]{board.okLines,board.worstLines,
                 board.bestLines};
         for (int i=0;i<gridSize;i++) {
             for(int j=0;j<gridSize-1;j++) {
@@ -325,16 +325,15 @@ public class AIBoard {
         int[] connectedLines;
 
         for(int i=0;i<lines.size();i++)
-            lines.forEach(listLine -> removeLine(listLine));
+            lines.forEach(this::removeLine);
 
-        for (int i=0;i<lines.size();i++) {
-            connectedLines = checkLeftBoxes(lines.get(i));
+        for (ModelLine modelLine : lines) {
+            connectedLines = checkLeftBoxes(modelLine);
             if (connectedLines[0] == 3 || connectedLines[1] == 3)
-                bestLines.add(lines.get(i));
+                bestLines.add(modelLine);
             else if (connectedLines[0] == 2 || connectedLines[1] == 2)
-                worstLines.add(lines.get(i));
-            else
-                okLines.add(lines.get(i));
+                worstLines.add(modelLine);
+            else okLines.add(modelLine);
         }
 
     }
@@ -349,7 +348,7 @@ public class AIBoard {
      *      after the move.
      */
     private List<ModelLine> getUnconnectedLines(ModelLine line) {
-        List<ModelLine> lines = new ArrayList<ModelLine>();
+        List<ModelLine> lines = new ArrayList<>();
         int x = line.getRow();
         int y = line.getColumn();
         int columnLength = horizontalLines[0].length;
@@ -360,16 +359,14 @@ public class AIBoard {
                         horizontalLines[x - 1][y],verticalLines[y + 1][x - 1],
                                 verticalLines[y][x - 1]);
                 lines.addAll(otherLines.stream().filter(listLine ->
-                        listLine.getIsConnected() == false)
-                        .collect(Collectors.toList()));
+                        !listLine.getIsConnected()).toList());
             }
             if (x < columnLength && y < columnLength) {
                 List<ModelLine> otherLines =
                         createLineList(horizontalLines[x+1][y],
                                 verticalLines[y][x], verticalLines[y+1][x]);
                 lines.addAll(otherLines.stream().filter(listLine ->
-                        listLine.getIsConnected() == false).
-                        collect(Collectors.toList()));
+                        !listLine.getIsConnected()).toList());
             }
         }
         else {
@@ -379,8 +376,7 @@ public class AIBoard {
                         horizontalLines[y][x - 1],
                         horizontalLines[y + 1][x - 1]);
                 lines.addAll(otherLines.stream().filter(listLine ->
-                        listLine.getIsConnected() == false).
-                        collect(Collectors.toList()));
+                        !listLine.getIsConnected()).toList());
             }
             if (x < columnLength && y < columnLength) {
                 List<ModelLine> otherLines =
@@ -388,8 +384,7 @@ public class AIBoard {
                                 horizontalLines[y][x],
                                 horizontalLines[y + 1][x]);
                 lines.addAll(otherLines.stream().filter(listLine ->
-                        listLine.getIsConnected() == false).
-                        collect(Collectors.toList()));
+                        !listLine.getIsConnected()).toList());
             }
         }
         return lines;
@@ -404,8 +399,7 @@ public class AIBoard {
      */
     private List<ModelLine> createLineList(ModelLine line,ModelLine line2,
     ModelLine line3) {
-        return new ArrayList<>(Arrays.asList(new ModelLine[]{line, line2, line3}
-        ));
+        return new ArrayList<>(Arrays.asList(line, line2, line3));
     }
     /**
      * function that removes a line from all available line lists.

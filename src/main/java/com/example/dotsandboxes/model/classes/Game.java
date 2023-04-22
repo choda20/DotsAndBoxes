@@ -13,7 +13,7 @@ import java.beans.PropertyChangeSupport;
 
 
 public class Game {
-    private PropertyChangeSupport pcs; // holds the observer that is used
+    private final PropertyChangeSupport pcs; // holds the observer that is used
     // to notify listeners when changes in the board occur
     private Player first; // represents player 1
     private Player second; //represents player 2
@@ -67,8 +67,7 @@ public class Game {
             MoveResult result = !isGameInProgress() ?
                     MoveResult.gameOver : MoveResult.valid;
             PropertyChangeEvent event = new PropertyChangeEvent(this,
-                    "performMove",
-                    new Pair<ModelLine,PlayerNumber>(line,turn),result);
+                    "performMove", new Pair<>(line, turn),result);
             if (scoreObtained == 0) {swapTurn();}
             pcs.firePropertyChange(event);
         }

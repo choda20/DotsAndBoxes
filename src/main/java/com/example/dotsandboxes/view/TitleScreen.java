@@ -13,10 +13,10 @@ import java.awt.*;
 
 
 public class TitleScreen extends Application {
-    private Label title; // window title
-    private Button HVH; // button the enters a HVH game
-    private Button HVA; // button the enters a HVA game
-    private Background background; // background Image used by the screen
+    private final Label title; // window title
+    private final Button HVH; // button the enters a HVH game
+    private final Button HVA; // button the enters a HVA game
+    private final Background background; // background Image used by the screen
 
     /**
      * constructor that initializes all class variables
@@ -32,7 +32,6 @@ public class TitleScreen extends Application {
     /**
      * function that sets up the app window and displays it to the user
      * @param stage the app window
-     * @throws Exception
      */
     @Override
     public void start(Stage stage) throws Exception {

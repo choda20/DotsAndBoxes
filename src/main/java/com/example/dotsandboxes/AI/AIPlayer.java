@@ -12,8 +12,7 @@ import java.beans.PropertyChangeListener;
 
 
 public class AIPlayer extends Player implements PropertyChangeListener {
-    private AIBoard model; // the AI's game board
-    private MCTS moveAlgorithm; // the algorithm the AI uses to choose a move
+    private final AIBoard model; // the AI's game board
 
     /**
      * empty constructor that sets Player score to 0, and initializes
@@ -31,10 +30,11 @@ public class AIPlayer extends Player implements PropertyChangeListener {
      * should be made on
      */
     public Pair<Point, LineType> makeMove()  {
-        moveAlgorithm = new MCTS(new AIBoard(model),750);
+        // the algorithm the AI uses to choose a move
+        MCTS moveAlgorithm = new MCTS(new AIBoard(model));
         ModelLine move = moveAlgorithm.MCTSCalc();
-        return new Pair<Point,LineType>(new Point(move.getRow(),
-                move.getColumn()),move.getIsHorizontal());
+        return new Pair<>(new Point(move.getRow(),
+                move.getColumn()), move.getIsHorizontal());
     }
 
     /**

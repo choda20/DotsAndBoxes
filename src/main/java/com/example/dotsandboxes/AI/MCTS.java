@@ -1,30 +1,23 @@
 package com.example.dotsandboxes.AI;
 
 import com.example.dotsandboxes.model.classes.ModelLine;
-import com.example.dotsandboxes.model.enums.LineType;
 
 
 import java.time.Instant;
 import java.util.Random;
 
 public class MCTS {
-    private final AIBoard gameBoard; // the game board the algorithm should pick a move for
-    private final int playerId; // the id of the player who asked for a move
-    private final int opponentId; // the id of the opponent
-    private final int computations; // the amount of computations the algorithm is allowed
-    private Random generator = new Random();
+    private final AIBoard gameBoard; // the game board the algorithm should
+    // pick a move for
+    private final Random generator; // used to roll random numbers
 
 
     /**
      * full constructor that initializes all class fields
      * @param gameBoard the current game board
-     * @param computations the amount of computations allowed
      */
-    public MCTS(AIBoard gameBoard,int computations) {
-        this.computations = computations;
+    public MCTS(AIBoard gameBoard) {
         this.gameBoard = gameBoard;
-        this.playerId = 1;
-        this.opponentId = 0;
         this.generator = new Random();
     }
 
@@ -62,8 +55,11 @@ public class MCTS {
         long mills = end.toEpochMilli() - start.toEpochMilli();
         ModelLine move = best.getBoard().getLastMove();
 
-        System.out.println("Did " + simulationCounter + " expansions/simulations within " + mills + " mills");
-        System.out.println("Move was made at: " + move.getRow() + "," + move.getColumn() + " on horizontal line: " + move.getIsHorizontal() + "\n");
+        System.out.println("Did " + simulationCounter + " " +
+                "expansions/simulations within " + mills + " mills");
+        System.out.println("Move was made at: " + move.getRow() + "," +
+                move.getColumn() + " on horizontal line: " +
+                move.getIsHorizontal() + "\n");
         return move;
     }
 
@@ -93,8 +89,8 @@ public class MCTS {
 
     /**
      * function that goes up from the give node to the root, while updating
-     * the number of visits for each node, and setting each node's score to the highest sum
-     * of its children's score.
+     * the number of visits for each node, and setting each node's score to
+     * the highest sum of its children's score.
      * @param selected the node to get to the root from
      */
     private void backPropagation(MCTSNode selected, int winningPlayer) {
@@ -111,11 +107,12 @@ public class MCTS {
     }
 
     /**
-     * functions that simulates a full game from a given node, using the best possible
-     * move available. (the move is removed from the available moves lists each time so if the node
-     * will be simulated again a new move will be explored)
-     * the score of each node that is simulated is set to the difference between the player scores,
-     * meaning the highest rated leafs will be when the AI wins.
+     * functions that simulates a full game from a given node, using the best
+     * possible move available. (the move is removed from the available moves
+     * lists each time so if the node will be simulated again a new move
+     * will be explored) the score of each node that is simulated is set to
+     * the difference between the player scores, meaning the highest rated
+     * leafs will be when the AI wins.
      * @param promisingNode a node that seems promising for exploration
      */
     private int simulateLightPlayout(MCTSNode promisingNode) {

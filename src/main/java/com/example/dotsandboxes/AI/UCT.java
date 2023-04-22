@@ -4,8 +4,9 @@ import java.util.Collections;
 import java.util.Comparator;
 
 /**
- * UCT (Upper Confidence bounds applied to Trees), an algorithm that deals with the flaw of Monte-Carlo Tree Search,
- *  and is a way to decide which node in the tree to expand next during the search process.
+ * UCT (Upper Confidence bounds applied to Trees), an algorithm that deals
+ * with the flaw of Monte-Carlo Tree Search, and is a way to decide which
+ * node in the tree to expand next during the search process.
  */
 public class UCT {
     /**
@@ -24,19 +25,20 @@ public class UCT {
     }
 
     /**
-     * the UCT algorithm, The UCT algorithm essentially balances between two competing goals:
-     * choosing a node that has high win rates (exploitation),
+     * the UCT algorithm, The UCT algorithm essentially balances between two
+     * competing goals: choosing a node that has high win rates (exploitation),
      * and choosing a node that hasn't been explored much yet (exploration).
      * @param totalVisit the amount of times the nodes parent was visited
      * @param nodeWinScore the nodes score
      * @param nodeVisit the amount of times the node was visited
      * @return the UCT value of the node
      */
-    private static double uctValue(int totalVisit, double nodeWinScore, int nodeVisit) {
+    private static double uctValue(int totalVisit, double nodeWinScore,
+                                   int nodeVisit) {
         if (nodeVisit == 0) {
             return 0;
         }
-        return ((double) nodeWinScore / (double) nodeVisit)
-                + (1.41 * Math.sqrt(Math.log(totalVisit) / (double) nodeVisit));
+        return (nodeWinScore / (double) nodeVisit)
+                +(1.41 * Math.sqrt(Math.log(totalVisit) / (double) nodeVisit));
     }
 }
