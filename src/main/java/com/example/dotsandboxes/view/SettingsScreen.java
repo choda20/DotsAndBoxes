@@ -40,7 +40,7 @@ public class SettingsScreen extends Application {
 
         this.title = new Label("Settings");
         this.p1Name = new Label("Player 1 name: ");
-        this.errorText = new Label("Invalid Names!");
+        this.errorText = new Label("Invalid Values!");
         this.p2Name = new Label("Player 2 name: ");
         this.gridSizeTitle = new Label("Grid-Size(NxN): ");
         this.p1Field = new TextField();
