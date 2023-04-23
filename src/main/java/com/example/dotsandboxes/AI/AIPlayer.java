@@ -24,6 +24,7 @@ public class AIPlayer extends Player implements PropertyChangeListener {
     /**
      * Function that activates the algorithm the AI uses to choose a move and
      * returns the chosen move
+     * function run-time is O(l*(n^3)), as explained in MCTSCalc
      * @return a Pair that holds information on the line the move
      * should be made on
      */

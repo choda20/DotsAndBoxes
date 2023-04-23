@@ -13,6 +13,7 @@ public class UCT {
      * function that is used to access the UCT algorithm.
      * the function activates UCT on all children of the provided node
      * and returns the child with the highest UCT value.
+     * function run-time is O(n), where n=the number of children the node has
      * @param node the tree node that is to be explored
      * @return child node with highest UCT value
      */

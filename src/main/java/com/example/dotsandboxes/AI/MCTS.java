@@ -24,6 +24,11 @@ public class MCTS {
 
     /**
      * function that starts the MCTS algorithm
+     * in order to simplify the run-time of the function, lets consider a
+     * case where m and k are equal to n(not really a possible scenario since
+     * n will always be bigger than both), in which case the run time will be
+     * O((n^3)*I), where I = the number of iterations made, and n = the depth
+     * of the tree.
      * @return the line selected by the algorithm
      */
     public ModelLine MCTSCalc() {
@@ -32,19 +37,24 @@ public class MCTS {
 
         while (System.currentTimeMillis() < endTime) {
             // select a node to explore
-            MCTSNode promisingNode = selectPromisingNode(tree);
+            MCTSNode promisingNode = selectPromisingNode(tree); // function
+            // run-time is O(n*m) where N = the depth of the tree
 
             //expands the selected node if possible
             MCTSNode selected = promisingNode;
             if (selected.getBoard().isGameOngoing()) {
-                selected = expandNodeAndReturnRandom(promisingNode);
+                selected = expandNodeAndReturnRandom(promisingNode); //
+                // function run-time is O(m), where m = number of
+                // possible best moves and
             }
 
             //simulates a game on the node
-            int winningPlayer = simulateLightPlayout(selected);
+            int winningPlayer = simulateLightPlayout(selected); // function
+            // run-time is O(n*m*k), where k = the chain each move is a part of
 
             //back propagates the results of the playout
-            backPropagation(selected,winningPlayer);
+            backPropagation(selected,winningPlayer); // function run-time is
+            // O(n)
         }
 
         MCTSNode best = tree.getChildWithMaxScore();
@@ -56,6 +66,7 @@ public class MCTS {
     /**
      * function the expands the Monte Carlo tree by adding all "best" future
      * boards available from the given node as children to said node.
+     * function run-time is O(n), where n=  the number of possible best moves
      * @param node a node to be expanded
      * @return a random child of the parameter node, or the node itself if
      * it is a leaf.
@@ -79,6 +90,8 @@ public class MCTS {
     /**
      * function that climbs the tree up to the root, while increasing the
      * score of nodes that the winning player played at by 10 points.
+     * function run-time is O(n) where n=number of possible moves from the
+     * start of the game(the tree depth basically)
      * @param selected the node to climb from
      * @param winningPlayer the id of the winning plater
      */
@@ -101,6 +114,7 @@ public class MCTS {
      * lists each time so if the node will be simulated again a new move will
      * be explored). the function sets simulations that end in loss to the
      * minimum value of an integer, and tie to minimum-value/2.
+     * function run-time is O(n*m*k) as described below
      * @param promisingNode
      * @return the id of the player who made the last move
      */
@@ -117,9 +131,12 @@ public class MCTS {
             return tempBoard.getLastPlayer();
         }
 
-        while (tempBoard.isGameOngoing()) {
+        while (tempBoard.isGameOngoing()) { // O(n), where n = is the depth
+            // of the game tree
 
-            Pair<ModelLine,Integer> bestMoveAndScore= tempBoard.getBestMove();
+            Pair<ModelLine,Integer> bestMoveAndScore=
+                    tempBoard.getBestMove(); // O(m*k), n = number of
+            // possible best moves and k = the chain each move is a part of
             bestMove = bestMoveAndScore.getKey();
             childBoard = new AIBoard(tempBoard);
             childBoard.performMove(bestMove.getRow(), bestMove.getColumn(),
@@ -141,13 +158,16 @@ public class MCTS {
     /**
      * function that selects a promising node for exploration using the
      * UCT formula.
+     * function run-time is O(n*m) as described below
      * @param tree the root of the Monte carlo tree
      * @return the promising node to be explored
      */
     private MCTSNode selectPromisingNode(MCTSNode tree) {
         MCTSNode node = tree;
-        while (node.getChildren().size() != 0) {
-            node = UCT.findBestNodeWithUCT(node);
+        while (node.getChildren().size() != 0) { // O(n) since the tree depth
+            // is equal or greater to the number of possible moves
+            node = UCT.findBestNodeWithUCT(node); // O(m), m = the number of
+            // children the node has
         }
         return node;
     }

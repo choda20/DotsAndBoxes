@@ -129,17 +129,19 @@ public class AIBoard {
     public void performMove(int row, int column, LineType lineType) {
         ModelLine[][] lines = lineType.equals(LineType.horizontal) ?
                 horizontalLines : verticalLines;
-        ModelLine line = lines[row][column];
-        if (!line.getIsConnected()) {
-            line.connectLine();
-            int scoreObtained = checkBoxFormed(line)[0];
-            increaseCurrentScore(scoreObtained);
-            adjustLinesBasedOnMove(line);
-            lastPlayer = currentPlayer;
-            if (scoreObtained == 0) {
-                currentPlayer = 1 - currentPlayer;
+        if (row < lines.length && column < lines[0].length) {
+            ModelLine line = lines[row][column];
+            if (!line.getIsConnected()) {
+                line.connectLine();
+                int scoreObtained = checkBoxFormed(line)[0];
+                increaseCurrentScore(scoreObtained);
+                adjustLinesBasedOnMove(line);
+                lastPlayer = currentPlayer;
+                if (scoreObtained == 0) {
+                    currentPlayer = 1 - currentPlayer;
+                }
+                this.lastMove = line;
             }
-            this.lastMove = line;
         }
     }
 
@@ -225,15 +227,18 @@ public class AIBoard {
      * moves based on a line list returned by the function "getBestMoves()".
      * additionally,the moves are scored by the function evaluateMove.
      * if there are multiple "best moves" a random move will be returned
-     * @return the best move that was found
+     * function run-time is O(n*k).
+     * @return the best move that was found and its score
      */
     public Pair<ModelLine,Integer> getBestMove() {
         List<ModelLine> avlLines = getBestMovesList(),
                 bestMoves = new ArrayList<>();
         int bestScore = Integer.MIN_VALUE, score;
 
-        for (ModelLine move: avlLines) {
-            score = evaluateMove(move);
+        for (ModelLine move: avlLines) { // O(N), n = number of possible
+            // best moves
+            score = evaluateMove(move); // O(k), k = the length of the chain
+            // the line is a part of
             if (score == bestScore) {
                 bestMoves.add(move);
             }
@@ -259,6 +264,9 @@ public class AIBoard {
      gains points from the move the score will be positive, and if the player
      does not gain move it will be negative(represents evaluation for the
      opposing player's moves).
+     function run time is O(k), where k = the length of the chain the line is
+     a part of. this applies when the line completes a box or is a 3rd line
+     to be connected in a box. otherwise, the run time is O(1).
      * @param move
      * @return the score of the move
      */
@@ -270,17 +278,18 @@ public class AIBoard {
         int score = boxState[0], reducedScore;
 
         if (score > 0){
-            for (ModelLine line: leftLines) {
+            for (ModelLine line: leftLines) { // at most 3 lines so negligible
                 score += evaluateMove(line);
             }
         } else {
-            reducedScore = (boxState[1] == 2 ? 1 : 0) + (boxState[2] == 2 ? 1 :0);
+            reducedScore = (boxState[1] == 2 ? 1 : 0) +
+                    (boxState[2] == 2 ? 1 :0);
             if (reducedScore != 0) {
                 for (ModelLine line: leftLines) {
-                    score -= evaluateMove(line);
+                    score +=Math.abs(evaluateMove(line))*(-1);
                 }
            }
-            score -= reducedScore;
+            score += Math.abs(reducedScore)*(-1);
         }
 
         move.disconnectLine();
@@ -354,7 +363,8 @@ public class AIBoard {
      */
     private void adjustLinesBasedOnMove(ModelLine line) {
         removeLine(line);
-        List<ModelLine> lines = getUnconnectedLines(line);
+        List<ModelLine> lines = getUnconnectedLines(line); // will be 6 lines
+        // at most
         int[] connectedLines;
 
         for(int i=0;i<lines.size();i++)

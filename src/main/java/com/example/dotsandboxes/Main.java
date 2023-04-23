@@ -31,7 +31,6 @@ public class Main extends Application {
         primaryStage.getIcons().add(getImageFromUrl(
                 "src/main/resources/images/appicon.jpg"));
 
-
         Image backgroundImageImage = getImageFromUrl(
                 "src/main/resources/images/background.png");
         BackgroundImage backgroundImage = new BackgroundImage(
