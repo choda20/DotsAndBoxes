@@ -206,6 +206,7 @@ public class AIBoard {
      * the list DOES NOT hold all future game boards, but rather all "best"
      * future boards based on a line list returned by the function
      * "getBestMoves()".
+     * run-time is O(n), n = size of bestMoves list
      * @return a list of "best" possible future game boards
      */
     public List<AIBoard> getAvlNextMoves() {
