@@ -152,7 +152,9 @@ public class AIBoard {
      * the line is a part of. But, a line is in 2 boxes at maximum, so the
      * function run-time is O(1) in practice
      * @param line a newly connected line
-     * @return the score obtained from connecting the line, ranges from 0-2.
+     * @return an int array of length 3, where each index 1 is the number of connected
+     * boxes the line is a part of, and indexes 1-2 are contain the amount of connected lines
+     * in each box the line is a part of(excluding itself)
      */
     public int[] checkBoxFormed(ModelLine line) {
         int score = 0;
@@ -284,12 +286,15 @@ public class AIBoard {
             }
         } else {
             reducedScore = (boxState[1] == 2 ? 1 : 0) +
-                    (boxState[2] == 2 ? 1 :0);
-            if (reducedScore != 0) {
+                    (boxState[2] == 2 ? 1 :0); // checks if the line is the third
+                    // connected line in the box
+
+            if (reducedScore != 0) { // happens when a line is the third in a box
                 for (ModelLine line: leftLines) {
-                    score +=Math.abs(evaluateMove(line))*(-1);
+                    score +=(Math.abs(evaluateMove(line))*(-1));
                 }
            }
+
             score += Math.abs(reducedScore)*(-1);
         }
 

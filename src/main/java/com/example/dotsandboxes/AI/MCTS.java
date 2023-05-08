@@ -118,6 +118,8 @@ public class MCTS {
      * @param promisingNode
      * @return the id of the player who made the last move
      */
+    // name needs to be changed to simulatePlayout, it is not changed to avoid
+    // confusion with the project book where it is named simulateLightPlayout
     private int simulateLightPlayout(MCTSNode promisingNode) {
         MCTSNode tempNode = promisingNode,child;
         AIBoard childBoard,tempBoard = tempNode.getBoard() ;
